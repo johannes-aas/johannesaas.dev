@@ -240,7 +240,6 @@ h3,
 	--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
 	background-color: color-mix(in srgb, var(--panel-tint) 72%, transparent);
 	backdrop-filter: blur(14px) saturate(1.4);
-	-webkit-backdrop-filter: blur(14px) saturate(1.4);
 }
 
 /* on the dark themes, lighten the tint instead of darkening it, so the panel
