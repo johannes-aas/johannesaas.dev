@@ -391,7 +391,7 @@
 >
 	<div class="relative mx-auto">
 		<svg
-			class="h-auto w-auto overflow-visible p-4 md:p-10 portrait:h-auto portrait:w-[clamp(300px,calc(100svw),600px)] landscape:h-[clamp(400px,calc(100svh-5rem),700px)] landscape:w-auto"
+			class="pointer-events-none h-auto w-auto overflow-visible p-4 md:p-10 portrait:h-auto portrait:w-[clamp(300px,calc(100svw),600px)] landscape:h-[clamp(400px,calc(100svh-5rem),700px)] landscape:w-auto"
 			viewBox="0 0 200 200"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
