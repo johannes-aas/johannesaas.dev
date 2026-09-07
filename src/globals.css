@@ -2,47 +2,214 @@
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 
+/*
+	Eight themes forming one continuous light-to-dark spectrum: themes 1–4 are
+	light, 5–8 are dark, and each --base-bg is strictly darker than the one before
+	it, so dragging the theme slider downward reads as a single dimming gradient.
+	Each step keeps its own hue so they stay distinguishable, not just steps of grey.
+*/
+
 :root {
-  --base-bg: rgb(239, 242, 242);
-  --base-fg: rgb(44, 47, 47);
-  --surface-bg: rgb(220, 231, 231);
-  --surface-fg: rgb(77, 77, 85);
-	--muted: rgb(99, 107, 107);
-	--border: rgb(142, 179, 179);
-	--accent: rgb(162, 196, 196);
+	/* defaults mirror theme-1, the lightest step */
+	--base-bg: rgb(250, 250, 250);
+	--base-fg: rgb(28, 30, 30);
+	--surface-bg: rgb(238, 239, 239);
+	--surface-fg: rgb(60, 64, 64);
+	--muted: rgb(104, 110, 110);
+	--border: rgb(206, 212, 212);
+	--accent: rgb(74, 142, 142);
 }
 
-.dark {
-  --base-bg: rgb(44, 52, 52);
-  --base-fg: rgb(233, 245, 245);
-  --surface-bg: rgb(67, 82, 82);
-  --surface-fg: rgb(225, 240, 240);
-	--muted: rgb(187, 208, 208);
-	--border: rgb(69, 83, 83);
-	--accent: rgb(98, 173, 173);
+/* ---------- LIGHT ---------- */
+
+/* THEME 1: Paper — neutral off-white, teal accent */
+.theme-1 {
+	--base-bg: rgb(250, 250, 250);
+	--base-fg: rgb(28, 30, 30);
+	--surface-bg: rgb(238, 239, 239);
+	--surface-fg: rgb(60, 64, 64);
+	--muted: rgb(104, 110, 110);
+	--border: rgb(206, 212, 212);
+	--accent: rgb(74, 142, 142);
+}
+
+/* THEME 2: Warm Sand — warm cream, terracotta accent */
+.theme-2 {
+	--base-bg: rgb(245, 238, 232);
+	--base-fg: rgb(48, 40, 34);
+	--surface-bg: rgb(236, 227, 218);
+	--surface-fg: rgb(82, 70, 60);
+	--muted: rgb(124, 108, 96);
+	--border: rgb(216, 200, 186);
+	--accent: rgb(198, 102, 64);
+}
+
+/* THEME 3: Sea Glass — cool mint, green-teal accent */
+.theme-3 {
+	--base-bg: rgb(220, 230, 226);
+	--base-fg: rgb(24, 46, 40);
+	--surface-bg: rgb(206, 221, 215);
+	--surface-fg: rgb(52, 82, 74);
+	--muted: rgb(88, 116, 108);
+	--border: rgb(184, 206, 198);
+	--accent: rgb(20, 142, 110);
+}
+
+/* THEME 4: Overcast — dusty blue, strong blue accent */
+.theme-4 {
+	--base-bg: rgb(207, 217, 231);
+	--base-fg: rgb(22, 36, 56);
+	--surface-bg: rgb(192, 204, 221);
+	--surface-fg: rgb(48, 66, 96);
+	--muted: rgb(84, 100, 128);
+	--border: rgb(168, 184, 206);
+	--accent: rgb(38, 96, 196);
+}
+
+/* ---------- DARK ---------- */
+
+/* THEME 5: Plum Dusk — muted violet, lilac accent */
+.theme-5 {
+	--base-bg: rgb(62, 53, 74);
+	--base-fg: rgb(234, 228, 242);
+	--surface-bg: rgb(76, 65, 90);
+	--surface-fg: rgb(212, 204, 224);
+	--muted: rgb(166, 156, 182);
+	--border: rgb(86, 74, 100);
+	--accent: rgb(184, 142, 240);
+}
+
+/* THEME 6: Deep Forest — desaturated green, spring-green accent */
+.theme-6 {
+	--base-bg: rgb(35, 46, 40);
+	--base-fg: rgb(222, 234, 226);
+	--surface-bg: rgb(47, 60, 52);
+	--surface-fg: rgb(198, 212, 202);
+	--muted: rgb(150, 168, 156);
+	--border: rgb(64, 80, 70);
+	--accent: rgb(72, 194, 126);
+}
+
+/* THEME 7: Midnight — cool navy slate, azure accent */
+.theme-7 {
+	--base-bg: rgb(25, 29, 39);
+	--base-fg: rgb(222, 228, 238);
+	--surface-bg: rgb(35, 42, 54);
+	--surface-fg: rgb(196, 204, 218);
+	--muted: rgb(142, 152, 170);
+	--border: rgb(50, 58, 72);
+	--accent: rgb(96, 148, 244);
+}
+
+/* THEME 8: Void — near-black neutral, periwinkle accent */
+.theme-8 {
+	--base-bg: rgb(15, 15, 18);
+	--base-fg: rgb(228, 228, 230);
+	--surface-bg: rgb(26, 26, 29);
+	--surface-fg: rgb(198, 198, 204);
+	--muted: rgb(138, 138, 148);
+	--border: rgb(40, 40, 46);
+	--accent: rgb(140, 152, 216);
+}
+
+/*
+	The background lives on <html>, not just <body>: mobile browsers paint the
+	overscroll/rubber-band area and the strip behind the URL bar from the root
+	canvas, so a body-only background leaves a white band at the top.
+*/
+html {
+	background-color: var(--base-bg);
+	min-height: 100%;
 }
 
 body {
 	color: var(--base-fg);
 	background-color: var(--base-bg);
 	font-family: 'Funnel Sans', sans-serif;
+	min-height: 100vh;
+	min-height: 100dvh;
 }
 
-h1, h2, h3, .display {
-	font-family: 'Funnel Display', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Ubuntu, Cantarell, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+/*
+	Applied to <html> by the theme switcher for ~1800ms around a theme change, so
+	every colour on the page cross-fades instead of snapping. Scoped to the change
+	itself so it never slows down ordinary hover transitions. This is the path used
+	while dragging the slider and wherever the View Transition API below is missing.
+*/
+.theme-transition,
+.theme-transition *,
+.theme-transition *::before,
+.theme-transition *::after {
+	transition:
+		background-color 1600ms ease,
+		border-color 1600ms ease,
+		color 1600ms ease,
+		fill 1600ms ease,
+		stroke 1600ms ease,
+		box-shadow 1600ms ease !important;
+	transition-delay: 0s !important;
 }
 
-.markdown {
-	max-width: 65ch;
-	margin: 0 auto;
-	line-height: 1.6;
-	font-size: 1rem;
+@media (prefers-reduced-motion: reduce) {
+	.theme-transition,
+	.theme-transition *,
+	.theme-transition *::before,
+	.theme-transition *::after {
+		transition: none !important;
+	}
 }
 
-.markdown h1 {
-	font-size: 3rem;
-	line-height: normal;
-	margin-bottom: 2rem;
+/*
+	View Transition path: the switcher snapshots the page, swaps the theme class,
+	then wipes the new snapshot in as a square growing from wherever the theme was
+	picked. The actual clip-path animation runs from JS via the Web Animations API
+	(ThemeSwitcher.svelte), because clip-path polygons can't be interpolated with
+	CSS custom properties alone; this just replaces the default cross-fade and pins
+	the new snapshot collapsed to a point until that animation takes over, so it
+	never flashes in unclipped.
+*/
+/*
+	Unscoped (not gated behind .theme-reveal) — class-scoped selectors don't reliably
+	match these pseudo-elements, since the ::view-transition tree isn't a normal DOM
+	descendant of <html>. Safe to apply unconditionally: document.startViewTransition
+	is only ever called from revealTheme() below.
+*/
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation: none;
+	mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+	/* the outgoing page just sits still underneath and gets covered */
+	z-index: 1;
+}
+
+::view-transition-new(root) {
+	z-index: 2;
+	clip-path: var(--theme-reveal-clip-from, none);
+}
+
+h1,
+h2,
+h3,
+.display {
+	font-family:
+		'Funnel Display',
+		ui-sans-serif,
+		system-ui,
+		-apple-system,
+		Segoe UI,
+		Roboto,
+		Noto Sans,
+		Ubuntu,
+		Cantarell,
+		Helvetica Neue,
+		Arial,
+		'Apple Color Emoji',
+		'Segoe UI Emoji',
+		'Segoe UI Symbol',
+		sans-serif;
 }
 
 /*
@@ -58,4 +225,31 @@ h1, h2, h3, .display {
 	accent
 */
 
+/*
+	Shared look for the header's control nav (theme switcher, logo settings):
+	a translucent, sharp-edged panel. Kept here rather than duplicated
+	per-component so both stay visually in sync. Positioning is up to each
+	component, since the two now anchor to different points on screen rather
+	than dropping below their toggle button. (The toggle button itself is
+	plain Tailwind utilities, applied per-component.)
+*/
+.control-panel {
+	border-radius: 0;
+	border: 1px solid color-mix(in srgb, var(--border) 65%, #000);
+	/* base-bg darkened a touch, then made translucent so the blur reads through */
+	--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
+	background-color: color-mix(in srgb, var(--panel-tint) 72%, transparent);
+	backdrop-filter: blur(14px) saturate(1.4);
+	-webkit-backdrop-filter: blur(14px) saturate(1.4);
+}
 
+/* on the dark themes, lighten the tint instead of darkening it, so the panel
+   still reads as a raised surface against the dark backdrop — darkening the
+   border further would vanish into it, so lighten instead to keep the edge */
+.theme-5 .control-panel,
+.theme-6 .control-panel,
+.theme-7 .control-panel,
+.theme-8 .control-panel {
+	--panel-tint: color-mix(in srgb, var(--base-bg) 82%, #fff);
+	border-color: color-mix(in srgb, var(--border) 65%, #fff);
+}

@@ -1,9 +1,13 @@
+<script>
+	import Mail from '@lucide/svelte/icons/mail'
+</script>
+
 <div class="flex flex-col sm:flex-row gap-4 justify-center">
   <a
     href="https://github.com/johannes-aas"
     target="_blank"
     rel="noopener noreferrer"
-    class="group flex items-center space-x-3 rounded-lg border border-[var(--border)] bg-[color-mix(in_oklab,_var(--surface-bg)_/_50%,_transparent)] px-6 py-3 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-[var(--muted)] hover:bg-[color-mix(in_oklab,_var(--surface-bg)_/_60%,_transparent)]"
+    class="group flex items-center space-x-3 border border-[var(--border)] bg-[color-mix(in_oklab,_var(--surface-bg)_/_50%,_transparent)] px-6 py-3 backdrop-blur-sm transition-colors duration-200 hover:border-[var(--muted)] hover:bg-[color-mix(in_oklab,_var(--surface-bg)_/_60%,_transparent)]"
   >
     <svg
       class="h-5 w-5 text-[var(--muted)] transition-colors group-hover:text-[var(--base-fg)]"
@@ -21,7 +25,7 @@
     href="https://www.linkedin.com/in/johannes-hansen-aas/"
     target="_blank"
     rel="noopener noreferrer"
-    class="group flex items-center space-x-3 rounded-lg border border-[var(--border)] bg-[color-mix(in_oklab,_var(--surface-bg)_/_50%,_transparent)] px-6 py-3 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-[var(--muted)] hover:bg-[color-mix(in_oklab,_var(--surface-bg)_/_60%,_transparent)]"
+    class="group flex items-center space-x-3 border border-[var(--border)] bg-[color-mix(in_oklab,_var(--surface-bg)_/_50%,_transparent)] px-6 py-3 backdrop-blur-sm transition-colors duration-200 hover:border-[var(--muted)] hover:bg-[color-mix(in_oklab,_var(--surface-bg)_/_60%,_transparent)]"
   >
     <svg
       class="h-5 w-5 text-[var(--muted)] transition-colors group-hover:text-[var(--base-fg)]"
@@ -37,17 +41,9 @@
 
   <a
     href={`mailto:johannes.hansen.aas@gmail.com`}
-    class="group flex items-center space-x-3 rounded-lg border border-[var(--border)] bg-[color-mix(in_oklab,_var(--surface-bg)_/_50%,_transparent)] px-6 py-3 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-[var(--muted)] hover:bg-[color-mix(in_oklab,_var(--surface-bg)_/_60%,_transparent)]"
+    class="group flex items-center space-x-3 border border-[var(--border)] bg-[color-mix(in_oklab,_var(--surface-bg)_/_50%,_transparent)] px-6 py-3 backdrop-blur-sm transition-colors duration-200 hover:border-[var(--muted)] hover:bg-[color-mix(in_oklab,_var(--surface-bg)_/_60%,_transparent)]"
   >
-    <svg
-      class="h-5 w-5 text-[var(--muted)] transition-colors group-hover:text-[var(--base-fg)]"
-      fill="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path d="M20 4H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm0 2v.511l-8 5.333-8-5.333V6h16zM4 18V8.489l7.386 4.915a1 1 0 0 0 1.228 0L20 8.489V18H4z" />
-    </svg>
+    <Mail class="h-5 w-5 text-[var(--muted)] transition-colors group-hover:text-[var(--base-fg)]" />
     <span class="text-[var(--surface-fg)] transition-colors group-hover:text-[var(--base-fg)]">Email</span>
   </a>
 </div>
-
-

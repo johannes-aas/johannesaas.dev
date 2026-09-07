@@ -6,14 +6,14 @@
 	export let githubUrl = ''
 </script>
 
-<div class="overflow-hidden rounded-lg bg-[var(--surface-bg)] shadow-md ring-1 ring-[var(--border)]">
+<div class="border border-[var(--border)] bg-[var(--surface-bg)]">
 	<div class="p-6">
 		<h3 class="mb-2 text-xl font-semibold text-[var(--surface-fg)]">{title}</h3>
 		<p class="mb-4 text-[var(--muted)]">{description}</p>
 
 		<div class="mb-4 flex flex-wrap gap-2">
 			{#each technologies as tech}
-				<span class="rounded border border-[var(--border)] bg-[var(--base-bg)] px-2 py-1 text-sm text-[var(--base-fg)]">
+				<span class="border border-[var(--border)] bg-[var(--base-bg)] px-2 py-1 text-sm text-[var(--base-fg)]">
 					{tech}
 				</span>
 			{/each}

@@ -16,7 +16,7 @@
 			<img
 				src="/images/johannes.jpeg"
 				alt="Johannes"
-				class="w-80 h-80 object-cover rounded-xl ring-1 ring-white/10"
+				class="w-80 h-80 object-cover border border-[var(--border)]"
 			/>
 		</div>
 	</div>

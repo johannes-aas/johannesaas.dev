@@ -8,7 +8,7 @@
 		{#each posts as post}
 			<a
 				href={`/blog/${post.slug}`}
-				class="block overflow-hidden rounded-lg bg-[var(--surface-bg)] ring-1 ring-[var(--border)] transition-colors hover:ring-[var(--muted)]"
+				class="block overflow-hidden border border-[var(--border)] bg-[var(--surface-bg)] transition-colors hover:border-[var(--muted)]"
 			>
 				{#if post.meta.cover}
 					<img src={post.meta.cover} alt={post.meta.title} class="h-48 w-full object-cover" />

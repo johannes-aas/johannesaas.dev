@@ -5,10 +5,16 @@
 	import { injectAnalytics } from '@vercel/analytics/sveltekit'
 	import Header from '$lib/components/Header.svelte'
 	import Footer from '$lib/components/Footer.svelte'
+	import { openPanelCount } from '$lib/stores/panelState'
 
 	injectAnalytics({ mode: dev ? 'development' : 'production' })
 
 	let { children } = $props()
+
+	// lock page scroll while any header panel (theme switcher, logo settings) is open
+	$effect(() => {
+		document.body.style.overflow = $openPanelCount > 0 ? 'hidden' : ''
+	})
 </script>
 
 <svelte:head>
