@@ -83,8 +83,15 @@
 	// no cursor to follow — the layers ride the scroll instead
 	let isTouchDevice = false
 	let heroEl
+	let svgEl
 	let scrollProgress = 0
 	let cursorTimers = []
+
+	// center of the logo svg itself, in viewport coordinates — the point the
+	// layers spread from, kept separate from the window center since the logo
+	// isn't always centered in the viewport
+	let logoCenterX = innerWidth / 2
+	let logoCenterY = innerHeight / 2
 
 	// target offset per layer, derived straight from the cursor
 	let targetX = 0
@@ -106,9 +113,16 @@
 	// mirrored to the store so the settings panel knows to hide the speed slider
 	$: logoScrollDriven.set(scrollDriven)
 
+	const updateLogoCenter = () => {
+		if (!svgEl) return
+		const rect = svgEl.getBoundingClientRect()
+		logoCenterX = rect.left + rect.width / 2
+		logoCenterY = rect.top + rect.height / 2
+	}
+
 	const updateTarget = () => {
-		const cx = innerWidth / 2
-		const cy = innerHeight / 2
+		const cx = logoCenterX
+		const cy = logoCenterY
 		const dx = mouseX - cx
 		const dy = mouseY - cy
 		const distance = Math.hypot(dx, dy)
@@ -128,8 +142,9 @@
 			return
 		}
 
-		// capped so the layers never stretch beyond `spread` per step
-		const maxDistance = Math.min(cx, cy) || 1
+		// capped so the layers never stretch beyond `spread` per step — normalized
+		// against the viewport, not the (possibly off-center) logo position
+		const maxDistance = Math.min(innerWidth / 2, innerHeight / 2) || 1
 		const offset = Math.min(distance / maxDistance, 1) * spread
 
 		// point away from the cursor, or into it when the setting is flipped
@@ -209,7 +224,17 @@
 	// already easing toward its scroll position before the intro ends — otherwise
 	// it sits frozen at 0 and snaps into place the instant the intro finishes.
 	const handleScroll = () => {
-		if (!scrollDriven || !heroEl) return
+		updateLogoCenter()
+
+		if (!scrollDriven) {
+			// the logo moves within the viewport as the page scrolls, so the
+			// offset relative to the (unmoved) cursor position needs recomputing
+			// too, or the follow effect freezes until the next mousemove
+			updateTarget()
+			startAnimation()
+			return
+		}
+		if (!heroEl) return
 		const rect = heroEl.getBoundingClientRect()
 		const range = (rect.height || innerHeight || 1) * SCROLL_RANGE
 		// Measuring from rect.top alone would stall the swing until the hero had
@@ -301,6 +326,7 @@
 		if (!browser) return
 		innerWidth = window.innerWidth
 		innerHeight = window.innerHeight
+		updateLogoCenter()
 		// Keep mouse centered on resize if there is no cursor driving the stack
 		if (scrollDriven) {
 			mouseX = innerWidth / 2
@@ -317,6 +343,7 @@
 		// Set initial values
 		innerWidth = window.innerWidth
 		innerHeight = window.innerHeight
+		updateLogoCenter()
 
 		// Anything that cannot hover has no cursor to follow, so it scrolls instead.
 		// This is narrower than a touch check: a touchscreen laptop still has a mouse.
@@ -388,9 +415,11 @@
 <section
 	bind:this={heroEl}
 	class="flex w-full flex-col items-center pt-10 sm:pt-0 portrait:items-start"
+	style="background: radial-gradient(circle 320px at 50% 360px, color-mix(in srgb, var(--accent) 14%, var(--base-bg)), var(--base-bg) 100%);"
 >
 	<div class="relative mx-auto">
 		<svg
+			bind:this={svgEl}
 			class="pointer-events-none h-auto w-auto overflow-visible p-4 md:p-10 portrait:h-auto portrait:w-[clamp(300px,calc(100svw),600px)] landscape:h-[clamp(400px,calc(100svh-5rem),700px)] landscape:w-auto"
 			viewBox="0 0 200 200"
 			fill="none"
