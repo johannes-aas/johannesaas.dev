@@ -4,18 +4,18 @@ import { writable } from 'svelte/store'
 // own opening look below, which is tuned to make a stronger first impression.
 export const logoDefaults = {
   thickness: 0.5,
-  spread: 3.4,
-  speed: 2.2,
-  layers: 8,
+  spread: 3.2,
+  speed: 2.8,
+  layers: 10,
   scaleStep: 0.02,
   spreadTowards: true
 }
 
 export const logoControls = writable({
   thickness: 0.5,
-  spread: 3.4,
-  speed: 2.2,
-  layers: 8,
+  spread: 3.2,
+  speed: 2.8,
+  layers: 10,
   scaleStep: 0.02,
   spreadTowards: true
 })
