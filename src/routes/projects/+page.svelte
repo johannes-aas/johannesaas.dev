@@ -10,6 +10,13 @@
 			githubUrl: 'https://github.com/johannes-aas/react-calendar'
 		},
 		{
+			title: 'oysteinaas.no',
+			description: 'Landingpage for triathlete Øystein Aas',
+			technologies: ['Nextjs', 'Tailwind CSS'],
+			liveUrl: 'https://oysteinaas.no/',
+			githubUrl: 'https://github.com/johannes-aas/oysteinaas'
+		},
+		{
 			title: 'Portfolio',
 			description: 'This website',
 			technologies: ['SvelteKit', 'Tailwind CSS'],
@@ -31,6 +38,13 @@
 			technologies: ['Nextjs', 'React', 'Tailwind CSS', 'TypeScript'],
 			liveUrl: 'https://login.no',
 			githubUrl: 'https://github.com/Login-Linjeforening-for-IT/beehive'
+		},
+		{
+			title: 'HealthTech',
+			description: "Bachelor's thesis project built with a student group for Aker Solutions. A web application that visualizes workplace health data — noise, vibration, and dust exposure.",
+			technologies: ['React', 'Tailwind CSS', 'TypeScript'],
+			liveUrl: 'http://129.241.100.43/foreman',
+			githubUrl: 'https://github.com/johannes-aas/react-calendar'
 		}
 	]
 </script>
