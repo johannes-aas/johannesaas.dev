@@ -8,6 +8,7 @@
 		{#each posts as post}
 			<a
 				href={`/blog/${post.slug}`}
+				data-cursor="read"
 				class="block overflow-hidden border border-[var(--border)] bg-[var(--surface-bg)] transition-colors hover:border-[var(--muted)]"
 			>
 				{#if post.meta.cover}

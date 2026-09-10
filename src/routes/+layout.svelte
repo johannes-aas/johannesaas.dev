@@ -5,6 +5,7 @@
 	import { injectAnalytics } from '@vercel/analytics/sveltekit'
 	import Header from '$lib/components/Header.svelte'
 	import Footer from '$lib/components/Footer.svelte'
+	import CustomCursor from '$lib/components/CustomCursor.svelte'
 	import { openPanelCount } from '$lib/stores/panelState'
 
 	injectAnalytics({ mode: dev ? 'development' : 'production' })
@@ -20,6 +21,8 @@
 <svelte:head>
 	<link rel="icon" href={favicon} />
 </svelte:head>
+
+<CustomCursor />
 
 <div class="flex min-h-screen flex-col bg-[var(--base-bg)]">
 	<Header />

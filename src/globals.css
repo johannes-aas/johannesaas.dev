@@ -18,6 +18,7 @@
 	--muted: rgb(104, 110, 110);
 	--border: rgb(206, 212, 212);
 	--accent: rgb(74, 142, 142);
+	--cursor: rgb(42, 174, 174);
 }
 
 /* ---------- LIGHT ---------- */
@@ -31,6 +32,7 @@
 	--muted: rgb(104, 110, 110);
 	--border: rgb(206, 212, 212);
 	--accent: rgb(74, 142, 142);
+	--cursor: rgb(42, 174, 174);
 }
 
 /* THEME 2: Warm Sand — warm cream, terracotta accent */
@@ -42,6 +44,7 @@
 	--muted: rgb(124, 108, 96);
 	--border: rgb(216, 200, 186);
 	--accent: rgb(198, 102, 64);
+	--cursor: rgb(235, 86, 27);
 }
 
 /* THEME 3: Sea Glass — cool mint, green-teal accent */
@@ -53,6 +56,7 @@
 	--muted: rgb(88, 116, 108);
 	--border: rgb(184, 206, 198);
 	--accent: rgb(20, 142, 110);
+	--cursor: rgb(4, 199, 148);
 }
 
 /* THEME 4: Overcast — dusty blue, strong blue accent */
@@ -64,6 +68,7 @@
 	--muted: rgb(84, 100, 128);
 	--border: rgb(168, 184, 206);
 	--accent: rgb(38, 96, 196);
+	--cursor: rgb(5, 87, 229);
 }
 
 /* ---------- DARK ---------- */
@@ -77,6 +82,7 @@
 	--muted: rgb(166, 156, 182);
 	--border: rgb(86, 74, 100);
 	--accent: rgb(184, 142, 240);
+	--cursor: rgb(153, 80, 251);
 }
 
 /* THEME 6: Deep Forest — desaturated green, spring-green accent */
@@ -88,6 +94,7 @@
 	--muted: rgb(150, 168, 156);
 	--border: rgb(64, 80, 70);
 	--accent: rgb(72, 194, 126);
+	--cursor: rgb(35, 231, 122);
 }
 
 /* THEME 7: Midnight — cool navy slate, azure accent */
@@ -99,6 +106,7 @@
 	--muted: rgb(142, 152, 170);
 	--border: rgb(50, 58, 72);
 	--accent: rgb(96, 148, 244);
+	--cursor: rgb(38, 113, 251);
 }
 
 /* THEME 8: Void — near-black neutral, periwinkle accent */
@@ -110,6 +118,7 @@
 	--muted: rgb(138, 138, 148);
 	--border: rgb(40, 40, 46);
 	--accent: rgb(140, 152, 216);
+	--cursor: rgb(71, 97, 234);
 }
 
 /*
@@ -128,6 +137,17 @@ body {
 	font-family: 'Funnel Sans', sans-serif;
 	min-height: 100vh;
 	min-height: 100dvh;
+}
+
+/*
+	Custom cursor (CustomCursor.svelte) replaces the native pointer. Only on
+	devices that actually have one — touch devices never see this rule, so
+	they keep their normal tap behaviour untouched.
+*/
+@media (hover: hover) and (pointer: fine) {
+	* {
+		cursor: none !important;
+	}
 }
 
 /*
