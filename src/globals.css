@@ -3,10 +3,39 @@
 @plugin '@tailwindcss/typography';
 
 /*
+	Exposes the theme's own CSS custom properties (below) as first-class
+	Tailwind color utilities — `bg-accent`, `text-muted`, `border-border`, etc.
+	— instead of every callsite spelling out `bg-[var(--accent)]`. The indirection
+	through `var()` is what keeps these live across the runtime theme switch
+	(ThemeSwitcher.svelte swaps a `.theme-N` class on <html>, which is what
+	actually changes the color); Tailwind just resolves the variable at paint
+	time like any other CSS consumer would.
+*/
+@theme {
+	--color-base-bg: var(--base-bg);
+	--color-base-fg: var(--base-fg);
+	--color-surface-bg: var(--surface-bg);
+	--color-surface-fg: var(--surface-fg);
+	--color-muted: var(--muted);
+	--color-border: var(--border);
+	--color-accent: var(--accent);
+	--color-cursor: var(--cursor);
+	--color-panel-tint: var(--panel-tint);
+	--color-panel-border: var(--panel-border);
+}
+
+/*
 	Eight themes forming one continuous light-to-dark spectrum: themes 1–4 are
 	light, 5–8 are dark, and each --base-bg is strictly darker than the one before
 	it, so dragging the theme slider downward reads as a single dimming gradient.
 	Each step keeps its own hue so they stay distinguishable, not just steps of grey.
+
+	--panel-tint and --panel-border feed the translucent "control panel" look
+	shared by the theme switcher and logo settings panels (see .control-panel
+	below, and the two panels in LogoSettings.svelte). They're defined per-theme
+	here — rather than computed once from --base-bg/--border and overridden for
+	dark themes wherever they're used — so every consumer just reads one
+	variable instead of duplicating the light/dark branch itself.
 */
 
 :root {
@@ -19,6 +48,8 @@
 	--border: rgb(206, 212, 212);
 	--accent: rgb(74, 142, 142);
 	--cursor: rgb(42, 174, 174);
+	--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
+	--panel-border: color-mix(in srgb, var(--border) 65%, #000);
 }
 
 /* ---------- LIGHT ---------- */
@@ -33,6 +64,8 @@
 	--border: rgb(206, 212, 212);
 	--accent: rgb(74, 142, 142);
 	--cursor: rgb(42, 174, 174);
+	--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
+	--panel-border: color-mix(in srgb, var(--border) 65%, #000);
 }
 
 /* THEME 2: Warm Sand — warm cream, terracotta accent */
@@ -45,6 +78,8 @@
 	--border: rgb(216, 200, 186);
 	--accent: rgb(198, 102, 64);
 	--cursor: rgb(235, 86, 27);
+	--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
+	--panel-border: color-mix(in srgb, var(--border) 65%, #000);
 }
 
 /* THEME 3: Sea Glass — cool mint, green-teal accent */
@@ -57,6 +92,8 @@
 	--border: rgb(184, 206, 198);
 	--accent: rgb(20, 142, 110);
 	--cursor: rgb(4, 199, 148);
+	--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
+	--panel-border: color-mix(in srgb, var(--border) 65%, #000);
 }
 
 /* THEME 4: Overcast — dusty blue, strong blue accent */
@@ -69,9 +106,15 @@
 	--border: rgb(168, 184, 206);
 	--accent: rgb(38, 96, 196);
 	--cursor: rgb(5, 87, 229);
+	--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
+	--panel-border: color-mix(in srgb, var(--border) 65%, #000);
 }
 
 /* ---------- DARK ---------- */
+
+/* on dark themes the tint/border lighten instead of darken, so the panel
+   still reads as a raised surface against the dark backdrop — darkening
+   further would just vanish into it */
 
 /* THEME 5: Plum Dusk — muted violet, lilac accent */
 .theme-5 {
@@ -83,6 +126,8 @@
 	--border: rgb(86, 74, 100);
 	--accent: rgb(184, 142, 240);
 	--cursor: rgb(153, 80, 251);
+	--panel-tint: color-mix(in srgb, var(--base-bg) 82%, #fff);
+	--panel-border: color-mix(in srgb, var(--border) 65%, #fff);
 }
 
 /* THEME 6: Deep Forest — desaturated green, spring-green accent */
@@ -95,6 +140,8 @@
 	--border: rgb(64, 80, 70);
 	--accent: rgb(72, 194, 126);
 	--cursor: rgb(35, 231, 122);
+	--panel-tint: color-mix(in srgb, var(--base-bg) 82%, #fff);
+	--panel-border: color-mix(in srgb, var(--border) 65%, #fff);
 }
 
 /* THEME 7: Midnight — cool navy slate, azure accent */
@@ -107,6 +154,8 @@
 	--border: rgb(50, 58, 72);
 	--accent: rgb(96, 148, 244);
 	--cursor: rgb(38, 113, 251);
+	--panel-tint: color-mix(in srgb, var(--base-bg) 82%, #fff);
+	--panel-border: color-mix(in srgb, var(--border) 65%, #fff);
 }
 
 /* THEME 8: Void — near-black neutral, periwinkle accent */
@@ -119,6 +168,8 @@
 	--border: rgb(40, 40, 46);
 	--accent: rgb(140, 152, 216);
 	--cursor: rgb(71, 97, 234);
+	--panel-tint: color-mix(in srgb, var(--base-bg) 82%, #fff);
+	--panel-border: color-mix(in srgb, var(--border) 65%, #fff);
 }
 
 /*
@@ -255,20 +306,7 @@ h3,
 */
 .control-panel {
 	border-radius: 0;
-	border: 1px solid color-mix(in srgb, var(--border) 65%, #000);
-	/* base-bg darkened a touch, then made translucent so the blur reads through */
-	--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
+	border: 1px solid var(--panel-border);
 	background-color: color-mix(in srgb, var(--panel-tint) 72%, transparent);
 	backdrop-filter: blur(14px) saturate(1.4);
-}
-
-/* on the dark themes, lighten the tint instead of darkening it, so the panel
-   still reads as a raised surface against the dark backdrop — darkening the
-   border further would vanish into it, so lighten instead to keep the edge */
-.theme-5 .control-panel,
-.theme-6 .control-panel,
-.theme-7 .control-panel,
-.theme-8 .control-panel {
-	--panel-tint: color-mix(in srgb, var(--base-bg) 82%, #fff);
-	border-color: color-mix(in srgb, var(--border) 65%, #fff);
 }

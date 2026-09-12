@@ -6,6 +6,7 @@
 		logoReplayRequested
 	} from '$lib/stores/logoControls'
 	import Slider from '$lib/components/Slider.svelte'
+	import { cn } from '$lib/utils'
 	import WandSparkles from '@lucide/svelte/icons/wand-sparkles'
 	import RotateCcw from '@lucide/svelte/icons/rotate-ccw'
 	import Play from '@lucide/svelte/icons/play'
@@ -92,7 +93,7 @@
 	// clamped back on screen if that would overflow — the same "place it, then
 	// shift back if it would overflow" idea Floating UI's shift() middleware
 	// uses, computed directly against values we already have (panelHeight;
-	// PANEL_WIDTH matches .morph-panel.open's width below) rather than asking
+	// PANEL_WIDTH matches the open panel's own w-72 below) rather than asking
 	// Floating UI to measure the real panel element. That doesn't work here: a
 	// CSS `transition` makes `getBoundingClientRect()` report the panel's
 	// *currently interpolating* size, not its target — so at the instant the
@@ -104,7 +105,7 @@
 	// (the user can just scroll up to see it) — the only thing it's clamped
 	// against is the actual top of the page (scroll position 0), since there's
 	// nothing above that to scroll to.
-	const PANEL_WIDTH = 304 // 18rem, in px — keep in sync with .morph-panel.open
+	const PANEL_WIDTH = 304 // 18rem, in px — keep in sync with the open panel's w-72
 	const EDGE_PADDING = 8
 
 	let panelX = 0
@@ -216,11 +217,15 @@
 	/>
 {/snippet}
 
-<div class="relative h-11 w-11" bind:this={container}>
+<div class="relative h-11 w-11 rounded-sm" bind:this={container}>
 	<div
-		class="morph-panel absolute z-10 overflow-hidden hover:border-[var(--border)]"
-		class:open
-		class:border-[var(--border)]={open}
+		class={cn(
+			'absolute z-10 overflow-hidden rounded-sm border border-transparent bg-transparent transition-[top,left,width,height,border-color,background-color] duration-300 ease-in-out hover:border-border hover:bg-[color-mix(in_srgb,var(--panel-tint)_72%,transparent)] hover:backdrop-blur-[14px] hover:backdrop-saturate-[1.4]',
+			open ? 'w-72 border-border bg-[color-mix(in_srgb,var(--panel-tint)_72%,transparent)]' : 'w-11'
+		)}
+		class:max-w-[calc(100vw-1.5rem)]={open}
+		class:backdrop-blur-[14px]={open}
+		class:backdrop-saturate-[1.4]={open}
 		style="top:{open ? panelY + 'px' : '0'};left:{open ? panelX + 'px' : '0'};height:{open
 			? panelHeight + 'px'
 			: '2.75rem'}"
@@ -232,10 +237,9 @@
 			aria-hidden={!open}
 		>
 			<div class="flex h-11 items-center justify-between pl-12">
-				<span class="text-md color-[var(--base-fg)]">Playground</span>
+				<span class="text-md text-base-fg">Playground</span>
 				<button
-					class="flex h-full cursor-pointer items-center gap-1.5 px-5 text-[13px] border-l border-[var(--border)] transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]"
-					style="color:var(--muted)"
+					class="flex h-full cursor-pointer items-center gap-1.5 border-l border-border px-5 text-[13px] text-muted transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]"
 					on:click={reset}
 					aria-label="Reset to defaults"
 					title="Reset to defaults"
@@ -245,26 +249,20 @@
 				</button>
 			</div>
 
-			<div class="h-px" style="background:var(--border)"></div>
+			<div class="h-px bg-border"></div>
 
 			<div class="flex flex-col gap-[10px] px-4 pt-[14px] pb-4">
-				<span
-					class="font-mono text-[10px] tracking-[0.16em] uppercase"
-					style="color:var(--muted)">Form</span
-				>
+				<span class="font-mono text-[10px] tracking-[0.16em] text-muted uppercase">Form</span>
 				{#each formSliders as spec (spec.key)}
 					{@render sliderRow(spec)}
 				{/each}
 			</div>
 
-			<div class="h-px" style="background:var(--border)"></div>
+			<div class="h-px bg-border"></div>
 
 			<div class="flex flex-col gap-[10px] px-4 pt-[14px] pb-4">
-				<span
-					class="font-mono text-[10px] tracking-[0.16em] uppercase"
-					style="color:var(--muted)"
-				>
-						Motion
+				<span class="font-mono text-[10px] tracking-[0.16em] text-muted uppercase">
+					Motion
 				</span>
 				{#each motionSliders as spec (spec.key)}
 					{@render sliderRow(spec)}
@@ -273,25 +271,23 @@
 				{#if !$logoScrollDriven}
 					{@const { key, label, options } = spreadSegment}
 					<div class="flex items-center gap-6">
-						<span class="text-[13px]" style="color:var(--muted)">
+						<span class="text-[13px] text-muted">
 							{label}
 						</span>
-						<div
-							role="radiogroup"
-							aria-label={label}
-							class="flex w-full"
-						>
+						<div role="radiogroup" aria-label={label} class="flex w-full">
 							{#each options as option, i (option.label)}
+								{@const selected = $logoControls[key] === option.value}
 								<button
 									type="button"
 									role="radio"
-									aria-checked={$logoControls[key] === option.value}
-									class="w-full py-1 text-center text-[13px] transition-colors duration-200 border"
-									style="border-color:{$logoControls[key] === option.value
-										? 'var(--accent)'
-										: 'var(--border)'};
-										background:{$logoControls[key] === option.value ? 'var(--accent)' : 'transparent'};
-										color:{$logoControls[key] === option.value ? 'var(--base-bg)' : 'var(--muted)'}"
+									aria-checked={selected}
+									class="w-full border py-1 text-center text-[13px] transition-colors duration-200"
+									class:border-accent={selected}
+									class:bg-accent={selected}
+									class:text-base-bg={selected}
+									class:border-border={!selected}
+									class:bg-transparent={!selected}
+									class:text-muted={!selected}
 									on:click={() => handleSegment(key, option.value)}
 								>
 									{option.label}
@@ -302,18 +298,16 @@
 				{/if}
 			</div>
 
-			<div class="flex border-t" style="border-color:var(--border)">
+			<div class="flex border-t border-border">
 				<button
-					class="flex h-11 flex-1 cursor-pointer items-center justify-center gap-2 text-[13px] transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]"
-					style="color:var(--base-fg)"
+					class="flex h-11 flex-1 cursor-pointer items-center justify-center gap-2 text-[13px] text-base-fg transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]"
 					on:click={randomize}
 				>
 					<Shuffle class="h-3.5 w-3.5 stroke-2" aria-hidden="true" />
 					<span>Randomize</span>
 				</button>
 				<button
-					class="flex h-11 flex-1 cursor-pointer items-center justify-center gap-2 border-l text-[13px] transition-opacity duration-200 hover:opacity-90"
-					style="border-color:var(--border);background:var(--accent);color:var(--base-bg)"
+					class="flex h-11 flex-1 cursor-pointer items-center justify-center gap-2 border-l border-border bg-accent text-[13px] text-base-bg transition-opacity duration-200 hover:opacity-90"
 					on:click={replay}
 				>
 					<Play class="h-3.5 w-3.5 fill-current stroke-current" aria-hidden="true" />
@@ -324,10 +318,14 @@
 	</div>
 
 	<button
-		class="icon-btn absolute z-20 flex cursor-pointer items-center justify-center text-[var(--muted)] transition-[top,left,width,height,color,border-color,background-color] duration-300 ease-in-out hover:text-[var(--base-fg)]"
-		class:open
-		class:text-[var(--base-fg)]={open}
-		class:hover:border-[var(--border)]={!open}
+		class={cn(
+			'absolute z-20 flex cursor-pointer items-center justify-center border border-transparent text-muted transition-[top,left,width,height,color,border-color,background-color] duration-300 ease-in-out hover:text-base-fg',
+			open ? 'h-11 w-11 text-base-fg' : 'h-full w-full'
+		)}
+		class:hover:border-border={!open}
+		class:hover:bg-[color-mix(in_srgb,var(--panel-tint)_72%,transparent)]={!open}
+		class:hover:backdrop-blur-[14px]={!open}
+		class:hover:backdrop-saturate-[1.4]={!open}
 		style="top:{open ? iconOpenTop + 'px' : '0'};left:{open ? iconOpenLeft + 'px' : '0'}"
 		on:click={() => setOpen(!open)}
 		aria-label={open ? 'Close playground' : 'Open playground'}
@@ -335,97 +333,11 @@
 		title="Playground"
 	>
 		<WandSparkles
-			class="h-7 w-7 flex-none stroke-[1.75] transition-transform duration-300 ease-in-out {open
-				? 'scale-[0.83]'
-				: ''}"
+			class={cn(
+				'h-7 w-7 flex-none stroke-[1.75] transition-transform duration-300 ease-in-out',
+				open && 'scale-[0.83]'
+			)}
 			aria-hidden="true"
 		/>
 	</button>
 </div>
-
-<style>
-	/* same recipe as the shared .control-panel look (see globals.css) — sharp
-	   corners throughout, matching the trigger button's own square edges.
-	   Ghost by default: no border/background until hovered or open, so the
-	   trigger only reveals its "panel" chrome on interaction. --panel-tint is
-	   defined on both .morph-panel and .icon-btn directly (they're siblings,
-	   not nested) so each has it available for its own hover chrome below. */
-	.morph-panel,
-	.icon-btn {
-		--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
-	}
-
-	:global(.theme-5) .morph-panel,
-	:global(.theme-5) .icon-btn,
-	:global(.theme-6) .morph-panel,
-	:global(.theme-6) .icon-btn,
-	:global(.theme-7) .morph-panel,
-	:global(.theme-7) .icon-btn,
-	:global(.theme-8) .morph-panel,
-	:global(.theme-8) .icon-btn {
-		--panel-tint: color-mix(in srgb, var(--base-bg) 82%, #fff);
-	}
-
-	.morph-panel {
-		top: 0;
-		left: 0;
-		width: 2.75rem;
-		border-radius: 0;
-		border: 1px solid transparent;
-		background-color: transparent;
-		/* cubic-bezier(0.4, 0, 0.2, 1) is what Tailwind's `ease-in-out` utility
-		   (used on .icon-btn below) actually resolves to — it's a different
-		   curve than the plain CSS `ease-in-out` keyword. Spelling it out here
-		   keeps the panel and the icon on the exact same curve. top/left are
-		   Floating UI's collision-corrected position (see updatePosition) —
-		   animating them too means the shrink-back-on-overflow reads as a
-		   smooth part of the same motion, not a separate snap. */
-		transition:
-			top 300ms cubic-bezier(0.4, 0, 0.2, 1),
-			left 300ms cubic-bezier(0.4, 0, 0.2, 1),
-			width 300ms cubic-bezier(0.4, 0, 0.2, 1),
-			height 300ms cubic-bezier(0.4, 0, 0.2, 1),
-			border-color 300ms cubic-bezier(0.4, 0, 0.2, 1),
-			background-color 300ms cubic-bezier(0.4, 0, 0.2, 1);
-	}
-
-	.morph-panel.open,
-	.morph-panel:hover {
-		background-color: color-mix(in srgb, var(--panel-tint) 72%, transparent);
-		backdrop-filter: blur(14px) saturate(1.4);
-	}
-
-	.morph-panel.open {
-		width: 18rem;
-		/* belt-and-braces fallback for the instant before JS has measured and
-		   positioned it — Floating UI's own size() middleware (see script)
-		   applies the precise, live-measured constraint once it runs. */
-		max-width: calc(100vw - 1.5rem);
-	}
-
-	/* the button is a sibling of .morph-panel, not a child of it — both sit
-	   directly in the static 2.75rem outer wrapper. Sized as a percentage of
-	   that wrapper (which never itself animates) so it always fills exactly,
-	   border included. `top`/`left` are set inline (see iconOpenTop/Left in
-	   the script): they track panelX/panelY, which Floating UI computes and
-	   can shift at any time to avoid overflow, so they can't be static here. */
-	.icon-btn {
-		width: 100%;
-		height: 100%;
-		justify-content: center;
-		border: 1px solid transparent;
-	}
-
-	/* while closed, the button sits exactly over the (invisible) closed
-	   panel — hovering it stands in for hovering the panel itself, so it
-	   gets the same border/background/blur the open panel always shows */
-	.icon-btn:not(.open):hover {
-		background-color: color-mix(in srgb, var(--panel-tint) 72%, transparent);
-		backdrop-filter: blur(14px) saturate(1.4);
-	}
-
-	.icon-btn.open {
-		width: 2.75rem;
-		height: 2.75rem;
-	}
-</style>

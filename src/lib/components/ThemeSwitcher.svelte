@@ -250,8 +250,8 @@
 
 <div class="relative flex items-center justify-center" bind:this={container}>
 	<button
-		class="grid h-11 w-11 cursor-pointer place-items-center rounded-full text-[var(--muted)] transition-[color,background-color,transform] duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)] hover:text-[var(--base-fg)] active:scale-[0.94]"
-		class:text-[var(--base-fg)]={open}
+		class="grid h-11 w-11 cursor-pointer place-items-center rounded-full text-muted transition-[color,background-color,transform] duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)] hover:text-base-fg active:scale-[0.94]"
+		class:text-base-fg={open}
 		class:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]={open}
 		bind:this={toggleEl}
 		on:click={toggle}
@@ -273,7 +273,7 @@
 				transition:scale={{ duration: 160, start: 0.9, opacity: 0 }}
 			>
 				<Sun
-					class="h-5 w-5 flex-none stroke-[var(--muted)] stroke-[1.5] opacity-75 sm:h-7 sm:w-7 lg:h-9 lg:w-9"
+					class="h-5 w-5 flex-none stroke-muted stroke-[1.5] opacity-75 sm:h-7 sm:w-7 lg:h-9 lg:w-9"
 					aria-hidden="true"
 				/>
 
@@ -291,7 +291,7 @@
 							title={t.name}
 							tabindex={i === themeIndex ? 0 : -1}
 							aria-disabled={transitioning}
-							class="theme-swatch block w-full cursor-pointer outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+							class="theme-swatch block w-full cursor-pointer outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
 							class:selected={i === themeIndex}
 							class:wiping={transitioning && i !== themeIndex}
 							style="aspect-ratio: {screenAspect}; --swatch-accent: {t.accent};"
@@ -303,7 +303,7 @@
 				</div>
 
 				<Moon
-					class="h-5 w-5 flex-none stroke-[var(--muted)] stroke-[1.5] opacity-75 sm:h-7 sm:w-7 lg:h-9 lg:w-9"
+					class="h-5 w-5 flex-none stroke-muted stroke-[1.5] opacity-75 sm:h-7 sm:w-7 lg:h-9 lg:w-9"
 					aria-hidden="true"
 				/>
 			</div>

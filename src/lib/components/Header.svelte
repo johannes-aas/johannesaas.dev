@@ -12,9 +12,9 @@
 				</a>
 			</div>
       <div class="flex items-center justify-center gap-3 text-sm sm:gap-8 sm:text-base">
-        <a href="/about" class="text-[var(--muted)] hover:text-[var(--base-fg)] transition-colors">About</a>
-        <a href="/projects" class="text-[var(--muted)] hover:text-[var(--base-fg)] transition-colors">Projects</a>
-        <a href="/blog" class="text-[var(--muted)] hover:text-[var(--base-fg)] transition-colors">Blog</a>
+        <a href="/about" class="text-muted hover:text-base-fg transition-colors">About</a>
+        <a href="/projects" class="text-muted hover:text-base-fg transition-colors">Projects</a>
+        <a href="/blog" class="text-muted hover:text-base-fg transition-colors">Blog</a>
       </div>
       <div class="flex items-center justify-end">
         <ControlsNav />

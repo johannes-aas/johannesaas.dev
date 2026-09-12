@@ -1,5 +1,5 @@
 <svg
-	class="h-full w-full fill-[var(--base-fg)]"
+	class="h-full w-full fill-base-fg"
 	xmlns="http://www.w3.org/2000/svg"
 	stroke-width="1"
 	viewBox="0 0 200 200"

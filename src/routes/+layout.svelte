@@ -24,7 +24,7 @@
 
 <CustomCursor />
 
-<div class="flex min-h-screen flex-col bg-[var(--base-bg)]">
+<div class="flex min-h-screen flex-col bg-base-bg">
 	<Header />
 	<main class="flex-grow">
 		{@render children?.()}

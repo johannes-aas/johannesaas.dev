@@ -1,6 +1,7 @@
 <script>
 	import { createEventDispatcher } from 'svelte'
 	import { Slider as SliderPrimitive } from 'bits-ui'
+	import { cn } from '$lib/utils'
 
 	export let label
 	export let min
@@ -86,9 +87,10 @@
 		dragPercent = null
 	}
 
-	$: rootClass = `relative flex h-9 touch-none items-center justify-between overflow-hidden border px-3 transition-opacity duration-200 select-none ${
+	$: rootClass = cn(
+		'relative flex h-9 touch-none items-center justify-between overflow-hidden border border-border bg-surface-bg px-3 transition-opacity duration-200 select-none',
 		disabled ? 'cursor-not-allowed opacity-40' : 'cursor-ew-resize'
-	}`
+	)
 </script>
 
 <SliderPrimitive.Root
@@ -108,22 +110,21 @@
 	onpointerup={endDrag}
 	onpointercancel={endDrag}
 	class={rootClass}
-	style="background:var(--surface-bg);border-color:var(--border)"
 >
 	<div
-		class="absolute inset-y-0"
-		style="left:{fill.left}%;width:{fill.width}%;background:color-mix(in srgb, var(--accent) 22%, transparent);transition-property:left,width;transition-timing-function:cubic-bezier(0.34,1.56,0.64,1);transition-duration:{dragging
-			? '0ms'
-			: '300ms'}"
+		class="absolute inset-y-0 bg-[color-mix(in_srgb,var(--accent)_22%,transparent)] transition-[left,width] ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+		class:duration-0={dragging}
+		class:duration-300={!dragging}
+		style="left:{fill.left}%;width:{fill.width}%"
 	></div>
 	{#each ticks() as left}
 		<div
-			class="absolute top-[10px] bottom-[10px] w-px"
-			style="left:{left}%;background:color-mix(in srgb, var(--border) 70%, transparent)"
+			class="absolute top-[10px] bottom-[10px] w-px bg-[color-mix(in_srgb,var(--border)_70%,transparent)]"
+			style="left:{left}%"
 		></div>
 	{/each}
 	{#if bipolar}
-		<div class="absolute inset-y-0 w-px" style="left:{pct(0)}%;background:var(--border)"></div>
+		<div class="absolute inset-y-0 w-px bg-border" style="left:{pct(0)}%"></div>
 	{/if}
 	<SliderPrimitive.Thumb
 		index={0}
@@ -133,19 +134,18 @@
 	/>
 	<div
 		aria-hidden="true"
-		class="pointer-events-none absolute inset-y-0 w-[3px]"
-		style="left:calc({displayPercent}% - 1.5px);opacity:{active
-			? 1
-			: 0.55};background:var(--accent);transform:scaleY({dragging
-			? 1.3
-			: 1});transition-property:left,opacity,transform;transition-timing-function:cubic-bezier(0.34,1.56,0.64,1);transition-duration:{dragging
-			? '0ms,150ms,300ms'
-			: '300ms,150ms,300ms'}"
+		class="pointer-events-none absolute inset-y-0 w-[3px] bg-accent transition-[left,opacity,transform] ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+		class:opacity-100={active}
+		class:opacity-[0.55]={!active}
+		class:scale-y-[1.3]={dragging}
+		class:scale-y-100={!dragging}
+		class:duration-[0ms,150ms,300ms]={dragging}
+		class:duration-[300ms,150ms,300ms]={!dragging}
+		style="left:calc({displayPercent}% - 1.5px)"
 	></div>
-	<span class="relative text-sm" style="color:var(--base-fg)">{label}</span>
+	<span class="relative text-sm text-base-fg">{label}</span>
 	<span
-		class="relative font-mono text-[13px] [font-variant-numeric:tabular-nums]"
-		style="color:var(--surface-fg)"
+		class="relative font-mono text-[13px] text-surface-fg [font-variant-numeric:tabular-nums]"
 		>{bipolar && value > 0 ? '+' : ''}{value.toFixed(decimals)}</span
 	>
 </SliderPrimitive.Root>

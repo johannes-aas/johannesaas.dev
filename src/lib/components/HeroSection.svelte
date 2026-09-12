@@ -459,8 +459,7 @@
 
 <section
 	bind:this={heroEl}
-	class="flex w-full flex-col items-center pt-10 sm:pt-0 portrait:items-start"
-	style="background: radial-gradient(circle 320px at 50% 360px, color-mix(in srgb, var(--accent) 14%, var(--base-bg)), var(--base-bg) 100%);"
+	class="flex w-full flex-col items-center bg-[radial-gradient(circle_320px_at_50%_360px,color-mix(in_srgb,var(--accent)_14%,var(--base-bg)),var(--base-bg)_100%)] pt-10 sm:pt-0 portrait:items-start"
 >
 	<div class="relative mx-auto">
 		<svg
@@ -472,7 +471,7 @@
 		>
 			{#each Array(layers) as _, i (i)}
 				<g
-					class="layer stroke-[var(--accent)] transition-opacity duration-[950ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+					class="layer stroke-accent transition-opacity duration-[950ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
 					stroke-width={thickness}
 					fill="none"
 					style="opacity: {i <= revealedLayers ? 1 - i / layers : 0};"
