@@ -50,13 +50,19 @@
 			visible = false
 		}
 
-		window.addEventListener('mousemove', handleMove)
-		document.addEventListener('mouseleave', handleLeave)
+		// pointermove (not mousemove) in the capture phase: a dragged element (e.g.
+		// the logo playground's bits-ui slider) handles pointermove on `document`
+		// and calls both preventDefault() (which suppresses the browser's
+		// synthesized mousemove compat event) and stopPropagation() (which stops
+		// the event before it would reach a bubble-phase listener on `window`).
+		// Capturing on `window` runs before either of those can fire.
+		window.addEventListener('pointermove', handleMove, true)
+		document.addEventListener('pointerleave', handleLeave)
 
 		return () => {
 			cancelAnimationFrame(frame)
-			window.removeEventListener('mousemove', handleMove)
-			document.removeEventListener('mouseleave', handleLeave)
+			window.removeEventListener('pointermove', handleMove, true)
+			document.removeEventListener('pointerleave', handleLeave)
 		}
 	})
 </script>

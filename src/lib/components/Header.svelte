@@ -3,7 +3,7 @@
 	import ControlsNav from './ControlsNav.svelte'
 </script>
 
-<header class="relative z-10">
+<header class="relative z-30">
 	<nav class="mx-auto max-w-6xl px-3 py-3 sm:px-4 sm:py-4">
 		<div class="grid grid-cols-[1fr_auto_1fr] items-center gap-1 sm:gap-4">
 			<div class="flex items-center">

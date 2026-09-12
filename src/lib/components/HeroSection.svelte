@@ -1,12 +1,8 @@
 <script>
 	import { onMount } from 'svelte'
 	import { browser } from '$app/environment'
-	import {
-		logoControls,
-		logoScrollDriven,
-		logoSettingsActive,
-		logoReplayRequested
-	} from '$lib/stores/logoControls'
+	import { logoControls, logoScrollDriven, logoReplayRequested } from '$lib/stores/logoControls'
+	import LogoSettings from './LogoSettings.svelte'
 
 	// user-tunable, see LogoSettings.svelte — driven by the shared store so the
 	// settings panel (rendered from the header) can reach this component's state
@@ -41,7 +37,7 @@
 	const PATH_STAGGER = 620
 	const LAYERS_DELAY = 2450
 	const LAYER_STAGGER = 110
-	const SETTLE_TIME = 1100
+	const SETTLE_TIME = 700
 
 	// the fan-out rides a lazier trail than the cursor does
 	const INTRO_SMOOTHING = 0.5
@@ -76,6 +72,19 @@
 	let pointerActive = false
 	let timers = []
 
+	// the settings panel only makes sense once there's a logo to play with, and
+	// only while the cursor is actually near its trigger button — margin in px
+	// added around the (44px) trigger's own bounding box
+	const SETTINGS_PROXIMITY_MARGIN = 300
+	// once triggered, the button stays put for a beat after the cursor moves
+	// away instead of vanishing the instant it drifts out of range
+	const SETTINGS_LINGER_MS = 1500
+	let showSettings = false
+	let settingsHideTimer = null
+	// once opened, stays mounted regardless of proximity — so dragging a
+	// slider doesn't yank the panel away from under the cursor
+	let settingsOpen = false
+
 	let innerWidth = 1000
 	let innerHeight = 1000
 	let mouseX = innerWidth / 2 // initialize to center
@@ -84,6 +93,7 @@
 	let isTouchDevice = false
 	let heroEl
 	let svgEl
+	let settingsTriggerEl
 	let scrollProgress = 0
 	let cursorTimers = []
 
@@ -118,6 +128,33 @@
 		const rect = svgEl.getBoundingClientRect()
 		logoCenterX = rect.left + rect.width / 2
 		logoCenterY = rect.top + rect.height / 2
+	}
+
+	const updateProximity = (x, y) => {
+		if (!settingsTriggerEl) {
+			showSettings = false
+			return
+		}
+		const rect = settingsTriggerEl.getBoundingClientRect()
+		const margin = SETTINGS_PROXIMITY_MARGIN
+		const near =
+			x >= rect.left - margin &&
+			x <= rect.right + margin &&
+			y >= rect.top - margin &&
+			y <= rect.bottom + margin
+
+		if (near) {
+			if (settingsHideTimer !== null) {
+				clearTimeout(settingsHideTimer)
+				settingsHideTimer = null
+			}
+			showSettings = true
+		} else if (showSettings && settingsHideTimer === null) {
+			settingsHideTimer = setTimeout(() => {
+				settingsHideTimer = null
+				showSettings = false
+			}, SETTINGS_LINGER_MS)
+		}
 	}
 
 	const updateTarget = () => {
@@ -206,6 +243,9 @@
 		if (scrollDriven || !introDone) return
 		const x = e.clientX
 		const y = e.clientY
+		// unlagged, unlike the layer follow below — showing/hiding the panel
+		// should track the cursor immediately, not trail behind it
+		updateProximity(x, y)
 		// queued rather than debounced, so each move lands its own delayed update
 		// and the stack trails the cursor by a steady beat instead of catching up in jumps
 		const id = setTimeout(() => {
@@ -232,6 +272,9 @@
 			// too, or the follow effect freezes until the next mousemove
 			updateTarget()
 			startAnimation()
+			// same reasoning: the logo (and its proximity zone) just moved under
+			// an unmoved cursor
+			updateProximity(mouseX, mouseY)
 			return
 		}
 		if (!heroEl) return
@@ -252,6 +295,11 @@
 	// they keep following the cursor anywhere else on the page
 	const handleDocumentLeave = () => {
 		pointerActive = false
+		if (settingsHideTimer !== null) {
+			clearTimeout(settingsHideTimer)
+			settingsHideTimer = null
+		}
+		showSettings = false
 		updateTarget()
 		startAnimation()
 	}
@@ -359,9 +407,6 @@
 			runIntro()
 		}
 
-		// the header's settings button only shows while this component is mounted
-		logoSettingsActive.set(true)
-
 		// skip the store's own initial value so mounting doesn't trigger a replay
 		let skipFirstReplay = true
 		const unsubscribeReplay = logoReplayRequested.subscribe(() => {
@@ -377,8 +422,8 @@
 			clearTimers()
 			cursorTimers.forEach(clearTimeout)
 			cursorTimers = []
+			if (settingsHideTimer !== null) clearTimeout(settingsHideTimer)
 			unsubscribeReplay()
-			logoSettingsActive.set(false)
 		}
 	})
 
@@ -431,7 +476,7 @@
 					stroke-width={thickness}
 					fill="none"
 					style="opacity: {i <= revealedLayers ? 1 - i / layers : 0};"
-					transform={`translate(${offsetX * (i + LEAD)}, ${offsetY * (i + LEAD)}) scale(${1 - i * scaleStep})`}
+					transform={`translate(${offsetX * (i + LEAD)}, ${offsetY * (i + LEAD)}) scale(${1 + i * scaleStep})`}
 					transform-origin="100 100"
 				>
 					{#each PATHS as d, j (j)}
@@ -450,7 +495,7 @@
 		>
 			{#each NAMES as { text, position }, j (text)}
 				<span
-					class="name absolute transition-[opacity,transform] duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none {position}"
+					class="name pointer-events-auto absolute transition-[opacity,transform] duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none {position}"
 					style="opacity: {j < revealedPaths ? 1 : 0}; transform: translateY({j < revealedPaths
 						? 0
 						: '0.4em'});"
@@ -459,5 +504,14 @@
 				</span>
 			{/each}
 		</h1>
+		<div
+			bind:this={settingsTriggerEl}
+			class="absolute top-1/2 left-full z-20 ml-3 hidden -translate-y-1/2 transition-opacity duration-200 motion-reduce:transition-none md:block"
+			class:opacity-0={!(introDone && (showSettings || settingsOpen))}
+			class:pointer-events-none={!(introDone && (showSettings || settingsOpen))}
+			inert={!(introDone && (showSettings || settingsOpen))}
+		>
+			<LogoSettings bind:open={settingsOpen} />
+		</div>
 	</div>
 </section>
