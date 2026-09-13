@@ -47,6 +47,13 @@
 	$: displayPercent = dragging && dragPercent !== null ? dragPercent : pct(value)
 	$: fill = fillFor(displayPercent)
 
+	// the thumb sits flush against the fill's moving edge rather than
+	// straddling it — for a bipolar slider that edge is on the left once the
+	// value drops below zero (fill grows leftward from the zero mark), so the
+	// 4px-wide thumb (w-1) shifts to hug whichever side that is
+	const THUMB_WIDTH = 4
+	$: thumbOffset = displayPercent < (bipolar ? pct(0) : 0) ? 0 : -THUMB_WIDTH
+
 	function ticks() {
 		const steps = Math.round((max - min) / step)
 		const n = steps <= 12 ? steps : 8
@@ -87,10 +94,6 @@
 		dragPercent = null
 	}
 
-	$: rootClass = cn(
-		'relative flex h-9 touch-none items-center justify-between overflow-hidden border border-border bg-surface-bg px-3 transition-opacity duration-200 select-none',
-		disabled ? 'cursor-not-allowed opacity-40' : 'cursor-ew-resize'
-	)
 </script>
 
 <SliderPrimitive.Root
@@ -109,17 +112,20 @@
 	onpointermove={onRootPointerMove}
 	onpointerup={endDrag}
 	onpointercancel={endDrag}
-	class={rootClass}
+	class={cn(
+		'relative flex h-9 touch-none items-center justify-between overflow-hidden rounded-sm border border-border bg-surface-bg px-3 transition-opacity duration-200 select-none',
+		disabled ? 'cursor-not-allowed opacity-40' : 'cursor-ew-resize'
+	)}
 >
 	<div
-		class="absolute inset-y-0 bg-[color-mix(in_srgb,var(--accent)_22%,transparent)] transition-[left,width] ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+		class="absolute inset-y-0 bg-[color-mix(in_srgb,var(--accent)_32%,transparent)] transition-[left,width] ease-[cubic-bezier(0.34,1.56,0.64,1)]"
 		class:duration-0={dragging}
 		class:duration-300={!dragging}
 		style="left:{fill.left}%;width:{fill.width}%"
 	></div>
 	{#each ticks() as left}
 		<div
-			class="absolute top-[10px] bottom-[10px] w-px bg-[color-mix(in_srgb,var(--border)_70%,transparent)]"
+			class="absolute top-2.5 bottom-2.5 w-px bg-[color-mix(in_srgb,var(--border)_70%,transparent)]"
 			style="left:{left}%"
 		></div>
 	{/each}
@@ -130,22 +136,22 @@
 		index={0}
 		{disabled}
 		aria-label={label}
-		class="absolute inset-y-0 w-[3px] opacity-0"
+		class="absolute inset-y-0 w-1 opacity-0"
 	/>
 	<div
 		aria-hidden="true"
-		class="pointer-events-none absolute inset-y-0 w-[3px] bg-accent transition-[left,opacity,transform] ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+		class="pointer-events-none absolute inset-y-0 w-1 bg-accent transition-[left,opacity,transform] ease-[cubic-bezier(0.34,1.56,0.64,1)]"
 		class:opacity-100={active}
-		class:opacity-[0.55]={!active}
+		class:opacity-0={!active}
 		class:scale-y-[1.3]={dragging}
 		class:scale-y-100={!dragging}
-		class:duration-[0ms,150ms,300ms]={dragging}
-		class:duration-[300ms,150ms,300ms]={!dragging}
-		style="left:calc({displayPercent}% - 1.5px)"
+		class:duration-0={dragging}
+		class:duration-500={!dragging}
+		style="left:calc({displayPercent}% + {thumbOffset}px)"
 	></div>
 	<span class="relative text-sm text-base-fg">{label}</span>
 	<span
-		class="relative font-mono text-[13px] text-surface-fg [font-variant-numeric:tabular-nums]"
+		class="relative font-mono text-sm text-surface-fg [font-variant-numeric:tabular-nums]"
 		>{bipolar && value > 0 ? '+' : ''}{value.toFixed(decimals)}</span
 	>
 </SliderPrimitive.Root>

@@ -20,11 +20,10 @@
 
 	// `random` narrows the slider's full range to the part worth landing on —
 	// a randomized thickness of 0 or a single layer is just a broken-looking logo
-	const sliders = [
+	const formSliders = [
 		{
 			key: 'thickness',
 			label: 'Thickness',
-			group: 'form',
 			min: 0,
 			max: 3,
 			step: 0.05,
@@ -34,7 +33,6 @@
 		{
 			key: 'spread',
 			label: 'Spread',
-			group: 'form',
 			min: 0,
 			max: 10,
 			step: 0.1,
@@ -44,7 +42,6 @@
 		{
 			key: 'layers',
 			label: 'Layers',
-			group: 'form',
 			min: 1,
 			max: 14,
 			step: 1,
@@ -54,18 +51,19 @@
 		{
 			key: 'scaleStep',
 			label: 'Layer size step',
-			group: 'form',
-			min: -0.1,
-			max: 0.1,
+			min: -0.06,
+			max: 0.06,
 			step: 0.005,
 			decimals: 3,
 			bipolar: true,
 			random: [-0.06, 0.06]
-		},
+		}
+	]
+
+	const motionSliders = [
 		{
 			key: 'speed',
 			label: 'Speed',
-			group: 'motion',
 			min: 0.5,
 			max: 10,
 			step: 0.1,
@@ -74,17 +72,8 @@
 		}
 	]
 
-	const formSliders = sliders.filter((s) => s.group === 'form')
-	const motionSliders = sliders.filter((s) => s.group === 'motion')
-
-	const spreadSegment = {
-		key: 'spreadTowards',
-		label: 'Spread',
-		options: [
-			{ value: true, label: 'Follow' },
-			{ value: false, label: 'Avoid' }
-		]
-	}
+	// randomize()/resetOne() below iterate over every slider generically, regardless of group
+	const sliders = [...formSliders, ...motionSliders]
 
 	export let open = false
 	let container
@@ -146,10 +135,6 @@
 
 	function resetOne(key) {
 		setValue(key, logoDefaults[key])
-	}
-
-	function handleSegment(key, value) {
-		setValue(key, value)
 	}
 
 	function randomize() {
@@ -217,7 +202,7 @@
 	/>
 {/snippet}
 
-<div class="relative h-11 w-11 rounded-sm" bind:this={container}>
+<div class="relative h-11 w-11" bind:this={container}>
 	<div
 		class={cn(
 			'absolute z-10 overflow-hidden rounded-sm border border-transparent bg-transparent transition-[top,left,width,height,border-color,background-color] duration-300 ease-in-out hover:border-border hover:bg-[color-mix(in_srgb,var(--panel-tint)_72%,transparent)] hover:backdrop-blur-[14px] hover:backdrop-saturate-[1.4]',
@@ -231,15 +216,15 @@
 			: '2.75rem'}"
 	>
 		<div
-			class="content flex w-[18rem] flex-col"
+			class="content flex w-72 flex-col"
 			bind:clientHeight={panelHeight}
 			inert={!open}
 			aria-hidden={!open}
 		>
 			<div class="flex h-11 items-center justify-between pl-12">
-				<span class="text-md text-base-fg">Playground</span>
+				<span class="text-sm text-muted">Playground</span>
 				<button
-					class="flex h-full cursor-pointer items-center gap-1.5 border-l border-border px-5 text-[13px] text-muted transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]"
+					class="flex h-full cursor-pointer items-center gap-1.5 border-l border-border px-5 text-sm text-muted transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]"
 					on:click={reset}
 					aria-label="Reset to defaults"
 					title="Reset to defaults"
@@ -251,8 +236,8 @@
 
 			<div class="h-px bg-border"></div>
 
-			<div class="flex flex-col gap-[10px] px-4 pt-[14px] pb-4">
-				<span class="font-mono text-[10px] tracking-[0.16em] text-muted uppercase">Form</span>
+			<div class="flex flex-col gap-2.5 px-4 pt-3.5 pb-4">
+				<span class="font-mono text-xs tracking-[0.16em] text-muted uppercase">Form</span>
 				{#each formSliders as spec (spec.key)}
 					{@render sliderRow(spec)}
 				{/each}
@@ -260,8 +245,8 @@
 
 			<div class="h-px bg-border"></div>
 
-			<div class="flex flex-col gap-[10px] px-4 pt-[14px] pb-4">
-				<span class="font-mono text-[10px] tracking-[0.16em] text-muted uppercase">
+			<div class="flex flex-col gap-2.5 px-4 pt-3.5 pb-4">
+				<span class="font-mono text-xs tracking-[0.16em] text-muted uppercase">
 					Motion
 				</span>
 				{#each motionSliders as spec (spec.key)}
@@ -269,30 +254,39 @@
 				{/each}
 
 				{#if !$logoScrollDriven}
-					{@const { key, label, options } = spreadSegment}
 					<div class="flex items-center gap-6">
-						<span class="text-[13px] text-muted">
-							{label}
-						</span>
-						<div role="radiogroup" aria-label={label} class="flex w-full">
-							{#each options as option, i (option.label)}
-								{@const selected = $logoControls[key] === option.value}
-								<button
-									type="button"
-									role="radio"
-									aria-checked={selected}
-									class="w-full border py-1 text-center text-[13px] transition-colors duration-200"
-									class:border-accent={selected}
-									class:bg-accent={selected}
-									class:text-base-bg={selected}
-									class:border-border={!selected}
-									class:bg-transparent={!selected}
-									class:text-muted={!selected}
-									on:click={() => handleSegment(key, option.value)}
-								>
-									{option.label}
-								</button>
-							{/each}
+						<span class="text-sm text-muted">Spread</span>
+						<div role="radiogroup" aria-label="Spread" class="flex w-full">
+							<button
+								type="button"
+								role="radio"
+								aria-checked={$logoControls.spreadTowards}
+								class="w-full rounded-l-sm border py-1 text-center text-sm transition-colors duration-200"
+								class:border-accent={$logoControls.spreadTowards}
+								class:bg-accent={$logoControls.spreadTowards}
+								class:text-base-bg={$logoControls.spreadTowards}
+								class:border-border={!$logoControls.spreadTowards}
+								class:bg-transparent={!$logoControls.spreadTowards}
+								class:text-muted={!$logoControls.spreadTowards}
+								on:click={() => setValue('spreadTowards', true)}
+							>
+								Follow
+							</button>
+							<button
+								type="button"
+								role="radio"
+								aria-checked={!$logoControls.spreadTowards}
+								class="w-full rounded-r-sm border py-1 text-center text-sm transition-colors duration-200"
+								class:border-accent={!$logoControls.spreadTowards}
+								class:bg-accent={!$logoControls.spreadTowards}
+								class:text-base-bg={!$logoControls.spreadTowards}
+								class:border-border={$logoControls.spreadTowards}
+								class:bg-transparent={$logoControls.spreadTowards}
+								class:text-muted={$logoControls.spreadTowards}
+								on:click={() => setValue('spreadTowards', false)}
+							>
+								Avoid
+							</button>
 						</div>
 					</div>
 				{/if}
@@ -300,14 +294,14 @@
 
 			<div class="flex border-t border-border">
 				<button
-					class="flex h-11 flex-1 cursor-pointer items-center justify-center gap-2 text-[13px] text-base-fg transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]"
+					class="flex h-11 flex-1 cursor-pointer items-center justify-center gap-2 text-sm text-muted transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]"
 					on:click={randomize}
 				>
 					<Shuffle class="h-3.5 w-3.5 stroke-2" aria-hidden="true" />
 					<span>Randomize</span>
 				</button>
 				<button
-					class="flex h-11 flex-1 cursor-pointer items-center justify-center gap-2 border-l border-border bg-accent text-[13px] text-base-bg transition-opacity duration-200 hover:opacity-90"
+					class="flex h-11 flex-1 cursor-pointer items-center justify-center gap-2 border-l border-border bg-accent text-sm text-base-bg transition-opacity duration-200 hover:opacity-90"
 					on:click={replay}
 				>
 					<Play class="h-3.5 w-3.5 fill-current stroke-current" aria-hidden="true" />
@@ -319,7 +313,7 @@
 
 	<button
 		class={cn(
-			'absolute z-20 flex cursor-pointer items-center justify-center border border-transparent text-muted transition-[top,left,width,height,color,border-color,background-color] duration-300 ease-in-out hover:text-base-fg',
+			'absolute z-20 flex cursor-pointer items-center justify-center rounded-sm border border-transparent text-muted transition-[top,left,width,height,color,border-color,background-color] duration-300 ease-in-out hover:text-base-fg',
 			open ? 'h-11 w-11 text-base-fg' : 'h-full w-full'
 		)}
 		class:hover:border-border={!open}
@@ -335,7 +329,7 @@
 		<WandSparkles
 			class={cn(
 				'h-7 w-7 flex-none stroke-[1.75] transition-transform duration-300 ease-in-out',
-				open && 'scale-[0.83]'
+				open && 'scale-[0.7]'
 			)}
 			aria-hidden="true"
 		/>

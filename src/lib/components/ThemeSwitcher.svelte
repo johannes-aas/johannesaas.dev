@@ -267,7 +267,7 @@
 	</button>
 
 	{#if open}
-		<div class="panel-wrap fixed top-[6rem] left-1/2 z-50 w-[calc(100vw-1.5rem)] max-w-[58rem] [transform:translateX(-50%)]">
+		<div class="panel-wrap fixed top-24 left-1/2 z-50 w-[calc(100vw-1.5rem)] max-w-[58rem] [transform:translateX(-50%)]">
 			<div
 				class="control-panel flex w-full flex-row items-center gap-2 px-2 py-3 sm:gap-4 sm:px-6 sm:py-5 lg:gap-6 lg:px-9 lg:py-7"
 				transition:scale={{ duration: 160, start: 0.9, opacity: 0 }}

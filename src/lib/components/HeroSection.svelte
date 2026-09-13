@@ -84,6 +84,10 @@
 	// once opened, stays mounted regardless of proximity — so dragging a
 	// slider doesn't yank the panel away from under the cursor
 	let settingsOpen = false
+	// edge-triggered on showSettings going true, not settingsOpen — so the
+	// attention pulse fires once per proximity approach and doesn't replay
+	// just because the panel was opened and closed again while still nearby
+	let pulseArmed = false
 
 	let innerWidth = 1000
 	let innerHeight = 1000
@@ -133,6 +137,7 @@
 	const updateProximity = (x, y) => {
 		if (!settingsTriggerEl) {
 			showSettings = false
+			pulseArmed = false
 			return
 		}
 		const rect = settingsTriggerEl.getBoundingClientRect()
@@ -148,11 +153,13 @@
 				clearTimeout(settingsHideTimer)
 				settingsHideTimer = null
 			}
+			if (!showSettings) pulseArmed = true
 			showSettings = true
 		} else if (showSettings && settingsHideTimer === null) {
 			settingsHideTimer = setTimeout(() => {
 				settingsHideTimer = null
 				showSettings = false
+				pulseArmed = false
 			}, SETTINGS_LINGER_MS)
 		}
 	}
@@ -300,6 +307,7 @@
 			settingsHideTimer = null
 		}
 		showSettings = false
+		pulseArmed = false
 		updateTarget()
 		startAnimation()
 	}
@@ -457,6 +465,40 @@
 	</style>
 </noscript>
 
+<style>
+	/* draws the eye to the settings trigger right after it appears — a quick
+     one-shot wiggle, then it settles so it doesn't nag if you don't click. */
+	.settings-attention {
+		animation: settings-attention-wiggle 0.5s ease-in-out;
+		transform-origin: 50% 50%;
+	}
+
+	@keyframes settings-attention-wiggle {
+		0%,
+		100% {
+			transform: rotate(0deg);
+		}
+		20% {
+			transform: rotate(-12deg);
+		}
+		40% {
+			transform: rotate(10deg);
+		}
+		60% {
+			transform: rotate(-6deg);
+		}
+		80% {
+			transform: rotate(3deg);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.settings-attention {
+			animation: none;
+		}
+	}
+</style>
+
 <section
 	bind:this={heroEl}
 	class="flex w-full flex-col items-center bg-[radial-gradient(circle_320px_at_50%_360px,color-mix(in_srgb,var(--accent)_14%,var(--base-bg)),var(--base-bg)_100%)] pt-10 sm:pt-0 portrait:items-start"
@@ -505,12 +547,15 @@
 		</h1>
 		<div
 			bind:this={settingsTriggerEl}
-			class="absolute top-1/2 left-full z-20 ml-3 hidden -translate-y-1/2 transition-opacity duration-200 motion-reduce:transition-none md:block"
+			class="absolute top-1/2 left-full z-20 ml-3 hidden -translate-y-1/2 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-reduce:transition-none md:block"
 			class:opacity-0={!(introDone && (showSettings || settingsOpen))}
+			class:scale-75={!(introDone && (showSettings || settingsOpen))}
 			class:pointer-events-none={!(introDone && (showSettings || settingsOpen))}
 			inert={!(introDone && (showSettings || settingsOpen))}
 		>
-			<LogoSettings bind:open={settingsOpen} />
+			<div class:settings-attention={pulseArmed}>
+				<LogoSettings bind:open={settingsOpen} />
+			</div>
 		</div>
 	</div>
 </section>
