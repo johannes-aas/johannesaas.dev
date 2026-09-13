@@ -24,7 +24,7 @@
 		{
 			key: 'thickness',
 			label: 'Thickness',
-			min: 0,
+			min: 0.2,
 			max: 3,
 			step: 0.05,
 			decimals: 1,
