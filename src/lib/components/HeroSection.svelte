@@ -23,11 +23,11 @@
 
 	const NAMES = [
 		// pairs with the left stroke
-		{ text: 'Johannes', position: 'top-[15%] left-0 md:-left-[8%] lg:-left-[19%]' },
+		{ text: 'Johannes', position: 'top-[15%] left-0 min-[600px]:-left-[8%] lg:-left-[19%]' },
 		// pairs with the top-right arm
 		{ text: 'Hansen', position: 'top-[37%] left-[40%]' },
 		// pairs with the bottom-right wedge
-		{ text: 'Aas', position: 'top-[59%] right-0 md:-right-[6%] lg:-right-[10%]' }
+		{ text: 'Aas', position: 'top-[59%] right-0 min-[600px]:-right-[6%] lg:-right-[10%]' }
 	]
 
 	// intro timeline, in ms
@@ -85,9 +85,12 @@
 	// slider doesn't yank the panel away from under the cursor
 	let settingsOpen = false
 	// edge-triggered on showSettings going true, not settingsOpen — so the
-	// attention pulse fires once per proximity approach and doesn't replay
+	// attention wiggle fires once per proximity approach and doesn't replay
 	// just because the panel was opened and closed again while still nearby
-	let pulseArmed = false
+	let shouldWiggle = false
+	// once the panel is actually opened, the wiggle has done its job — clear
+	// it so closing the panel again doesn't re-add the class and replay it
+	$: if (settingsOpen) shouldWiggle = false
 
 	let innerWidth = 1000
 	let innerHeight = 1000
@@ -137,7 +140,7 @@
 	const updateProximity = (x, y) => {
 		if (!settingsTriggerEl) {
 			showSettings = false
-			pulseArmed = false
+			shouldWiggle = false
 			return
 		}
 		const rect = settingsTriggerEl.getBoundingClientRect()
@@ -153,13 +156,13 @@
 				clearTimeout(settingsHideTimer)
 				settingsHideTimer = null
 			}
-			if (!showSettings) pulseArmed = true
+			if (!showSettings) shouldWiggle = true
 			showSettings = true
 		} else if (showSettings && settingsHideTimer === null) {
 			settingsHideTimer = setTimeout(() => {
 				settingsHideTimer = null
 				showSettings = false
-				pulseArmed = false
+				shouldWiggle = false
 			}, SETTINGS_LINGER_MS)
 		}
 	}
@@ -307,7 +310,7 @@
 			settingsHideTimer = null
 		}
 		showSettings = false
-		pulseArmed = false
+		shouldWiggle = false
 		updateTarget()
 		startAnimation()
 	}
@@ -531,7 +534,7 @@
 			{/each}
 		</svg>
 		<h1
-			class="pointer-events-none absolute inset-0 m-4 text-5xl font-bold md:m-10 md:text-7xl"
+			class="pointer-events-none absolute inset-0 m-4 text-5xl min-[450px]:text-6xl font-bold min-[600px]:m-10 min-[600px]:text-7xl lg:text-[5.5rem] tracking-tight"
 			style="transform: translate({offsetX * LEAD * UNIT_PCT}%, {offsetY * LEAD * UNIT_PCT}%);"
 		>
 			{#each NAMES as { text, position }, j (text)}
@@ -553,7 +556,7 @@
 			class:pointer-events-none={!(introDone && (showSettings || settingsOpen))}
 			inert={!(introDone && (showSettings || settingsOpen))}
 		>
-			<div class:settings-attention={pulseArmed}>
+			<div class:settings-attention={shouldWiggle && !settingsOpen}>
 				<LogoSettings bind:open={settingsOpen} />
 			</div>
 		</div>

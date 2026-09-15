@@ -216,7 +216,9 @@
 			: '2.75rem'}"
 	>
 		<div
-			class="content flex w-72 flex-col"
+			class="content flex w-72 flex-col transition-opacity duration-200 ease-in-out {open
+				? 'opacity-100 delay-100'
+				: 'opacity-0'}"
 			bind:clientHeight={panelHeight}
 			inert={!open}
 			aria-hidden={!open}
@@ -314,7 +316,7 @@
 	<button
 		class={cn(
 			'absolute z-20 flex cursor-pointer items-center justify-center rounded-sm border border-transparent text-muted transition-[top,left,width,height,color,border-color,background-color] duration-300 ease-in-out hover:text-base-fg',
-			open ? 'h-11 w-11 text-base-fg' : 'h-full w-full'
+			open ? 'h-11 w-11' : 'h-full w-full'
 		)}
 		class:hover:border-border={!open}
 		class:hover:bg-[color-mix(in_srgb,var(--panel-tint)_72%,transparent)]={!open}
