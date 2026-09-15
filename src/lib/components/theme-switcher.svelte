@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte'
 	import { scale } from 'svelte/transition'
 	import { openPanelCount } from '$lib/stores/panelState'
+	import Button from '$lib/components/button.svelte'
 	import Sun from '@lucide/svelte/icons/sun'
 	import Moon from '@lucide/svelte/icons/moon'
 
@@ -28,8 +29,8 @@
 	let themeIndex = $state(0)
 	let open = $state(false)
 	let container
-	let toggleEl
-	let buttonEls = []
+	let toggleEl = $state(null)
+	let buttonEls = $state(Array(themes.length).fill(null))
 	let transitionTimer
 	/* true for the duration of the reveal/cross-fade animation — swatches are
      inert while it plays so a second pick can't stack a new wipe on top of
@@ -249,12 +250,12 @@
 <svelte:window onpointerdown={onWindowPointerDown} onkeydown={onWindowKeyDown} />
 
 <div class="relative flex items-center justify-center" bind:this={container}>
-	<button
+	<Button
 		class={[
-			'grid h-11 w-11 cursor-pointer place-items-center rounded-full text-muted transition-[color,background-color,transform] duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)] hover:text-base-fg active:scale-[0.94]',
+			'grid h-11 w-11 place-items-center rounded-full text-muted transition-[color,background-color,transform] duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)] hover:text-base-fg active:scale-[0.94]',
 			open && 'bg-[color-mix(in_srgb,var(--muted)_14%,transparent)] text-base-fg'
 		]}
-		bind:this={toggleEl}
+		bind:ref={toggleEl}
 		onclick={toggle}
 		aria-label="Colour theme"
 		aria-expanded={open}
@@ -265,7 +266,7 @@
 		{:else}
 			<Sun class="h-6 w-6 stroke-[1.75]" aria-hidden="true" />
 		{/if}
-	</button>
+	</Button>
 
 	{#if open}
 		<div
@@ -286,7 +287,7 @@
 					aria-label="Colour theme"
 				>
 					{#each themes as t, i}
-						<button
+						<Button
 							type="button"
 							role="radio"
 							aria-checked={i === themeIndex}
@@ -294,14 +295,16 @@
 							title={t.name}
 							tabindex={i === themeIndex ? 0 : -1}
 							aria-disabled={transitioning}
-							class="theme-swatch block w-full cursor-pointer outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-							class:selected={i === themeIndex}
-							class:wiping={transitioning && i !== themeIndex}
+							class={[
+								'theme-swatch block w-full outline-none',
+								i === themeIndex && 'selected',
+								transitioning && i !== themeIndex && 'wiping'
+							]}
 							style="aspect-ratio: {screenAspect}; --swatch-accent: {t.accent};"
-							bind:this={buttonEls[i]}
+							bind:ref={buttonEls[i]}
 							onclick={() => setTheme(i)}
 							onkeydown={(event) => onButtonKeyDown(event, i)}
-						></button>
+						></Button>
 					{/each}
 				</div>
 
@@ -315,7 +318,9 @@
 </div>
 
 <style>
-	.theme-swatch {
+	/* :global — the swatch is now the Button component's own root element
+	   rather than one Svelte scopes CSS onto directly here */
+	:global(.theme-swatch) {
 		/* the grid divides the row's full width evenly across the 8 buttons at
 		   every screen size, with height derived from that width via
 		   aspect-ratio (set inline, per-button) so the shape never distorts. */
@@ -337,11 +342,11 @@
 
 	/* --swatch-accent (set inline, per-button) mirrors that swatch's own theme
 	   accent, so hovering previews it regardless of the page's current theme */
-	.theme-swatch:hover:not(.selected) {
+	:global(.theme-swatch:hover:not(.selected)) {
 		background-color: var(--swatch-accent);
 	}
 
-	.theme-swatch.selected {
+	:global(.theme-swatch.selected) {
 		border-color: var(--accent);
 		background-color: var(--accent);
 	}
@@ -349,14 +354,14 @@
 	/* the other swatches wipe away fast while the picked one's reveal plays,
 	   then fade back in slowly via the base transition duration above once
 	   .wiping is removed */
-	.theme-swatch.wiping {
+	:global(.theme-swatch.wiping) {
 		opacity: 0;
 		transform: scale(0.8);
 		transition-duration: 150ms;
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.theme-swatch {
+		:global(.theme-swatch) {
 			transition: none;
 		}
 	}

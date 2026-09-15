@@ -7,6 +7,7 @@
 	} from '$lib/stores/logoControls'
 	import Slider from '$lib/components/slider.svelte'
 	import { ToggleGroupRoot, ToggleGroupItem } from '$lib/components/toggle-group'
+	import Button from '$lib/components/button.svelte'
 	import WandSparkles from '@lucide/svelte/icons/wand-sparkles'
 	import RotateCcw from '@lucide/svelte/icons/rotate-ccw'
 	import Play from '@lucide/svelte/icons/play'
@@ -225,15 +226,15 @@
 		>
 			<div class="flex h-11 items-center justify-between pl-12">
 				<span class="text-sm text-muted">Playground</span>
-				<button
-					class="flex h-full cursor-pointer items-center gap-1.5 border-l border-border px-5 text-sm text-muted transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]"
+				<Button
+					class="h-full border-l border-border px-5 text-sm text-muted transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]"
 					onclick={reset}
 					aria-label="Reset to defaults"
 					title="Reset to defaults"
 				>
 					<RotateCcw class="h-3.5 w-3.5 stroke-2" aria-hidden="true" />
 					<span>Reset</span>
-				</button>
+				</Button>
 			</div>
 
 			<div class="h-px bg-border"></div>
@@ -269,27 +270,27 @@
 			</div>
 
 			<div class="flex border-t border-border">
-				<button
-					class="flex h-11 flex-1 cursor-pointer items-center justify-center gap-2 text-sm text-muted transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]"
+				<Button
+					class="h-11 flex-1 text-sm text-muted transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]"
 					onclick={randomize}
 				>
 					<Shuffle class="h-3.5 w-3.5 stroke-2" aria-hidden="true" />
 					<span>Randomize</span>
-				</button>
-				<button
-					class="flex h-11 flex-1 cursor-pointer items-center justify-center gap-2 border-l border-border bg-accent text-sm text-base-bg transition-opacity duration-200 hover:opacity-90"
+				</Button>
+				<Button
+					class="h-11 flex-1 border-l border-border bg-accent text-sm text-base-bg transition-opacity duration-200 hover:opacity-90"
 					onclick={replay}
 				>
 					<Play class="h-3.5 w-3.5 fill-current stroke-current" aria-hidden="true" />
 					<span>Replay intro</span>
-				</button>
+				</Button>
 			</div>
 		</div>
 	</div>
 
-	<button
+	<Button
 		class={[
-			'absolute z-20 flex cursor-pointer items-center justify-center rounded-sm border border-transparent text-muted transition-[top,left,width,height,color,border-color,background-color] duration-300 ease-in-out hover:text-base-fg',
+			'absolute z-20 rounded-sm border border-transparent text-muted transition-[top,left,width,height,color,border-color,background-color] duration-300 ease-in-out hover:text-base-fg',
 			open
 				? 'h-11 w-11'
 				: 'h-full w-full hover:border-border hover:bg-[color-mix(in_srgb,var(--panel-tint)_72%,transparent)] hover:backdrop-blur-[14px] hover:backdrop-saturate-[1.4]'
@@ -307,5 +308,5 @@
 			]}
 			aria-hidden="true"
 		/>
-	</button>
+	</Button>
 </div>
