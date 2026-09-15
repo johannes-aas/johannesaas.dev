@@ -2,14 +2,14 @@
 	import { onMount } from 'svelte'
 	import { browser } from '$app/environment'
 	import { logoControls, logoScrollDriven, logoReplayRequested } from '$lib/stores/logoControls'
-	import LogoSettings from './LogoSettings.svelte'
+	import LogoSettings from './logo-settings.svelte'
 
 	// user-tunable, see LogoSettings.svelte — driven by the shared store so the
 	// settings panel (rendered from the header) can reach this component's state
-	$: ({ thickness, spread, speed, layers, scaleStep, spreadTowards } = $logoControls)
+	let { thickness, spread, speed, layers, scaleStep, spreadTowards } = $derived($logoControls)
 
 	// time constant of the smoothing, in seconds (lower = snappier)
-	$: smoothing = 1 / speed
+	let smoothing = $derived(1 / speed)
 
 	// PATHS[i] is revealed together with NAMES[i], so the two stay in step
 	const PATHS = [
@@ -66,9 +66,9 @@
 	// Start empty so the first painted frame — server-rendered included — is the
 	// state the intro animates out of, with no flash of the finished logo.
 	// Without JS the <noscript> rule below forces everything visible instead.
-	let revealedPaths = 0 // how many of PATHS/NAMES are on screen
-	let revealedLayers = 0 // highest layer index that has faded in
-	let introDone = false
+	let revealedPaths = $state(0) // how many of PATHS/NAMES are on screen
+	let revealedLayers = $state(0) // highest layer index that has faded in
+	let introDone = $state(false)
 	let pointerActive = false
 	let timers = []
 
@@ -79,25 +79,27 @@
 	// once triggered, the button stays put for a beat after the cursor moves
 	// away instead of vanishing the instant it drifts out of range
 	const SETTINGS_LINGER_MS = 1500
-	let showSettings = false
+	let showSettings = $state(false)
 	let settingsHideTimer = null
 	// once opened, stays mounted regardless of proximity — so dragging a
 	// slider doesn't yank the panel away from under the cursor
-	let settingsOpen = false
+	let settingsOpen = $state(false)
 	// edge-triggered on showSettings going true, not settingsOpen — so the
 	// attention wiggle fires once per proximity approach and doesn't replay
 	// just because the panel was opened and closed again while still nearby
-	let shouldWiggle = false
+	let shouldWiggle = $state(false)
 	// once the panel is actually opened, the wiggle has done its job — clear
 	// it so closing the panel again doesn't re-add the class and replay it
-	$: if (settingsOpen) shouldWiggle = false
+	$effect(() => {
+		if (settingsOpen) shouldWiggle = false
+	})
 
 	let innerWidth = 1000
 	let innerHeight = 1000
 	let mouseX = innerWidth / 2 // initialize to center
 	let mouseY = innerHeight / 2
 	// no cursor to follow — the layers ride the scroll instead
-	let isTouchDevice = false
+	let isTouchDevice = $state(false)
 	let heroEl
 	let svgEl
 	let settingsTriggerEl
@@ -114,8 +116,8 @@
 	let targetX = 0
 	let targetY = 0
 	// smoothed offset actually rendered
-	let offsetX = 0
-	let offsetY = 0
+	let offsetX = $state(0)
+	let offsetY = $state(0)
 	// velocity of the smoothed offset, so a reversal curves through instead of
 	// snapping — plain exponential decay has no memory of motion, so the instant
 	// the cursor changes direction the pull flips instantly and reads as a jolt
@@ -126,9 +128,11 @@
 	let lastTime = 0
 
 	// the cursor only drives the stack where there is one to follow
-	$: scrollDriven = isTouchDevice
+	let scrollDriven = $derived(isTouchDevice)
 	// mirrored to the store so the settings panel knows to hide the speed slider
-	$: logoScrollDriven.set(scrollDriven)
+	$effect(() => {
+		logoScrollDriven.set(scrollDriven)
+	})
 
 	const updateLogoCenter = () => {
 		if (!svgEl) return
@@ -447,15 +451,13 @@
 		updateTarget()
 		startAnimation()
 	}
-	$: applySettings(spread, layers, scrollDriven, spreadTowards, introDone)
+	$effect(() => {
+		applySettings(spread, layers, scrollDriven, spreadTowards, introDone)
+	})
 </script>
 
-<svelte:window
-	on:resize={handleResize}
-	on:scroll|passive={handleScroll}
-	on:mousemove={handleMouseMove}
-/>
-<svelte:document on:mouseleave={handleDocumentLeave} />
+<svelte:window onresize={handleResize} onscroll={handleScroll} onmousemove={handleMouseMove} />
+<svelte:document onmouseleave={handleDocumentLeave} />
 
 <noscript>
 	<style>
@@ -467,6 +469,67 @@
 		}
 	</style>
 </noscript>
+
+<section
+	bind:this={heroEl}
+	class="flex w-full flex-col items-center bg-[radial-gradient(circle_320px_at_50%_360px,color-mix(in_srgb,var(--accent)_14%,var(--base-bg)),var(--base-bg)_100%)] pt-10 sm:pt-0 portrait:items-start"
+>
+	<div class="relative mx-auto">
+		<svg
+			bind:this={svgEl}
+			class="pointer-events-none h-auto w-auto overflow-visible p-4 md:p-10 portrait:h-auto portrait:w-[clamp(300px,calc(100svw),600px)] landscape:h-[clamp(400px,calc(100svh-5rem),700px)] landscape:w-auto"
+			viewBox="0 0 200 200"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			{#each Array(layers) as _, i (i)}
+				<g
+					class="layer stroke-accent transition-opacity duration-[950ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+					stroke-width={thickness}
+					fill="none"
+					style="opacity: {i <= revealedLayers ? 1 - i / layers : 0};"
+					transform={`translate(${offsetX * (i + LEAD)}, ${offsetY * (i + LEAD)}) scale(${1 + i * scaleStep})`}
+					transform-origin="100 100"
+				>
+					{#each PATHS as d, j (j)}
+						<path
+							{d}
+							class="glyph transition-opacity duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+							style="opacity: {j < revealedPaths ? 1 : 0};"
+						/>
+					{/each}
+				</g>
+			{/each}
+		</svg>
+		<h1
+			class="pointer-events-none absolute inset-0 m-4 text-5xl font-bold tracking-tight min-[450px]:text-6xl min-[600px]:m-10 min-[600px]:text-7xl lg:text-[5.5rem]"
+			style="transform: translate({offsetX * LEAD * UNIT_PCT}%, {offsetY * LEAD * UNIT_PCT}%);"
+		>
+			{#each NAMES as { text, position }, j (text)}
+				<span
+					class="name pointer-events-auto absolute transition-[opacity,transform] duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none {position}"
+					style="opacity: {j < revealedPaths ? 1 : 0}; transform: translateY({j < revealedPaths
+						? 0
+						: '0.4em'});"
+				>
+					{text}
+				</span>
+			{/each}
+		</h1>
+		<div
+			bind:this={settingsTriggerEl}
+			class={[
+				'absolute top-1/2 left-full z-20 ml-3 hidden -translate-y-1/2 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-reduce:transition-none md:block',
+				!(introDone && (showSettings || settingsOpen)) && 'pointer-events-none scale-75 opacity-0'
+			]}
+			inert={!(introDone && (showSettings || settingsOpen))}
+		>
+			<div class:settings-attention={shouldWiggle && !settingsOpen}>
+				<LogoSettings bind:open={settingsOpen} />
+			</div>
+		</div>
+	</div>
+</section>
 
 <style>
 	/* draws the eye to the settings trigger right after it appears — a quick
@@ -501,64 +564,3 @@
 		}
 	}
 </style>
-
-<section
-	bind:this={heroEl}
-	class="flex w-full flex-col items-center bg-[radial-gradient(circle_320px_at_50%_360px,color-mix(in_srgb,var(--accent)_14%,var(--base-bg)),var(--base-bg)_100%)] pt-10 sm:pt-0 portrait:items-start"
->
-	<div class="relative mx-auto">
-		<svg
-			bind:this={svgEl}
-			class="pointer-events-none h-auto w-auto overflow-visible p-4 md:p-10 portrait:h-auto portrait:w-[clamp(300px,calc(100svw),600px)] landscape:h-[clamp(400px,calc(100svh-5rem),700px)] landscape:w-auto"
-			viewBox="0 0 200 200"
-			fill="none"
-			xmlns="http://www.w3.org/2000/svg"
-		>
-			{#each Array(layers) as _, i (i)}
-				<g
-					class="layer stroke-accent transition-opacity duration-[950ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
-					stroke-width={thickness}
-					fill="none"
-					style="opacity: {i <= revealedLayers ? 1 - i / layers : 0};"
-					transform={`translate(${offsetX * (i + LEAD)}, ${offsetY * (i + LEAD)}) scale(${1 + i * scaleStep})`}
-					transform-origin="100 100"
-				>
-					{#each PATHS as d, j (j)}
-						<path
-							{d}
-							class="glyph transition-opacity duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
-							style="opacity: {j < revealedPaths ? 1 : 0};"
-						/>
-					{/each}
-				</g>
-			{/each}
-		</svg>
-		<h1
-			class="pointer-events-none absolute inset-0 m-4 text-5xl min-[450px]:text-6xl font-bold min-[600px]:m-10 min-[600px]:text-7xl lg:text-[5.5rem] tracking-tight"
-			style="transform: translate({offsetX * LEAD * UNIT_PCT}%, {offsetY * LEAD * UNIT_PCT}%);"
-		>
-			{#each NAMES as { text, position }, j (text)}
-				<span
-					class="name pointer-events-auto absolute transition-[opacity,transform] duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none {position}"
-					style="opacity: {j < revealedPaths ? 1 : 0}; transform: translateY({j < revealedPaths
-						? 0
-						: '0.4em'});"
-				>
-					{text}
-				</span>
-			{/each}
-		</h1>
-		<div
-			bind:this={settingsTriggerEl}
-			class={[
-				'absolute top-1/2 left-full z-20 ml-3 hidden -translate-y-1/2 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-reduce:transition-none md:block',
-				!(introDone && (showSettings || settingsOpen)) && 'opacity-0 scale-75 pointer-events-none'
-			]}
-			inert={!(introDone && (showSettings || settingsOpen))}
-		>
-			<div class:settings-attention={shouldWiggle && !settingsOpen}>
-				<LogoSettings bind:open={settingsOpen} />
-			</div>
-		</div>
-	</div>
-</section>

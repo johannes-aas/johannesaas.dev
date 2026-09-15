@@ -16,14 +16,11 @@
 				{/if}
 				<div class="p-4">
 					<h2 class="mb-2 text-2xl font-semibold text-surface-fg">{post.meta.title}</h2>
-					<time
-						datetime={post.meta.date}
-						class="text-sm font-medium tracking-wide text-muted"
-					>
-						{new Date(post.meta.date).toLocaleDateString('en-US', { 
-							year: 'numeric', 
-							month: 'short', 
-							day: 'numeric' 
+					<time datetime={post.meta.date} class="text-sm font-medium tracking-wide text-muted">
+						{new Date(post.meta.date).toLocaleDateString('en-US', {
+							year: 'numeric',
+							month: 'short',
+							day: 'numeric'
 						})}
 					</time>
 				</div>

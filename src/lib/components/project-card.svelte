@@ -1,9 +1,5 @@
 <script>
-	export let title
-	export let description
-	export let technologies = []
-	export let liveUrl = ''
-	export let githubUrl = ''
+	let { title, description, technologies = [], liveUrl = '', githubUrl = '' } = $props()
 </script>
 
 <div class="border border-border bg-surface-bg">

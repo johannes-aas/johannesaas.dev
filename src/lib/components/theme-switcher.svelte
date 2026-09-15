@@ -25,8 +25,8 @@
 	/* themes at this index and beyond are dark, so the button shows a moon */
 	const firstDark = 4
 
-	let themeIndex = 0
-	let open = false
+	let themeIndex = $state(0)
+	let open = $state(false)
 	let container
 	let toggleEl
 	let buttonEls = []
@@ -34,10 +34,10 @@
 	/* true for the duration of the reveal/cross-fade animation — swatches are
      inert while it plays so a second pick can't stack a new wipe on top of
      one still running */
-	let transitioning = false
+	let transitioning = $state(false)
 	/* viewport width:height, mirrored onto each swatch button so it reads as a
      shrunk copy of the screen itself, same as the reveal animation's shape */
-	let screenAspect = 0.5
+	let screenAspect = $state(0.5)
 
 	onMount(() => {
 		const saved = localStorage.getItem('theme')
@@ -246,7 +246,7 @@
 	}
 </script>
 
-<svelte:window on:pointerdown={onWindowPointerDown} on:keydown={onWindowKeyDown} />
+<svelte:window onpointerdown={onWindowPointerDown} onkeydown={onWindowKeyDown} />
 
 <div class="relative flex items-center justify-center" bind:this={container}>
 	<button
@@ -255,7 +255,7 @@
 			open && 'bg-[color-mix(in_srgb,var(--muted)_14%,transparent)] text-base-fg'
 		]}
 		bind:this={toggleEl}
-		on:click={toggle}
+		onclick={toggle}
 		aria-label="Colour theme"
 		aria-expanded={open}
 		title="Colour theme: {themes[themeIndex].name}"
@@ -268,7 +268,9 @@
 	</button>
 
 	{#if open}
-		<div class="panel-wrap fixed top-24 left-1/2 z-50 w-[calc(100vw-1.5rem)] max-w-[58rem] [transform:translateX(-50%)]">
+		<div
+			class="panel-wrap fixed top-24 left-1/2 z-50 w-[calc(100vw-1.5rem)] max-w-[58rem] [transform:translateX(-50%)]"
+		>
 			<div
 				class="control-panel flex w-full flex-row items-center gap-2 px-2 py-3 sm:gap-4 sm:px-6 sm:py-5 lg:gap-6 lg:px-9 lg:py-7"
 				transition:scale={{ duration: 160, start: 0.9, opacity: 0 }}
@@ -297,8 +299,8 @@
 							class:wiping={transitioning && i !== themeIndex}
 							style="aspect-ratio: {screenAspect}; --swatch-accent: {t.accent};"
 							bind:this={buttonEls[i]}
-							on:click={() => setTheme(i)}
-							on:keydown={(event) => onButtonKeyDown(event, i)}
+							onclick={() => setTheme(i)}
+							onkeydown={(event) => onButtonKeyDown(event, i)}
 						></button>
 					{/each}
 				</div>

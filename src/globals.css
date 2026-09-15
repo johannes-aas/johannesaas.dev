@@ -7,7 +7,7 @@
 	Tailwind color utilities — `bg-accent`, `text-muted`, `border-border`, etc.
 	— instead of every callsite spelling out `bg-[var(--accent)]`. The indirection
 	through `var()` is what keeps these live across the runtime theme switch
-	(ThemeSwitcher.svelte swaps a `.theme-N` class on <html>, which is what
+	(theme-switcher.svelte swaps a `.theme-N` class on <html>, which is what
 	actually changes the color); Tailwind just resolves the variable at paint
 	time like any other CSS consumer would.
 */
@@ -32,7 +32,7 @@
 
 	--panel-tint and --panel-border feed the translucent "control panel" look
 	shared by the theme switcher and logo settings panels (see .control-panel
-	below, and the two panels in LogoSettings.svelte). They're defined per-theme
+	below, and the two panels in logo-settings.svelte). They're defined per-theme
 	here — rather than computed once from --base-bg/--border and overridden for
 	dark themes wherever they're used — so every consumer just reads one
 	variable instead of duplicating the light/dark branch itself.
@@ -234,7 +234,7 @@ body {
 	View Transition path: the switcher snapshots the page, swaps the theme class,
 	then wipes the new snapshot in as a square growing from wherever the theme was
 	picked. The actual clip-path animation runs from JS via the Web Animations API
-	(ThemeSwitcher.svelte), because clip-path polygons can't be interpolated with
+	(theme-switcher.svelte), because clip-path polygons can't be interpolated with
 	CSS custom properties alone; this just replaces the default cross-fade and pins
 	the new snapshot collapsed to a point until that animation takes over, so it
 	never flashes in unclipped.

@@ -1,27 +1,27 @@
 <script>
-	import { createEventDispatcher } from 'svelte'
 	import { Slider as SliderPrimitive } from 'bits-ui'
 
-	export let label
-	export let min
-	export let max
-	export let step = 1
-	export let decimals = 0
-	export let bipolar = false
-	export let value
-	export let disabled = false
-
-	const dispatch = createEventDispatcher()
+	let {
+		label,
+		min,
+		max,
+		step = 1,
+		decimals = 0,
+		bipolar = false,
+		value,
+		disabled = false,
+		onchange,
+		onreset
+	} = $props()
 
 	// Slider.Root drives `value` itself (drag/keyboard) via a bindable prop, so
 	// it needs its own mirror — kept in sync with the controlled `value` prop,
 	// which only actually moves once the parent applies the dispatched change
-	let internalValue = value
-	$: internalValue = value
+	let internalValue = $derived(value)
 
-	let hovered = false
-	let dragging = false
-	$: active = hovered || dragging
+	let hovered = $state(false)
+	let dragging = $state(false)
+	let active = $derived(hovered || dragging)
 
 	// While dragging we track the raw pointer position (not step-snapped) so
 	// the fill/thumb glide continuously under the cursor no matter how coarse
@@ -30,7 +30,7 @@
 	// back to the snapped value, animating there with a slight overshoot so
 	// it visibly "snaps" to the nearest step.
 	let trackRect = null
-	let dragPercent = null
+	let dragPercent = $state(null)
 
 	function pct(v) {
 		return ((v - min) / (max - min)) * 100
@@ -43,15 +43,15 @@
 		return { left: lo, width: hi - lo }
 	}
 
-	$: displayPercent = dragging && dragPercent !== null ? dragPercent : pct(value)
-	$: fill = fillFor(displayPercent)
+	let displayPercent = $derived(dragging && dragPercent !== null ? dragPercent : pct(value))
+	let fill = $derived(fillFor(displayPercent))
 
 	// the thumb sits flush against the fill's moving edge rather than
 	// straddling it — for a bipolar slider that edge is on the left once the
 	// value drops below zero (fill grows leftward from the zero mark), so the
 	// 4px-wide thumb (w-1) shifts to hug whichever side that is
 	const THUMB_WIDTH = 4
-	$: thumbOffset = displayPercent < (bipolar ? pct(0) : 0) ? 0 : -THUMB_WIDTH
+	let thumbOffset = $derived(displayPercent < (bipolar ? pct(0) : 0) ? 0 : -THUMB_WIDTH)
 
 	function ticks() {
 		const steps = Math.round((max - min) / step)
@@ -92,7 +92,6 @@
 		dragging = false
 		dragPercent = null
 	}
-
 </script>
 
 <SliderPrimitive.Root
@@ -103,8 +102,8 @@
 	{step}
 	{disabled}
 	thumbPositioning="exact"
-	onValueChange={(v) => dispatch('change', v)}
-	ondblclick={disabled ? undefined : () => dispatch('reset')}
+	onValueChange={(v) => onchange?.(v)}
+	ondblclick={disabled ? undefined : () => onreset?.()}
 	onpointerenter={() => (hovered = true)}
 	onpointerleave={() => (hovered = false)}
 	onpointerdown={onRootPointerDown}
@@ -148,8 +147,7 @@
 		style="left:calc({displayPercent}% + {thumbOffset}px)"
 	></div>
 	<span class="relative text-sm text-base-fg">{label}</span>
-	<span
-		class="relative font-mono text-sm text-surface-fg [font-variant-numeric:tabular-nums]"
+	<span class="relative font-mono text-sm text-surface-fg [font-variant-numeric:tabular-nums]"
 		>{bipolar && value > 0 ? '+' : ''}{value.toFixed(decimals)}</span
 	>
 </SliderPrimitive.Root>

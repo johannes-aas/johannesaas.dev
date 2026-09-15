@@ -10,7 +10,7 @@
 	let variant = $state('default') // 'default' | 'hover' | 'read'
 
 	const INTERACTIVE_SELECTOR = 'a, button, input, select, textarea, [role="button"], .cursor-hover'
-	const read_SELECTOR = '[data-cursor="read"]'
+	const READ_SELECTOR = '[data-cursor="read"]'
 
 	onMount(() => {
 		const pointerFine = window.matchMedia('(hover: hover) and (pointer: fine)').matches
@@ -37,7 +37,7 @@
 			}
 
 			const target = e.target
-			if (target instanceof Element && target.closest(read_SELECTOR)) {
+			if (target instanceof Element && target.closest(READ_SELECTOR)) {
 				variant = 'read'
 			} else if (target instanceof Element && target.closest(INTERACTIVE_SELECTOR)) {
 				variant = 'hover'
@@ -68,8 +68,7 @@
 </script>
 
 {#if enabled}
-	{@const sizeClass =
-		variant === 'hover' ? 'h-8 w-8' : variant === 'read' ? 'h-9 w-18' : 'h-4 w-4'}
+	{@const sizeClass = variant === 'hover' ? 'h-8 w-8' : variant === 'read' ? 'h-9 w-18' : 'h-4 w-4'}
 	{@const bgClass = variant === 'hover' ? 'bg-cursor/60' : 'bg-cursor'}
 	<div
 		class={[

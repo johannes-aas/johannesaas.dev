@@ -1,5 +1,5 @@
 <script>
-	import ProjectCard from '$lib/components/ProjectCard.svelte'
+	import ProjectCard from '$lib/components/project-card.svelte'
 
 	const projects = [
 		{
@@ -34,14 +34,15 @@
 		},
 		{
 			title: 'Login.no',
-			description: "Website of student association for IT at  NTNU in Gjøvik",
+			description: 'Website of student association for IT at  NTNU in Gjøvik',
 			technologies: ['Nextjs', 'React', 'Tailwind CSS', 'TypeScript'],
 			liveUrl: 'https://login.no',
 			githubUrl: 'https://github.com/Login-Linjeforening-for-IT/beehive'
 		},
 		{
 			title: 'HealthTech',
-			description: "Bachelor's thesis project built with a student group for Aker Solutions. A web application that visualizes workplace health data — noise, vibration, and dust exposure.",
+			description:
+				"Bachelor's thesis project built with a student group for Aker Solutions. A web application that visualizes workplace health data — noise, vibration, and dust exposure.",
 			technologies: ['React', 'Tailwind CSS', 'TypeScript'],
 			liveUrl: 'http://129.241.100.43/foreman',
 			githubUrl: 'https://github.com/johannes-aas/react-calendar'

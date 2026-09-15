@@ -5,7 +5,7 @@
 		logoScrollDriven,
 		logoReplayRequested
 	} from '$lib/stores/logoControls'
-	import Slider from '$lib/components/Slider.svelte'
+	import Slider from '$lib/components/slider.svelte'
 	import { ToggleGroupRoot, ToggleGroupItem } from '$lib/components/toggle-group'
 	import WandSparkles from '@lucide/svelte/icons/wand-sparkles'
 	import RotateCcw from '@lucide/svelte/icons/rotate-ccw'
@@ -16,7 +16,7 @@
 	// natural height of the (always-mounted, fixed-width) content column, fed
 	// into the panel's own height transition — measured off content that never
 	// reflows, so the grow animation never shifts text mid-flight
-	let panelHeight = 0
+	let panelHeight = $state(0)
 
 	// `random` narrows the slider's full range to the part worth landing on —
 	// a randomized thickness of 0 or a single layer is just a broken-looking logo
@@ -75,7 +75,7 @@
 	// randomize()/resetOne() below iterate over every slider generically, regardless of group
 	const sliders = [...formSliders, ...motionSliders]
 
-	export let open = false
+	let { open = $bindable(false) } = $props()
 	let container
 
 	// Grows the panel rightward from the trigger's own left edge (horizontally),
@@ -97,8 +97,8 @@
 	const PANEL_WIDTH = 304 // 18rem, in px — keep in sync with the open panel's w-72
 	const EDGE_PADDING = 8
 
-	let panelX = 0
-	let panelY = 0
+	let panelX = $state(0)
+	let panelY = $state(0)
 
 	function updatePosition() {
 		if (!open || !container) return
@@ -126,8 +126,8 @@
 
 	// the icon sits 0.5rem inside the panel's own top-left corner — same
 	// coordinate space as panelX/panelY, since both are absolute within container
-	$: iconOpenTop = panelY + 1
-	$: iconOpenLeft = panelX + 4
+	let iconOpenTop = $derived(panelY + 1)
+	let iconOpenLeft = $derived(panelX + 4)
 
 	function setValue(key, value) {
 		logoControls.update((s) => ({ ...s, [key]: value }))
@@ -181,9 +181,9 @@
 </script>
 
 <svelte:window
-	on:pointerdown={onWindowPointerDown}
-	on:keydown={onWindowKeyDown}
-	on:resize={updatePosition}
+	onpointerdown={onWindowPointerDown}
+	onkeydown={onWindowKeyDown}
+	onresize={updatePosition}
 />
 
 {#snippet sliderRow(spec)}
@@ -197,8 +197,8 @@
 		bipolar={spec.bipolar}
 		value={$logoControls[spec.key]}
 		{disabled}
-		on:change={(e) => setValue(spec.key, e.detail)}
-		on:reset={() => resetOne(spec.key)}
+		onchange={(v) => setValue(spec.key, v)}
+		onreset={() => resetOne(spec.key)}
 	/>
 {/snippet}
 
@@ -227,7 +227,7 @@
 				<span class="text-sm text-muted">Playground</span>
 				<button
 					class="flex h-full cursor-pointer items-center gap-1.5 border-l border-border px-5 text-sm text-muted transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]"
-					on:click={reset}
+					onclick={reset}
 					aria-label="Reset to defaults"
 					title="Reset to defaults"
 				>
@@ -248,9 +248,7 @@
 			<div class="h-px bg-border"></div>
 
 			<div class="flex flex-col gap-2.5 px-4 pt-3.5 pb-4">
-				<span class="font-mono text-xs tracking-[0.16em] text-muted uppercase">
-					Motion
-				</span>
+				<span class="font-mono text-xs tracking-[0.16em] text-muted uppercase"> Motion </span>
 				{#each motionSliders as spec (spec.key)}
 					{@render sliderRow(spec)}
 				{/each}
@@ -273,14 +271,14 @@
 			<div class="flex border-t border-border">
 				<button
 					class="flex h-11 flex-1 cursor-pointer items-center justify-center gap-2 text-sm text-muted transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]"
-					on:click={randomize}
+					onclick={randomize}
 				>
 					<Shuffle class="h-3.5 w-3.5 stroke-2" aria-hidden="true" />
 					<span>Randomize</span>
 				</button>
 				<button
 					class="flex h-11 flex-1 cursor-pointer items-center justify-center gap-2 border-l border-border bg-accent text-sm text-base-bg transition-opacity duration-200 hover:opacity-90"
-					on:click={replay}
+					onclick={replay}
 				>
 					<Play class="h-3.5 w-3.5 fill-current stroke-current" aria-hidden="true" />
 					<span>Replay intro</span>
@@ -297,7 +295,7 @@
 				: 'h-full w-full hover:border-border hover:bg-[color-mix(in_srgb,var(--panel-tint)_72%,transparent)] hover:backdrop-blur-[14px] hover:backdrop-saturate-[1.4]'
 		]}
 		style="top:{open ? iconOpenTop + 'px' : '0'};left:{open ? iconOpenLeft + 'px' : '0'}"
-		on:click={() => setOpen(!open)}
+		onclick={() => setOpen(!open)}
 		aria-label={open ? 'Close playground' : 'Open playground'}
 		aria-expanded={open}
 		title="Playground"

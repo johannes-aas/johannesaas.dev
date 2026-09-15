@@ -1,14 +1,15 @@
 <script>
-    import HeroSection from '$lib/components/HeroSection.svelte'
-    import SocialLinks from '$lib/components/SocialLinks.svelte'
+	import HeroSection from '$lib/components/hero-section.svelte'
+	import SocialLinks from '$lib/components/social-links.svelte'
 </script>
 
 <HeroSection />
 
-<div class="my-8 text-center p-4">
+<div class="my-8 p-4 text-center">
 	<h2 class="mb-6 text-2xl font-light text-surface-fg md:text-3xl">👋 Hi there!</h2>
 	<p class="mx-auto mb-8 max-w-lg text-lg leading-relaxed text-muted">
-		Nice of you to stop by. There's not much to see here yet. I spent way too much time making this sick logo, but I'm working on adding more content.
+		Nice of you to stop by. There's not much to see here yet. I spent way too much time making this
+		sick logo, but I'm working on adding more content.
 	</p>
-	<SocialLinks/>
+	<SocialLinks />
 </div>

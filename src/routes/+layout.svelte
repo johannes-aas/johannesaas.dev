@@ -3,9 +3,9 @@
 	import favicon from '$lib/assets/favicon.svg'
 	import { dev } from '$app/environment'
 	import { injectAnalytics } from '@vercel/analytics/sveltekit'
-	import Header from '$lib/components/Header.svelte'
-	import Footer from '$lib/components/Footer.svelte'
-	import CustomCursor from '$lib/components/CustomCursor.svelte'
+	import Header from '$lib/components/header.svelte'
+	import Footer from '$lib/components/footer.svelte'
+	import CustomCursor from '$lib/components/custom-cursor.svelte'
 	import { openPanelCount } from '$lib/stores/panelState'
 
 	injectAnalytics({ mode: dev ? 'development' : 'production' })
