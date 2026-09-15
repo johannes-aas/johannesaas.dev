@@ -1,9 +1,12 @@
 <script>
 	import HeroSection from '$lib/components/hero-section.svelte'
 	import SocialLinks from '$lib/components/social-links.svelte'
+	import GridLine from '$lib/components/grid-line.svelte'
 </script>
 
 <HeroSection />
+
+<GridLine />
 
 <div class="my-8 p-4 text-center">
 	<h2 class="mb-6 text-2xl font-light text-surface-fg md:text-3xl">👋 Hi there!</h2>

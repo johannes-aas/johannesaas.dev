@@ -5,6 +5,7 @@
 	import { injectAnalytics } from '@vercel/analytics/sveltekit'
 	import Header from '$lib/components/header.svelte'
 	import Footer from '$lib/components/footer.svelte'
+	import GridLine from '$lib/components/grid-line.svelte'
 	import CustomCursor from '$lib/components/custom-cursor.svelte'
 	import { openPanelCount } from '$lib/stores/panelState'
 
@@ -24,10 +25,14 @@
 
 <CustomCursor />
 
-<div class="flex min-h-screen flex-col bg-base-bg">
-	<Header />
-	<main class="flex-grow">
-		{@render children?.()}
-	</main>
-	<Footer />
+<div class="flex min-h-screen flex-col overflow-x-hidden bg-base-bg">
+	<div class="mx-auto flex w-full max-w-6xl flex-1 flex-col border-x border-border">
+		<Header />
+		<GridLine />
+		<main class="flex-grow">
+			{@render children?.()}
+		</main>
+		<GridLine />
+		<Footer />
+	</div>
 </div>
