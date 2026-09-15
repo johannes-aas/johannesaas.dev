@@ -550,10 +550,10 @@
 		</h1>
 		<div
 			bind:this={settingsTriggerEl}
-			class="absolute top-1/2 left-full z-20 ml-3 hidden -translate-y-1/2 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-reduce:transition-none md:block"
-			class:opacity-0={!(introDone && (showSettings || settingsOpen))}
-			class:scale-75={!(introDone && (showSettings || settingsOpen))}
-			class:pointer-events-none={!(introDone && (showSettings || settingsOpen))}
+			class={[
+				'absolute top-1/2 left-full z-20 ml-3 hidden -translate-y-1/2 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-reduce:transition-none md:block',
+				!(introDone && (showSettings || settingsOpen)) && 'opacity-0 scale-75 pointer-events-none'
+			]}
 			inert={!(introDone && (showSettings || settingsOpen))}
 		>
 			<div class:settings-attention={shouldWiggle && !settingsOpen}>

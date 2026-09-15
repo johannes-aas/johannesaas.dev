@@ -1,7 +1,6 @@
 <script>
 	import { createEventDispatcher } from 'svelte'
 	import { Slider as SliderPrimitive } from 'bits-ui'
-	import { cn } from '$lib/utils'
 
 	export let label
 	export let min
@@ -112,15 +111,16 @@
 	onpointermove={onRootPointerMove}
 	onpointerup={endDrag}
 	onpointercancel={endDrag}
-	class={cn(
+	class={[
 		'relative flex h-9 touch-none items-center justify-between overflow-hidden rounded-sm border border-border bg-surface-bg px-3 transition-opacity duration-200 select-none',
 		disabled ? 'cursor-not-allowed opacity-40' : 'cursor-ew-resize'
-	)}
+	]}
 >
 	<div
-		class="absolute inset-y-0 bg-[color-mix(in_srgb,var(--accent)_32%,transparent)] transition-[left,width] ease-[cubic-bezier(0.34,1.56,0.64,1)]"
-		class:duration-0={dragging}
-		class:duration-300={!dragging}
+		class={[
+			'absolute inset-y-0 bg-[color-mix(in_srgb,var(--accent)_32%,transparent)] transition-[left,width] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
+			dragging ? 'duration-0' : 'duration-300'
+		]}
 		style="left:{fill.left}%;width:{fill.width}%"
 	></div>
 	{#each ticks() as left}
@@ -140,13 +140,11 @@
 	/>
 	<div
 		aria-hidden="true"
-		class="pointer-events-none absolute inset-y-0 w-1 bg-accent transition-[left,opacity,transform] ease-[cubic-bezier(0.34,1.56,0.64,1)]"
-		class:opacity-100={active}
-		class:opacity-0={!active}
-		class:scale-y-[1.3]={dragging}
-		class:scale-y-100={!dragging}
-		class:duration-0={dragging}
-		class:duration-500={!dragging}
+		class={[
+			'pointer-events-none absolute inset-y-0 w-1 bg-accent transition-[left,opacity,transform] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
+			active ? 'opacity-100' : 'opacity-0',
+			dragging ? 'scale-y-[1.3] duration-0' : 'scale-y-100 duration-500'
+		]}
 		style="left:calc({displayPercent}% + {thumbOffset}px)"
 	></div>
 	<span class="relative text-sm text-base-fg">{label}</span>

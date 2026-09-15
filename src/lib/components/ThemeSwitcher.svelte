@@ -250,9 +250,10 @@
 
 <div class="relative flex items-center justify-center" bind:this={container}>
 	<button
-		class="grid h-11 w-11 cursor-pointer place-items-center rounded-full text-muted transition-[color,background-color,transform] duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)] hover:text-base-fg active:scale-[0.94]"
-		class:text-base-fg={open}
-		class:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]={open}
+		class={[
+			'grid h-11 w-11 cursor-pointer place-items-center rounded-full text-muted transition-[color,background-color,transform] duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)] hover:text-base-fg active:scale-[0.94]',
+			open && 'bg-[color-mix(in_srgb,var(--muted)_14%,transparent)] text-base-fg'
+		]}
 		bind:this={toggleEl}
 		on:click={toggle}
 		aria-label="Colour theme"

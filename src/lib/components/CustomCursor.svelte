@@ -72,8 +72,12 @@
 		variant === 'hover' ? 'h-8 w-8' : variant === 'read' ? 'h-9 w-18' : 'h-4 w-4'}
 	{@const bgClass = variant === 'hover' ? 'bg-cursor/60' : 'bg-cursor'}
 	<div
-		class="pointer-events-none fixed top-0 left-0 z-[9999] flex items-center justify-center rounded-full text-sm font-semibold tracking-widest text-base-bg transition-[width,height,opacity,background-color] duration-200 ease-out {sizeClass} {bgClass}"
-		class:opacity-0={!visible}
+		class={[
+			'pointer-events-none fixed top-0 left-0 z-[9999] flex items-center justify-center rounded-full text-sm font-semibold tracking-widest text-base-bg transition-[width,height,opacity,background-color] duration-200 ease-out',
+			sizeClass,
+			bgClass,
+			!visible && 'opacity-0'
+		]}
 		style:transform={`translate(${renderX}px, ${renderY}px) translate(-50%, -50%)`}
 	>
 		{#if variant === 'read'}
