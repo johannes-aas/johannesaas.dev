@@ -6,7 +6,7 @@
 		logoReplayRequested
 	} from '$lib/stores/logoControls'
 	import Slider from '$lib/components/Slider.svelte'
-	import { cn } from '$lib/utils'
+	import { ToggleGroupRoot, ToggleGroupItem } from '$lib/components/toggle-group'
 	import WandSparkles from '@lucide/svelte/icons/wand-sparkles'
 	import RotateCcw from '@lucide/svelte/icons/rotate-ccw'
 	import Play from '@lucide/svelte/icons/play'
@@ -204,21 +204,21 @@
 
 <div class="relative h-11 w-11" bind:this={container}>
 	<div
-		class={cn(
-			'absolute z-10 overflow-hidden rounded-sm border border-transparent bg-transparent transition-[top,left,width,height,border-color,background-color] duration-300 ease-in-out hover:border-border hover:bg-[color-mix(in_srgb,var(--panel-tint)_72%,transparent)] hover:backdrop-blur-[14px] hover:backdrop-saturate-[1.4]',
-			open ? 'w-72 border-border bg-[color-mix(in_srgb,var(--panel-tint)_72%,transparent)]' : 'w-11'
-		)}
-		class:max-w-[calc(100vw-1.5rem)]={open}
-		class:backdrop-blur-[14px]={open}
-		class:backdrop-saturate-[1.4]={open}
+		class={[
+			'absolute z-10 overflow-hidden rounded-sm border transition-[top,left,width,height,border-color,background-color] duration-300 ease-in-out',
+			open
+				? 'w-72 max-w-[calc(100vw-1.5rem)] border-border bg-[color-mix(in_srgb,var(--panel-tint)_72%,transparent)] backdrop-blur-[14px] backdrop-saturate-[1.4]'
+				: 'w-11 border-transparent bg-transparent hover:border-border hover:bg-[color-mix(in_srgb,var(--panel-tint)_72%,transparent)] hover:backdrop-blur-[14px] hover:backdrop-saturate-[1.4]'
+		]}
 		style="top:{open ? panelY + 'px' : '0'};left:{open ? panelX + 'px' : '0'};height:{open
 			? panelHeight + 'px'
 			: '2.75rem'}"
 	>
 		<div
-			class="content flex w-72 flex-col transition-opacity duration-200 ease-in-out {open
-				? 'opacity-100 delay-100'
-				: 'opacity-0'}"
+			class={[
+				'content flex w-72 flex-col transition-opacity duration-200 ease-in-out',
+				open ? 'opacity-100 delay-100' : 'opacity-0'
+			]}
 			bind:clientHeight={panelHeight}
 			inert={!open}
 			aria-hidden={!open}
@@ -258,38 +258,14 @@
 				{#if !$logoScrollDriven}
 					<div class="flex items-center gap-6">
 						<span class="text-sm text-muted">Spread</span>
-						<div role="radiogroup" aria-label="Spread" class="flex w-full">
-							<button
-								type="button"
-								role="radio"
-								aria-checked={$logoControls.spreadTowards}
-								class="w-full rounded-l-sm border py-1 text-center text-sm transition-colors duration-200"
-								class:border-accent={$logoControls.spreadTowards}
-								class:bg-accent={$logoControls.spreadTowards}
-								class:text-base-bg={$logoControls.spreadTowards}
-								class:border-border={!$logoControls.spreadTowards}
-								class:bg-transparent={!$logoControls.spreadTowards}
-								class:text-muted={!$logoControls.spreadTowards}
-								on:click={() => setValue('spreadTowards', true)}
-							>
-								Follow
-							</button>
-							<button
-								type="button"
-								role="radio"
-								aria-checked={!$logoControls.spreadTowards}
-								class="w-full rounded-r-sm border py-1 text-center text-sm transition-colors duration-200"
-								class:border-accent={!$logoControls.spreadTowards}
-								class:bg-accent={!$logoControls.spreadTowards}
-								class:text-base-bg={!$logoControls.spreadTowards}
-								class:border-border={$logoControls.spreadTowards}
-								class:bg-transparent={$logoControls.spreadTowards}
-								class:text-muted={$logoControls.spreadTowards}
-								on:click={() => setValue('spreadTowards', false)}
-							>
-								Avoid
-							</button>
-						</div>
+						<ToggleGroupRoot
+							label="Spread"
+							value={$logoControls.spreadTowards ? 'follow' : 'avoid'}
+							onValueChange={(v) => setValue('spreadTowards', v === 'follow')}
+						>
+							<ToggleGroupItem value="follow">Follow</ToggleGroupItem>
+							<ToggleGroupItem value="avoid">Avoid</ToggleGroupItem>
+						</ToggleGroupRoot>
 					</div>
 				{/if}
 			</div>
@@ -314,14 +290,12 @@
 	</div>
 
 	<button
-		class={cn(
+		class={[
 			'absolute z-20 flex cursor-pointer items-center justify-center rounded-sm border border-transparent text-muted transition-[top,left,width,height,color,border-color,background-color] duration-300 ease-in-out hover:text-base-fg',
-			open ? 'h-11 w-11' : 'h-full w-full'
-		)}
-		class:hover:border-border={!open}
-		class:hover:bg-[color-mix(in_srgb,var(--panel-tint)_72%,transparent)]={!open}
-		class:hover:backdrop-blur-[14px]={!open}
-		class:hover:backdrop-saturate-[1.4]={!open}
+			open
+				? 'h-11 w-11'
+				: 'h-full w-full hover:border-border hover:bg-[color-mix(in_srgb,var(--panel-tint)_72%,transparent)] hover:backdrop-blur-[14px] hover:backdrop-saturate-[1.4]'
+		]}
 		style="top:{open ? iconOpenTop + 'px' : '0'};left:{open ? iconOpenLeft + 'px' : '0'}"
 		on:click={() => setOpen(!open)}
 		aria-label={open ? 'Close playground' : 'Open playground'}
@@ -329,10 +303,10 @@
 		title="Playground"
 	>
 		<WandSparkles
-			class={cn(
+			class={[
 				'h-7 w-7 flex-none stroke-[1.75] transition-transform duration-300 ease-in-out',
 				open && 'scale-[0.7]'
-			)}
+			]}
 			aria-hidden="true"
 		/>
 	</button>
