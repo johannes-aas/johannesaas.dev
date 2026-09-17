@@ -340,7 +340,7 @@
 	{#if open}
 		<div class="absolute -inset-x-px top-full z-50">
 			<div
-				class="control-panel flex w-full flex-row items-center gap-2 px-4 py-4 sm:gap-3 sm:px-6 sm:py-4"
+				class="flex w-full flex-row items-center gap-2 rounded-none border border-border bg-surface-bg/95 px-4 py-4 sm:gap-3 sm:px-6 sm:py-4"
 				transition:fade={{ duration: 160 }}
 			>
 				<Sun class="hidden h-4 w-4 flex-none stroke-base-fg stroke-[1.5] sm:block sm:h-5 sm:w-5" aria-hidden="true" />

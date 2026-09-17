@@ -29,9 +29,8 @@
 	it, so dragging the theme slider downward reads as a single dimming gradient.
 	Each step keeps its own hue so they stay distinguishable, not just steps of grey.
 
-	--panel-tint feeds the translucent "control panel" look shared by the theme
-	switcher and logo settings panels (see .control-panel below, and the two
-	panels in logo-settings.svelte). It's defined per-theme here — rather than
+	--panel-tint feeds the translucent panel look used by the logo settings
+	panels in logo-settings.svelte. It's defined per-theme here — rather than
 	computed once from --base-bg and overridden for dark themes wherever it's
 	used — so every consumer just reads one variable instead of duplicating the
 	light/dark branch itself.
@@ -437,22 +436,3 @@ h3,
 	border
 	accent
 */
-
-/*
-	Shared look for the header's control nav (theme switcher, logo settings):
-	a translucent, sharp-edged panel. Kept here rather than duplicated
-	per-component so both stay visually in sync. Positioning is up to each
-	component, since the two now anchor to different points on screen rather
-	than dropping below their toggle button. (The toggle button itself is
-	plain Tailwind utilities, applied per-component.)
-*/
-.control-panel {
-	border-radius: 0;
-	/* plain --border, same as the layout's grid lines — every panel reads one
-	   consistent border colour instead of its own tinted variant */
-	border: 1px solid var(--border);
-	/* no backdrop-filter: iOS Safari drops/flickers backdrop-filter on elements
-	   composited above a document.startViewTransition snapshot (theme-switcher's
-	   wipe), so the panel relies on a more opaque tint instead of blur */
-	background-color: color-mix(in srgb, var(--panel-tint) 92%, transparent);
-}
