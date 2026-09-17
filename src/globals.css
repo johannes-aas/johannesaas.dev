@@ -21,7 +21,6 @@
 	--color-accent: var(--accent);
 	--color-cursor: var(--cursor);
 	--color-panel-tint: var(--panel-tint);
-	--color-panel-border: var(--panel-border);
 }
 
 /*
@@ -30,12 +29,12 @@
 	it, so dragging the theme slider downward reads as a single dimming gradient.
 	Each step keeps its own hue so they stay distinguishable, not just steps of grey.
 
-	--panel-tint and --panel-border feed the translucent "control panel" look
-	shared by the theme switcher and logo settings panels (see .control-panel
-	below, and the two panels in logo-settings.svelte). They're defined per-theme
-	here — rather than computed once from --base-bg/--border and overridden for
-	dark themes wherever they're used — so every consumer just reads one
-	variable instead of duplicating the light/dark branch itself.
+	--panel-tint feeds the translucent "control panel" look shared by the theme
+	switcher and logo settings panels (see .control-panel below, and the two
+	panels in logo-settings.svelte). It's defined per-theme here — rather than
+	computed once from --base-bg and overridden for dark themes wherever it's
+	used — so every consumer just reads one variable instead of duplicating the
+	light/dark branch itself.
 */
 
 :root {
@@ -49,7 +48,27 @@
 	--accent: rgb(74, 142, 142);
 	--cursor: rgb(42, 174, 174);
 	--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
-	--panel-border: color-mix(in srgb, var(--border) 65%, #000);
+}
+
+/*
+	Theme switcher swatch preview colours — one flat, always-on set at :root
+	rather than nested inside each .theme-N block, so a swatch button can show
+	any theme's colour while the page is in a *different* theme, by reading
+	--theme-N-swatch directly, without applying that theme's full class (which
+	would repaint the button's own border/background along with everything
+	else). Tuned by hand (not derived from --base-bg/--accent) so the eight
+	swatches read as one deliberate light-to-dark spectrum instead of each
+	theme's own, unrelated lightness curve.
+*/
+:root {
+	--theme-1-swatch: rgb(215, 244, 244);
+	--theme-2-swatch: rgb(233, 188, 165);
+	--theme-3-swatch: rgb(121, 216, 184);
+	--theme-4-swatch: rgb(70, 126, 206);
+	--theme-5-swatch: rgb(94, 49, 170);
+	--theme-6-swatch: rgb(38, 130, 69);
+	--theme-7-swatch: rgb(25, 51, 93);
+	--theme-8-swatch: rgb(18, 21, 48);
 }
 
 /* ---------- LIGHT ---------- */
@@ -65,7 +84,6 @@
 	--accent: rgb(74, 142, 142);
 	--cursor: rgb(42, 174, 174);
 	--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
-	--panel-border: color-mix(in srgb, var(--border) 65%, #000);
 }
 
 /* THEME 2: Warm Sand — warm cream, terracotta accent */
@@ -79,7 +97,6 @@
 	--accent: rgb(198, 102, 64);
 	--cursor: rgb(235, 86, 27);
 	--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
-	--panel-border: color-mix(in srgb, var(--border) 65%, #000);
 }
 
 /* THEME 3: Sea Glass — cool mint, green-teal accent */
@@ -93,7 +110,6 @@
 	--accent: rgb(20, 142, 110);
 	--cursor: rgb(4, 199, 148);
 	--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
-	--panel-border: color-mix(in srgb, var(--border) 65%, #000);
 }
 
 /* THEME 4: Overcast — dusty blue, strong blue accent */
@@ -107,7 +123,6 @@
 	--accent: rgb(38, 96, 196);
 	--cursor: rgb(5, 87, 229);
 	--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
-	--panel-border: color-mix(in srgb, var(--border) 65%, #000);
 }
 
 /* ---------- DARK ---------- */
@@ -127,7 +142,6 @@
 	--accent: rgb(184, 142, 240);
 	--cursor: rgb(153, 80, 251);
 	--panel-tint: color-mix(in srgb, var(--base-bg) 82%, #fff);
-	--panel-border: color-mix(in srgb, var(--border) 65%, #fff);
 }
 
 /* THEME 6: Deep Forest — desaturated green, spring-green accent */
@@ -141,7 +155,6 @@
 	--accent: rgb(72, 194, 126);
 	--cursor: rgb(35, 231, 122);
 	--panel-tint: color-mix(in srgb, var(--base-bg) 82%, #fff);
-	--panel-border: color-mix(in srgb, var(--border) 65%, #fff);
 }
 
 /* THEME 7: Midnight — cool navy slate, azure accent */
@@ -155,7 +168,6 @@
 	--accent: rgb(96, 148, 244);
 	--cursor: rgb(38, 113, 251);
 	--panel-tint: color-mix(in srgb, var(--base-bg) 82%, #fff);
-	--panel-border: color-mix(in srgb, var(--border) 65%, #fff);
 }
 
 /* THEME 8: Void — near-black neutral, periwinkle accent */
@@ -169,7 +181,6 @@
 	--accent: rgb(140, 152, 216);
 	--cursor: rgb(71, 97, 234);
 	--panel-tint: color-mix(in srgb, var(--base-bg) 82%, #fff);
-	--panel-border: color-mix(in srgb, var(--border) 65%, #fff);
 }
 
 /*
@@ -261,6 +272,137 @@ body {
 	clip-path: var(--theme-reveal-clip-from, none);
 }
 
+/*
+	main, the wipe-line divider, the footer divider and the footer itself all
+	carry their own view-transition-name (see the page-nav wipe rules below),
+	which pulls them out of the root snapshot entirely. Left alone, that means
+	the theme reveal above — which only ever clips ::view-transition-new(root)
+	— skips right past all four and they'd just snap to the new theme's colours
+	instantly instead of taking part in the wipe. Forcing their name back to
+	`none` for the duration of `.theme-reveal` merges them back into the root
+	group so the same clip-path animation covers the whole page again. Matched
+	by substring on the Tailwind arbitrary-value class itself, so this doesn't
+	need a dedicated hook class in every component that sets one of these names.
+*/
+.theme-reveal [class*='view-transition-name:page-content'],
+.theme-reveal [class*='view-transition-name:wipe-line'],
+.theme-reveal [class*='view-transition-name:footer-divider'],
+.theme-reveal [class*='view-transition-name:site-footer'] {
+	view-transition-name: none !important;
+}
+
+/*
+	Page-nav wipe (+layout.svelte's onNavigate): `page-content` is `main`'s own
+	named view-transition group, so only it — not the header, footer, or the
+	column's vertical borders — takes part in navigation. `wipe-line` is a
+	second named group used purely as an animatable top-layer target for the
+	moving divider line (a plain DOM element wouldn't render during the
+	transition otherwise). `animation: none` on both groups stops the
+	browser's default resize/cross-fade morph from running alongside the
+	explicit clip-path/transform this drives. `root`'s group is deliberately
+	left animating normally — disabling it made its box snap straight to the
+	new page's size at t=0 instead of resizing smoothly, which is what let a
+	shorter new page's footer show through immediately, before the wipe had
+	even started.
+*/
+::view-transition-group(page-content),
+::view-transition-group(wipe-line) {
+	animation: none;
+}
+
+/*
+	With its own animation disabled above, page-content's group box snaps
+	straight to the new page's height at t=0 (same effect noted for root's
+	group above) instead of the old page's height. Pinned here to the taller
+	of old/new (set as --wipe-height by +layout.svelte's onNavigate) so the
+	group's own box is never shorter than either snapshot, and so it's
+	stable for the whole transition rather than silently sized off the new
+	page. (Doesn't make old/new individually --wipe-height tall themselves —
+	see the object-fit rule below for why that still needs pixels, not %.)
+*/
+::view-transition-group(page-content) {
+	height: var(--wipe-height, auto);
+}
+
+::view-transition-old(page-content),
+::view-transition-new(page-content),
+::view-transition-old(wipe-line),
+::view-transition-new(wipe-line) {
+	animation: none;
+	mix-blend-mode: normal;
+}
+
+/*
+	Default object-fit: contain scales+centers each snapshot inside the group
+	box above, so once that box is taller than a given snapshot's own height
+	(e.g. the old page during a short->long nav), the snapshot gets pushed
+	down to stay vertically centered instead of sitting flush at the top.
+	object-fit: none renders each snapshot at its natural size anchored
+	top-left instead — deliberately with no explicit width/height alongside
+	it: old/new don't reliably fill the group's box the way the group itself
+	does (tried forcing width/height: 100%, in px and in %, and Chrome simply
+	stopped painting the snapshot at all). So old's own box stays sized to
+	its own natural (possibly shorter) height, which is exactly why the
+	clip-path below is in px against --wipe-height rather than a % against
+	old's own, possibly-smaller, 100%.
+*/
+::view-transition-old(page-content),
+::view-transition-new(page-content) {
+	object-fit: none;
+	object-position: 0 0;
+}
+
+/*
+	The wipe itself: erases the old page from the top down, in px rather
+	than % — old's own box isn't reliably --wipe-height tall (see above), so
+	a % inset here would clip old to a smaller/larger distance than the line
+	below actually travels, drifting apart again on a short<->long nav.
+	--wipe-progress is a plain 0-1 number written once per animation frame
+	(+layout.svelte) — both this and the line's transform below read the
+	same value against the same --wipe-height in the same style recalc, so
+	whatever frame actually paints always shows them in agreement, even if
+	that frame is late.
+*/
+::view-transition-old(page-content) {
+	clip-path: inset(calc(var(--wipe-progress, 0) * var(--wipe-height, 0px)) 0 0 0);
+}
+
+::view-transition-group(wipe-line) {
+	/* stays on top of the content it's sweeping across */
+	z-index: 3;
+	/*
+		Since the line never visually changes between old/new capture (it's
+		static), the browser has no real before/after geometry to compute for
+		it and otherwise defaults its box to (0,0)/full-width — set explicitly
+		from `mainEl`'s real on-screen rect (+layout.svelte's onNavigate) so it
+		starts exactly where the line sits at rest instead of the viewport
+		corner.
+	*/
+	left: var(--wipe-left, 0);
+	top: var(--wipe-top, 0);
+	width: var(--wipe-width, 100%);
+	height: 1px;
+	/* same --wipe-progress driving the clip-path above, scaled to the same
+	   pixel distance the clip is now covering (percentage doesn't apply
+	   here — this box is always 1px tall, not --wipe-height tall) */
+	transform: translateY(calc(var(--wipe-progress, 0) * var(--wipe-height, 0)));
+}
+
+/*
+	Footer, and the grid-line divider directly above it, get their own named
+	groups (site-footer / footer-divider — the divider's name is passed in as
+	a class in +layout.svelte) so both are excluded from the page-content wipe
+	and instead glide as a pair via the browser's default position-morph when
+	`main`'s height differs between routes. Left on the default animation
+	(not `animation: none`) deliberately — see the note above main's groups.
+	Only the duration is overridden here, to slow it down to roughly match the
+	wipe's own pace instead of the browser's default ~0.25s.
+*/
+::view-transition-group(site-footer),
+::view-transition-group(footer-divider) {
+	animation-duration: 900ms;
+}
+
 h1,
 h2,
 h3,
@@ -306,7 +448,11 @@ h3,
 */
 .control-panel {
 	border-radius: 0;
-	border: 1px solid var(--panel-border);
-	background-color: color-mix(in srgb, var(--panel-tint) 72%, transparent);
-	backdrop-filter: blur(14px) saturate(1.4);
+	/* plain --border, same as the layout's grid lines — every panel reads one
+	   consistent border colour instead of its own tinted variant */
+	border: 1px solid var(--border);
+	/* no backdrop-filter: iOS Safari drops/flickers backdrop-filter on elements
+	   composited above a document.startViewTransition snapshot (theme-switcher's
+	   wipe), so the panel relies on a more opaque tint instead of blur */
+	background-color: color-mix(in srgb, var(--panel-tint) 92%, transparent);
 }
