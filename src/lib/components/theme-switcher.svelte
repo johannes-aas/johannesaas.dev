@@ -1,24 +1,28 @@
 <script>
-	import { onMount } from 'svelte'
-	import { scale } from 'svelte/transition'
+	import { onMount, flushSync } from 'svelte'
+	import { fade } from 'svelte/transition'
 	import { openPanelCount } from '$lib/stores/panelState'
 	import Button from '$lib/components/button.svelte'
 	import Sun from '@lucide/svelte/icons/sun'
 	import Moon from '@lucide/svelte/icons/moon'
+	import X from '@lucide/svelte/icons/x'
+	import Check from '@lucide/svelte/icons/check'
 
-	/* ordered lightest to darkest — see the spectrum in globals.css.
-     `accent` mirrors each theme's --accent value there, so a swatch can preview
-     it on hover without taking on that theme's full set of custom properties
-     (which would also repaint its border/etc the rest of the time). */
+	/* ordered lightest to darkest — colours themselves live in globals.css as
+     --theme-N-swatch (read directly per-button below via var(--{id}-swatch)),
+     so a button can show any theme's preview colour without applying that
+     theme's full class (which would also repaint its own border/etc the rest
+     of the time). The selected swatch's checkmark uses the live var(--accent)
+     instead, since the selected theme is always the one currently applied. */
 	const themes = [
-		{ id: 'theme-1', name: 'Paper', accent: 'rgb(74, 142, 142)' },
-		{ id: 'theme-2', name: 'Warm Sand', accent: 'rgb(198, 102, 64)' },
-		{ id: 'theme-3', name: 'Sea Glass', accent: 'rgb(20, 142, 110)' },
-		{ id: 'theme-4', name: 'Overcast', accent: 'rgb(38, 96, 196)' },
-		{ id: 'theme-5', name: 'Plum Dusk', accent: 'rgb(184, 142, 240)' },
-		{ id: 'theme-6', name: 'Deep Forest', accent: 'rgb(72, 194, 126)' },
-		{ id: 'theme-7', name: 'Midnight', accent: 'rgb(96, 148, 244)' },
-		{ id: 'theme-8', name: 'Void', accent: 'rgb(140, 152, 216)' }
+		{ id: 'theme-1', name: 'Paper' },
+		{ id: 'theme-2', name: 'Warm Sand' },
+		{ id: 'theme-3', name: 'Sea Glass' },
+		{ id: 'theme-4', name: 'Overcast' },
+		{ id: 'theme-5', name: 'Plum Dusk' },
+		{ id: 'theme-6', name: 'Deep Forest' },
+		{ id: 'theme-7', name: 'Midnight' },
+		{ id: 'theme-8', name: 'Void' }
 	]
 
 	const ids = themes.map((t) => t.id)
@@ -32,13 +36,34 @@
 	let toggleEl = $state(null)
 	let buttonEls = $state(Array(themes.length).fill(null))
 	let transitionTimer
+	let jumpTimer
 	/* true for the duration of the reveal/cross-fade animation — swatches are
      inert while it plays so a second pick can't stack a new wipe on top of
      one still running */
 	let transitioning = $state(false)
-	/* viewport width:height, mirrored onto each swatch button so it reads as a
-     shrunk copy of the screen itself, same as the reveal animation's shape */
-	let screenAspect = $state(0.5)
+	/* plain (non-reactive) re-entry guard — set synchronously the instant a
+	   swatch is clicked, before any $state write. themeIndex/transitioning
+	   themselves are only assigned once inside the view transition's update
+	   callback (see revealTheme/crossFadeTheme) so the DOM never shows the new
+	   selection until it's part of the transition's own snapshot; this guard
+	   exists to block a second click during the window before that happens. */
+	let locked = false
+	/* true only for the brief window right after a real wipe/reveal cycle ends,
+     so the per-swatch jump plays on a theme switch but not when the panel is
+     merely opened (which also freshly inserts these buttons into the DOM) */
+	let justRevealed = $state(false)
+
+	/* the swatch stagger/jump both key off this, longest at the last swatch —
+     kept in one place so the reveal timer below can't drift out of sync with it */
+	const revealDuration = (i) => 400 + i * 40
+
+	function triggerJump() {
+		justRevealed = true
+		clearTimeout(jumpTimer)
+		jumpTimer = setTimeout(() => {
+			justRevealed = false
+		}, revealDuration(last))
+	}
 
 	onMount(() => {
 		const saved = localStorage.getItem('theme')
@@ -47,16 +72,8 @@
 		} else {
 			themeIndex = window.matchMedia('(prefers-color-scheme: dark)').matches ? last : 0
 		}
-		applyTheme(false)
-
-		updateScreenAspect()
-		window.addEventListener('resize', updateScreenAspect)
-		return () => window.removeEventListener('resize', updateScreenAspect)
+		applyTheme(themeIndex, false)
 	})
-
-	function updateScreenAspect() {
-		screenAspect = window.innerWidth / window.innerHeight
-	}
 
 	function swapTheme() {
 		const html = document.documentElement
@@ -66,14 +83,18 @@
 	}
 
 	/* the property-by-property cross-fade — the fallback path */
-	function crossFadeTheme() {
+	function crossFadeTheme(i) {
 		const html = document.documentElement
 		html.classList.add('theme-transition')
 		clearTimeout(transitionTimer)
 		transitionTimer = setTimeout(() => {
 			html.classList.remove('theme-transition')
 			transitioning = false
+			locked = false
+			triggerJump()
 		}, 1800)
+		transitioning = true
+		themeIndex = i
 		swapTheme()
 	}
 
@@ -121,7 +142,7 @@
     own size rather than a single point. The View Transition API snapshots the
     page, so this needs the plain cross-fade wherever startViewTransition is missing.
   */
-	function revealTheme(originRect) {
+	function revealTheme(i, originRect) {
 		const html = document.documentElement
 		const [from, to] = buttonClipPaths(originRect, window.innerWidth, window.innerHeight)
 
@@ -131,42 +152,66 @@
 		html.classList.add('theme-reveal')
 
 		let anim
-		const transition = document.startViewTransition(() => swapTheme())
-		transition.ready
-			.then(() => {
-				anim = html.animate(
-					{ clipPath: [from, to] },
-					{
-						duration: 600,
-						easing: 'ease-in-out',
-						fill: 'forwards',
-						pseudoElement: '::view-transition-new(root)'
-					}
-				)
+		/* themeIndex/transitioning are assigned in here, not before this call —
+       the browser flushes the resulting DOM update (checkmark move, swatch
+       wipe) as part of this same callback before it captures the "new" state
+       snapshot, so that update can never paint on the live page a frame
+       ahead of the transition covering it */
+		const transition = document.startViewTransition(() => {
+			flushSync(() => {
+				transitioning = true
+				themeIndex = i
 			})
-			.catch(() => {})
-		transition.finished.finally(() => {
-			anim?.cancel()
-			html.classList.remove('theme-reveal')
-			html.style.removeProperty('--theme-reveal-clip-from')
-			transitioning = false
+			swapTheme()
 		})
+		transition.ready
+			.then(
+				() =>
+					(anim = html.animate(
+						{ clipPath: [from, to] },
+						{
+							duration: 1000,
+							easing: 'ease-in-out',
+							fill: 'forwards',
+							pseudoElement: '::view-transition-new(root)'
+						}
+					)).finished
+			)
+			.catch(() => {})
+			/* cleanup waits on our own clip-path animation finishing, not on
+		   transition.finished — Safari resolves the native promise as soon as
+		   `ready` settles since ::view-transition-new(root)'s own animation is
+		   disabled (see globals.css), well before this 600ms wipe is actually
+		   done. Hanging cleanup off that native promise there un-hides the
+		   swatches while they're still covered by the in-progress wipe, so
+		   they're already fully visible the instant it uncovers them — the
+		   flash this replaces. */
+			.finally(() => {
+				anim?.cancel()
+				html.classList.remove('theme-reveal')
+				html.style.removeProperty('--theme-reveal-clip-from')
+				transitioning = false
+				locked = false
+				triggerJump()
+			})
 	}
 
-	function applyTheme(animate = true, originRect = null) {
-		if (!animate) return swapTheme()
+	function applyTheme(i, animate = true, originRect = null) {
+		if (!animate) {
+			themeIndex = i
+			return swapTheme()
+		}
 
 		const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 		if (reduced || !document.startViewTransition) {
-			crossFadeTheme()
+			crossFadeTheme(i)
 			return
 		}
-		revealTheme(originRect ?? toggleEl.getBoundingClientRect())
+		revealTheme(i, originRect ?? toggleEl.getBoundingClientRect())
 	}
 
-	function startTransition(originRect) {
-		transitioning = true
-		applyTheme(true, originRect)
+	function startTransition(i, originRect) {
+		applyTheme(i, true, originRect)
 	}
 
 	/*
@@ -182,10 +227,10 @@
 	}
 
 	function setTheme(i) {
-		if (transitioning || i === themeIndex) return
-		themeIndex = i
-		localStorage.setItem('theme', ids[themeIndex])
-		startTransition(buttonEls[i]?.getBoundingClientRect())
+		if (locked || i === themeIndex) return
+		locked = true
+		localStorage.setItem('theme', ids[i])
+		startTransition(i, buttonEls[i]?.getBoundingClientRect())
 	}
 
 	function setOpen(value) {
@@ -249,10 +294,17 @@
 
 <svelte:window onpointerdown={onWindowPointerDown} onkeydown={onWindowKeyDown} />
 
-<div class="relative flex items-center justify-center" bind:this={container}>
+<div class="flex items-center justify-center" bind:this={container}>
 	<Button
 		class={[
-			'grid h-11 w-11 place-items-center rounded-full text-muted transition-[color,background-color,transform] duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)] hover:text-base-fg active:scale-[0.94]',
+			/* fixed to match header.svelte nav's own rendered height (py-3 + h-8
+			   logo = 56px; sm:py-4 + sm:h-10 logo = 72px) rather than deriving it
+			   from aspect-ratio + flex-stretch — that combination sizes this
+			   button's width from its pre-stretch (unstretched, content-sized)
+			   height during the row's initial layout pass, then only stretches
+			   the height afterwards, so the button renders wider than the space
+			   the row actually reserved for it and spills past the header's edge */
+			'grid h-14 w-14 flex-none place-items-center border-l border-border text-muted transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)] hover:text-base-fg sm:h-[4.5rem] sm:w-[4.5rem]',
 			open && 'bg-[color-mix(in_srgb,var(--muted)_14%,transparent)] text-base-fg'
 		]}
 		bind:ref={toggleEl}
@@ -261,28 +313,40 @@
 		aria-expanded={open}
 		title="Colour theme: {themes[themeIndex].name}"
 	>
-		{#if themeIndex >= firstDark}
-			<Moon class="h-6 w-6 stroke-[1.75]" aria-hidden="true" />
-		{:else}
-			<Sun class="h-6 w-6 stroke-[1.75]" aria-hidden="true" />
-		{/if}
+		<span class="relative grid h-6 w-6 place-items-center sm:h-7 sm:w-7">
+			<span
+				class={[
+					'absolute inset-0 grid place-items-center transition-all duration-200 ease-out',
+					open ? 'scale-75 opacity-0' : 'scale-100 opacity-100'
+				]}
+			>
+				{#if themeIndex >= firstDark}
+					<Moon class="h-6 w-6 stroke-[1.75] sm:h-7 sm:w-7" aria-hidden="true" />
+				{:else}
+					<Sun class="h-6 w-6 stroke-[1.75] sm:h-7 sm:w-7" aria-hidden="true" />
+				{/if}
+			</span>
+			<span
+				class={[
+					'absolute inset-0 grid place-items-center transition-all duration-200 ease-out',
+					open ? 'scale-100 opacity-100' : 'scale-75 opacity-0'
+				]}
+			>
+				<X class="h-6 w-6 stroke-[1.75] sm:h-7 sm:w-7" aria-hidden="true" />
+			</span>
+		</span>
 	</Button>
 
 	{#if open}
-		<div
-			class="panel-wrap fixed top-24 left-1/2 z-50 w-[calc(100vw-1.5rem)] max-w-[58rem] [transform:translateX(-50%)]"
-		>
+		<div class="absolute -inset-x-px top-full z-50">
 			<div
-				class="control-panel flex w-full flex-row items-center gap-2 px-2 py-3 sm:gap-4 sm:px-6 sm:py-5 lg:gap-6 lg:px-9 lg:py-7"
-				transition:scale={{ duration: 160, start: 0.9, opacity: 0 }}
+				class="control-panel flex w-full flex-row items-center gap-2 px-4 py-4 sm:gap-3 sm:px-6 sm:py-4"
+				transition:fade={{ duration: 160 }}
 			>
-				<Sun
-					class="h-5 w-5 flex-none stroke-muted stroke-[1.5] opacity-75 sm:h-7 sm:w-7 lg:h-9 lg:w-9"
-					aria-hidden="true"
-				/>
+				<Sun class="hidden h-4 w-4 flex-none stroke-base-fg stroke-[1.5] sm:block sm:h-5 sm:w-5" aria-hidden="true" />
 
 				<div
-					class="grid flex-1 grid-cols-8 items-center gap-1 sm:gap-2 lg:gap-3"
+					class="flex flex-1 items-center gap-1 sm:gap-2"
 					role="radiogroup"
 					aria-label="Colour theme"
 				>
@@ -296,22 +360,25 @@
 							tabindex={i === themeIndex ? 0 : -1}
 							aria-disabled={transitioning}
 							class={[
-								'theme-swatch block w-full outline-none',
+								'theme-swatch relative h-16 flex-1 border border-border outline-none motion-reduce:transition-none motion-reduce:animate-none sm:h-8',
 								i === themeIndex && 'selected',
-								transitioning && i !== themeIndex && 'wiping'
+								i !== themeIndex && 'hover:brightness-[1.15]',
+								transitioning && i !== themeIndex && 'opacity-0 duration-150 delay-0',
+								justRevealed && i !== themeIndex && 'jump'
 							]}
-							style="aspect-ratio: {screenAspect}; --swatch-accent: {t.accent};"
+							style="--swatch-color: var(--{t.id}-swatch); --stagger-delay: {i * 40}ms;"
 							bind:ref={buttonEls[i]}
 							onclick={() => setTheme(i)}
 							onkeydown={(event) => onButtonKeyDown(event, i)}
-						></Button>
+						>
+							{#if i === themeIndex}
+								<Check class="h-3.5 w-3.5 stroke-[2.5] text-accent" aria-hidden="true" />
+							{/if}
+						</Button>
 					{/each}
 				</div>
 
-				<Moon
-					class="h-5 w-5 flex-none stroke-muted stroke-[1.5] opacity-75 sm:h-7 sm:w-7 lg:h-9 lg:w-9"
-					aria-hidden="true"
-				/>
+				<Moon class="hidden h-4 w-4 flex-none stroke-base-fg stroke-[1.5] sm:block sm:h-5 sm:w-5" aria-hidden="true" />
 			</div>
 		</div>
 	{/if}
@@ -321,60 +388,45 @@
 	/* :global — the swatch is now the Button component's own root element
 	   rather than one Svelte scopes CSS onto directly here */
 	:global(.theme-swatch) {
-		/* the grid divides the row's full width evenly across the 8 buttons at
-		   every screen size, with height derived from that width via
-		   aspect-ratio (set inline, per-button) so the shape never distorts. */
-		background-color: transparent;
-		border: 1px solid var(--muted);
-		/* own compositing layer, so its background-color transition doesn't force
-		   the parent's backdrop-filter blur to repaint every hover frame — that
-		   repaint is what reads as flicker on hover */
-		will-change: background-color;
-		/* fade-in duration for when .wiping is removed — deliberately slower than
-		   the wipe-out below, so the other swatches settle back in gently once
-		   the reveal has finished rather than snapping back with it */
+		/* --swatch-color (set inline, per-button) mirrors that theme's --swatch
+		   value from globals.css, so every button shows its own place on the
+		   light-to-dark spectrum at all times, not just on hover */
+		background-color: var(--swatch-color);
+		/* fade-in duration for when opacity-0/duration-150/delay-0 (applied via the
+		   class array while transitioning) are removed — deliberately slower than
+		   the wipe-out, so the other swatches settle back in gently once the
+		   reveal has finished rather than snapping back with it.
+		   --stagger-delay (set inline, per-button, proportional to its left-to-right
+		   index) staggers that fade-in so the buttons reappear in order left to
+		   right regardless of which one was picked; the class array zeroes it via
+		   delay-0 while wiping so the wipe-out itself still happens for every
+		   button at once */
 		transition:
-			opacity 450ms ease,
-			transform 450ms ease,
-			background-color 150ms,
-			border-color 150ms;
+			opacity 450ms ease var(--stagger-delay, 0ms),
+			filter 150ms ease;
 	}
 
-	/* --swatch-accent (set inline, per-button) mirrors that swatch's own theme
-	   accent, so hovering previews it regardless of the page's current theme */
-	:global(.theme-swatch:hover:not(.selected)) {
-		background-color: var(--swatch-accent);
+	/* .jump is only applied by JS for the brief window right after a real
+	   wipe/reveal cycle — same --stagger-delay as the opacity fade above gives
+	   every swatch a tiny hop as it reappears, left to right. Driven by a class
+	   rather than a :not(.wiping) selector match so it doesn't also fire when
+	   the panel is simply opened (which freshly inserts these buttons too) */
+	:global(.theme-swatch.jump) {
+		animation: swatch-jump 400ms var(--stagger-delay, 0ms) ease-out both;
 	}
 
-	:global(.theme-swatch.selected) {
-		border-color: var(--accent);
-		background-color: var(--accent);
-	}
-
-	/* the other swatches wipe away fast while the picked one's reveal plays,
-	   then fade back in slowly via the base transition duration above once
-	   .wiping is removed */
-	:global(.theme-swatch.wiping) {
-		opacity: 0;
-		transform: scale(0.8);
-		transition-duration: 150ms;
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		:global(.theme-swatch) {
-			transition: none;
+	@keyframes swatch-jump {
+		0% {
+			transform: translateY(0);
 		}
-	}
-
-	/* Above lg, centre the panel on the hero logo's own vertical midpoint rather
-	   than the viewport's — mirrors HeroSection's landscape sizing (a `5rem`
-	   header offset plus a `clamp(400px, 100svh - 5rem, 700px)` logo height),
-	   so the two move in step as the window is resized instead of drifting
-	   apart once the logo's clamp hits a bound the viewport-centered value ignores. */
-	@media (min-width: 1024px) {
-		.panel-wrap {
-			top: calc(2rem + clamp(400px, calc(100svh - 5rem), 700px) / 2);
-			transform: translate(-50%, -50%);
+		35% {
+			transform: translateY(-6px);
+		}
+		65% {
+			transform: translateY(2px);
+		}
+		100% {
+			transform: translateY(0);
 		}
 	}
 </style>
