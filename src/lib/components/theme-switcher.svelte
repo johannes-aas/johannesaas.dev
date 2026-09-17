@@ -3,6 +3,7 @@
 	import { fade } from 'svelte/transition'
 	import { openPanelCount } from '$lib/stores/panelState'
 	import Button from '$lib/components/button.svelte'
+	import { DialogRoot, DialogOverlay, DialogContent, DialogTitle } from '$lib/components/dialog'
 	import Sun from '@lucide/svelte/icons/sun'
 	import Moon from '@lucide/svelte/icons/moon'
 	import X from '@lucide/svelte/icons/x'
@@ -32,9 +33,17 @@
 
 	let themeIndex = $state(0)
 	let open = $state(false)
+	/* which panel implementation is mounted — kept as JS state (not just a
+	   `sm:` CSS breakpoint on both) so the mobile dialog's bits-ui layers
+	   (focus trap, dismiss-on-outside-click) never mount at desktop widths;
+	   those layers act on document-level listeners regardless of CSS
+	   visibility, so a merely-hidden-by-CSS dialog was still swallowing
+	   pointer events meant for the sm+ panel's swatch buttons */
+	let isMobile = $state(false)
 	let container
 	let toggleEl = $state(null)
 	let buttonEls = $state(Array(themes.length).fill(null))
+	let mobileButtonEls = $state(Array(themes.length).fill(null))
 	let transitionTimer
 	let jumpTimer
 	/* true for the duration of the reveal/cross-fade animation — swatches are
@@ -73,6 +82,12 @@
 			themeIndex = window.matchMedia('(prefers-color-scheme: dark)').matches ? last : 0
 		}
 		applyTheme(themeIndex, false)
+
+		const mql = window.matchMedia('(min-width: 640px)')
+		isMobile = !mql.matches
+		const onMqlChange = () => (isMobile = !mql.matches)
+		mql.addEventListener('change', onMqlChange)
+		return () => mql.removeEventListener('change', onMqlChange)
 	})
 
 	function swapTheme() {
@@ -233,6 +248,14 @@
 		startTransition(i, buttonEls[i]?.getBoundingClientRect())
 	}
 
+	/* small-screen panel skips the view-transition wipe / cross-fade entirely —
+	   just applies the theme immediately, no wipe/reveal/jump animation */
+	function setThemeImmediate(i) {
+		if (i === themeIndex) return
+		localStorage.setItem('theme', ids[i])
+		applyTheme(i, false)
+	}
+
 	function setOpen(value) {
 		if (value === open) return
 		open = value
@@ -243,13 +266,14 @@
 		setOpen(!open)
 		if (open) {
 			await new Promise((r) => requestAnimationFrame(r))
-			buttonEls[themeIndex]?.focus()
+			const els = isMobile ? mobileButtonEls : buttonEls
+			els[themeIndex]?.focus()
 		}
 	}
 
 	/* roving tabindex within the radiogroup — arrow keys both move focus and
      pick the theme, matching the ARIA APG radiogroup pattern */
-	function onButtonKeyDown(event, i) {
+	function onButtonKeyDown(event, i, setFn, els) {
 		let next = i
 		switch (event.key) {
 			case 'ArrowUp':
@@ -271,8 +295,8 @@
 		}
 		event.preventDefault()
 		next = Math.max(0, Math.min(last, next))
-		setTheme(next)
-		buttonEls[next]?.focus()
+		setFn(next)
+		els[next]?.focus()
 	}
 
 	function onWindowPointerDown(event) {
@@ -338,19 +362,89 @@
 	</Button>
 
 	{#if open}
-		<div class="absolute -inset-x-px top-full z-50">
+		<!-- small screens: floating vertical dialog, centered on screen, instant
+		     theme switch with no wipe/reveal animation. Both this and the sm+
+		     panel below stay mounted together and are toggled purely by the
+		     `sm:hidden`/`hidden sm:block` CSS below — but bits-ui's focus trap
+		     and dismiss-on-outside-click layers act via document-level
+		     listeners regardless of CSS visibility, so a CSS-hidden dialog was
+		     still swallowing pointer events meant for the sm+ panel's swatch
+		     buttons. Passing `open && isMobile` (rather than just `open`) into
+		     DialogRoot keeps those layers genuinely inert at desktop widths
+		     without touching which markup is mounted. -->
+		<div class="sm:hidden" transition:fade={{ duration: 160 }}>
+			<DialogRoot open={open && isMobile} onOpenChange={setOpen}>
+				<DialogOverlay />
+				<DialogContent
+					class="fixed top-1/2 left-1/2 flex w-40 -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-none border border-border bg-surface-bg/95 shadow-lg"
+				>
+					<DialogTitle class="sr-only">Colour theme</DialogTitle>
+
+					<Button
+						type="button"
+						class="flex w-full items-center justify-center border-b border-border py-4 text-base-fg outline-none"
+						aria-label="Close"
+						onclick={() => setOpen(false)}
+					>
+						<X class="h-6 w-6 stroke-[1.5]" aria-hidden="true" />
+					</Button>
+
+					<div class="flex w-full flex-col items-center gap-2 px-3 py-4">
+						<Sun class="h-6 w-6 flex-none stroke-base-fg stroke-[1.5]" aria-hidden="true" />
+
+						<div
+							class="flex w-full flex-col items-center gap-1"
+							role="radiogroup"
+							aria-label="Colour theme"
+						>
+							{#each themes as t, i (t.id)}
+								<Button
+									type="button"
+									role="radio"
+									aria-checked={i === themeIndex}
+									aria-label={t.name}
+									title={t.name}
+									tabindex={i === themeIndex ? 0 : -1}
+									class={[
+										'relative h-9 w-full flex-none border border-border outline-none',
+										i === themeIndex && 'selected'
+									]}
+									style="background-color: var(--{t.id}-swatch);"
+									bind:ref={mobileButtonEls[i]}
+									onclick={() => setThemeImmediate(i)}
+									onkeydown={(event) =>
+										onButtonKeyDown(event, i, setThemeImmediate, mobileButtonEls)}
+								>
+									{#if i === themeIndex}
+										<Check class="h-3.5 w-3.5 stroke-[2.5] text-base-fg" aria-hidden="true" />
+									{/if}
+								</Button>
+							{/each}
+						</div>
+
+						<Moon class="h-6 w-6 flex-none stroke-base-fg stroke-[1.5]" aria-hidden="true" />
+					</div>
+				</DialogContent>
+			</DialogRoot>
+		</div>
+
+		<!-- sm and up: animated wipe/reveal panel -->
+		<div class="absolute -inset-x-px top-full z-50 hidden sm:block">
 			<div
 				class="flex w-full flex-row items-center gap-2 rounded-none border border-border bg-surface-bg/95 px-4 py-4 sm:gap-3 sm:px-6 sm:py-4"
 				transition:fade={{ duration: 160 }}
 			>
-				<Sun class="hidden h-4 w-4 flex-none stroke-base-fg stroke-[1.5] sm:block sm:h-5 sm:w-5" aria-hidden="true" />
+				<Sun
+					class="hidden h-4 w-4 flex-none stroke-base-fg stroke-[1.5] sm:block sm:h-5 sm:w-5"
+					aria-hidden="true"
+				/>
 
 				<div
 					class="flex flex-1 items-center gap-1 sm:gap-2"
 					role="radiogroup"
 					aria-label="Colour theme"
 				>
-					{#each themes as t, i}
+					{#each themes as t, i (t.id)}
 						<Button
 							type="button"
 							role="radio"
@@ -360,25 +454,28 @@
 							tabindex={i === themeIndex ? 0 : -1}
 							aria-disabled={transitioning}
 							class={[
-								'theme-swatch relative h-16 flex-1 border border-border outline-none motion-reduce:transition-none motion-reduce:animate-none sm:h-8',
+								'theme-swatch relative h-16 flex-1 border border-border outline-none motion-reduce:animate-none motion-reduce:transition-none sm:h-8',
 								i === themeIndex && 'selected',
 								i !== themeIndex && 'hover:brightness-[1.15]',
-								transitioning && i !== themeIndex && 'opacity-0 duration-150 delay-0',
+								transitioning && i !== themeIndex && 'opacity-0 delay-0 duration-150',
 								justRevealed && i !== themeIndex && 'jump'
 							]}
 							style="--swatch-color: var(--{t.id}-swatch); --stagger-delay: {i * 40}ms;"
 							bind:ref={buttonEls[i]}
 							onclick={() => setTheme(i)}
-							onkeydown={(event) => onButtonKeyDown(event, i)}
+							onkeydown={(event) => onButtonKeyDown(event, i, setTheme, buttonEls)}
 						>
 							{#if i === themeIndex}
-								<Check class="h-3.5 w-3.5 stroke-[2.5] text-accent" aria-hidden="true" />
+								<Check class="h-3.5 w-3.5 stroke-[2.5] text-base-fg" aria-hidden="true" />
 							{/if}
 						</Button>
 					{/each}
 				</div>
 
-				<Moon class="hidden h-4 w-4 flex-none stroke-base-fg stroke-[1.5] sm:block sm:h-5 sm:w-5" aria-hidden="true" />
+				<Moon
+					class="hidden h-4 w-4 flex-none stroke-base-fg stroke-[1.5] sm:block sm:h-5 sm:w-5"
+					aria-hidden="true"
+				/>
 			</div>
 		</div>
 	{/if}
