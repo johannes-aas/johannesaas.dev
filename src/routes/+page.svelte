@@ -1,5 +1,5 @@
 <script>
-	import HeroSection from '$lib/components/hero-section.svelte'
+	import HeroSection from '$lib/components/hero-section/hero-section.svelte'
 	import SocialLinks from '$lib/components/social-links.svelte'
 	import GridLine from '$lib/components/grid-line.svelte'
 </script>
