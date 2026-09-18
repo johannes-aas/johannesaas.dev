@@ -1,6 +1,6 @@
 <script>
 	import Logo from './logo.svelte'
-	import ControlsNav from './controls-nav.svelte'
+	import ThemeSwitcher from './theme-switcher.svelte'
 </script>
 
 <header class="relative z-30 flex items-center">
@@ -16,5 +16,7 @@
 			<a href="/blog" class="text-muted transition-colors hover:text-base-fg">Blog</a>
 		</div>
 	</nav>
-	<ControlsNav />
+	<div class="flex items-center self-stretch">
+		<ThemeSwitcher />
+	</div>
 </header>

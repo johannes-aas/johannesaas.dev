@@ -308,7 +308,7 @@
 <div class="flex items-center justify-center self-stretch" bind:this={container}>
 	<Button
 		class={[
-			/* height comes from self-stretch cascading up through controls-nav.svelte
+			/* height comes from self-stretch cascading up through header.svelte
 			   and this component's own wrapper div to the header row's own height —
 			   width stays independently fixed (not aspect-ratio-derived), so this
 			   doesn't hit the old aspect-ratio+stretch bug where the pre-stretch
