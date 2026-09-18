@@ -72,27 +72,7 @@
 	let pointerActive = false
 	let timers = []
 
-	// the settings panel only makes sense once there's a logo to play with, and
-	// only while the cursor is actually near its trigger button — margin in px
-	// added around the (44px) trigger's own bounding box
-	const SETTINGS_PROXIMITY_MARGIN = 300
-	// once triggered, the button stays put for a beat after the cursor moves
-	// away instead of vanishing the instant it drifts out of range
-	const SETTINGS_LINGER_MS = 1500
-	let showSettings = $state(false)
-	let settingsHideTimer = null
-	// once opened, stays mounted regardless of proximity — so dragging a
-	// slider doesn't yank the panel away from under the cursor
 	let settingsOpen = $state(false)
-	// edge-triggered on showSettings going true, not settingsOpen — so the
-	// attention wiggle fires once per proximity approach and doesn't replay
-	// just because the panel was opened and closed again while still nearby
-	let shouldWiggle = $state(false)
-	// once the panel is actually opened, the wiggle has done its job — clear
-	// it so closing the panel again doesn't re-add the class and replay it
-	$effect(() => {
-		if (settingsOpen) shouldWiggle = false
-	})
 
 	let innerWidth = 1000
 	let innerHeight = 1000
@@ -102,7 +82,6 @@
 	let isTouchDevice = $state(false)
 	let heroEl
 	let svgEl
-	let settingsTriggerEl
 	let scrollProgress = 0
 	let cursorTimers = []
 
@@ -139,36 +118,6 @@
 		const rect = svgEl.getBoundingClientRect()
 		logoCenterX = rect.left + rect.width / 2
 		logoCenterY = rect.top + rect.height / 2
-	}
-
-	const updateProximity = (x, y) => {
-		if (!settingsTriggerEl) {
-			showSettings = false
-			shouldWiggle = false
-			return
-		}
-		const rect = settingsTriggerEl.getBoundingClientRect()
-		const margin = SETTINGS_PROXIMITY_MARGIN
-		const near =
-			x >= rect.left - margin &&
-			x <= rect.right + margin &&
-			y >= rect.top - margin &&
-			y <= rect.bottom + margin
-
-		if (near) {
-			if (settingsHideTimer !== null) {
-				clearTimeout(settingsHideTimer)
-				settingsHideTimer = null
-			}
-			if (!showSettings) shouldWiggle = true
-			showSettings = true
-		} else if (showSettings && settingsHideTimer === null) {
-			settingsHideTimer = setTimeout(() => {
-				settingsHideTimer = null
-				showSettings = false
-				shouldWiggle = false
-			}, SETTINGS_LINGER_MS)
-		}
 	}
 
 	const updateTarget = () => {
@@ -257,9 +206,6 @@
 		if (scrollDriven || !introDone) return
 		const x = e.clientX
 		const y = e.clientY
-		// unlagged, unlike the layer follow below — showing/hiding the panel
-		// should track the cursor immediately, not trail behind it
-		updateProximity(x, y)
 		// queued rather than debounced, so each move lands its own delayed update
 		// and the stack trails the cursor by a steady beat instead of catching up in jumps
 		const id = setTimeout(() => {
@@ -286,9 +232,6 @@
 			// too, or the follow effect freezes until the next mousemove
 			updateTarget()
 			startAnimation()
-			// same reasoning: the logo (and its proximity zone) just moved under
-			// an unmoved cursor
-			updateProximity(mouseX, mouseY)
 			return
 		}
 		if (!heroEl) return
@@ -309,12 +252,6 @@
 	// they keep following the cursor anywhere else on the page
 	const handleDocumentLeave = () => {
 		pointerActive = false
-		if (settingsHideTimer !== null) {
-			clearTimeout(settingsHideTimer)
-			settingsHideTimer = null
-		}
-		showSettings = false
-		shouldWiggle = false
 		updateTarget()
 		startAnimation()
 	}
@@ -437,7 +374,6 @@
 			clearTimers()
 			cursorTimers.forEach(clearTimeout)
 			cursorTimers = []
-			if (settingsHideTimer !== null) clearTimeout(settingsHideTimer)
 			unsubscribeReplay()
 		}
 	})
@@ -472,7 +408,7 @@
 
 <section
 	bind:this={heroEl}
-	class="flex w-full flex-col items-center bg-[radial-gradient(circle_320px_at_50%_360px,color-mix(in_srgb,var(--accent)_14%,var(--base-bg)),var(--base-bg)_100%)] py-10 sm:pt-0 portrait:items-start"
+	class="relative flex w-full flex-col items-center bg-[radial-gradient(circle_320px_at_50%_360px,color-mix(in_srgb,var(--accent)_14%,var(--base-bg)),var(--base-bg)_100%)] py-10 sm:py-0 portrait:items-start"
 >
 	<div class="relative mx-auto">
 		<svg
@@ -516,51 +452,8 @@
 				</span>
 			{/each}
 		</h1>
-		<div
-			bind:this={settingsTriggerEl}
-			class={[
-				'absolute top-1/2 left-full z-20 ml-3 hidden -translate-y-1/2 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-reduce:transition-none md:block',
-				!(introDone && (showSettings || settingsOpen)) && 'pointer-events-none scale-75 opacity-0'
-			]}
-			inert={!(introDone && (showSettings || settingsOpen))}
-		>
-			<div class:settings-attention={shouldWiggle && !settingsOpen}>
-				<LogoSettings bind:open={settingsOpen} />
-			</div>
-		</div>
+	</div>
+	<div class="absolute top-1/2 right-[-1px] z-20 hidden -translate-y-1/2 md:block">
+		<LogoSettings bind:open={settingsOpen} />
 	</div>
 </section>
-
-<style>
-	/* draws the eye to the settings trigger right after it appears — a quick
-     one-shot wiggle, then it settles so it doesn't nag if you don't click. */
-	.settings-attention {
-		animation: settings-attention-wiggle 0.5s ease-in-out;
-		transform-origin: 50% 50%;
-	}
-
-	@keyframes settings-attention-wiggle {
-		0%,
-		100% {
-			transform: rotate(0deg);
-		}
-		20% {
-			transform: rotate(-12deg);
-		}
-		40% {
-			transform: rotate(10deg);
-		}
-		60% {
-			transform: rotate(-6deg);
-		}
-		80% {
-			transform: rotate(3deg);
-		}
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.settings-attention {
-			animation: none;
-		}
-	}
-</style>

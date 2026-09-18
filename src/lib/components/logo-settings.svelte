@@ -8,7 +8,7 @@
 	import Slider from '$lib/components/slider.svelte'
 	import { ToggleGroupRoot, ToggleGroupItem } from '$lib/components/toggle-group'
 	import Button from '$lib/components/button.svelte'
-	import WandSparkles from '@lucide/svelte/icons/wand-sparkles'
+	import Settings from '@lucide/svelte/icons/settings'
 	import RotateCcw from '@lucide/svelte/icons/rotate-ccw'
 	import Play from '@lucide/svelte/icons/play'
 	import Magnet from '@lucide/svelte/icons/magnet'
@@ -79,7 +79,7 @@
 	let { open = $bindable(false) } = $props()
 	let container
 
-	// Grows the panel rightward from the trigger's own left edge (horizontally),
+	// Grows the panel leftward from the trigger's own right edge (horizontally),
 	// clamped back on screen if that would overflow — the same "place it, then
 	// shift back if it would overflow" idea Floating UI's shift() middleware
 	// uses, computed directly against values we already have (panelHeight;
@@ -88,27 +88,31 @@
 	// CSS `transition` makes `getBoundingClientRect()` report the panel's
 	// *currently interpolating* size, not its target — so at the instant the
 	// panel starts opening, Floating UI would always measure it still at its
-	// closed 44×44, never the open size it's animating toward.
+	// closed size, never the open size it's animating toward.
 	//
 	// Vertically it always grows centered on the trigger, even if that runs it
 	// past the bottom of the screen or above the top of the current viewport
 	// (the user can just scroll up to see it) — the only thing it's clamped
 	// against is the actual top of the page (scroll position 0), since there's
 	// nothing above that to scroll to.
-	const PANEL_WIDTH = 304 // 18rem, in px — keep in sync with the open panel's w-72
+	const PANEL_WIDTH = 288 // 18rem, in px — keep in sync with the open panel's w-72
 	const EDGE_PADDING = 8
 
 	let panelX = $state(0)
 	let panelY = $state(0)
+	let panelWidth = $state(0)
 
 	function updatePosition() {
 		if (!open || !container) return
 		const rect = container.getBoundingClientRect()
 		const targetWidth = Math.min(PANEL_WIDTH, window.innerWidth - EDGE_PADDING * 2)
+		panelWidth = targetWidth
 
-		// ideal, pre-clamp position: left edge pinned to the trigger (grows
-		// rightward), vertically centered on the trigger (grows both ways)
-		const idealLeft = rect.left
+		// ideal, pre-clamp position: right edge pinned to the trigger (grows
+		// leftward), vertically centered on the trigger (grows both ways).
+		// +1 so the panel's own right border lands exactly on the page's right
+		// border rather than a hairline short of it.
+		const idealLeft = rect.right - targetWidth + 1
 		const idealTop = rect.top + rect.height / 2 - panelHeight / 2
 
 		// clamp horizontally into the viewport, then convert back to
@@ -125,10 +129,13 @@
 		panelY = clampedTopInDocument - window.scrollY - rect.top
 	}
 
-	// the icon sits 0.5rem inside the panel's own top-left corner — same
-	// coordinate space as panelX/panelY, since both are absolute within container
+	// the icon sits 0.5rem inside the panel's own top-right corner — same
+	// coordinate space as panelX/panelY, since both are absolute within container.
+	// Anchored off the panel's actual (possibly clamped) right edge rather than
+	// the container's own bounds, so it tracks the panel exactly even when the
+	// clamp above has shifted the panel away from the trigger.
 	let iconOpenTop = $derived(panelY + 1)
-	let iconOpenLeft = $derived(panelX + 4)
+	let iconOpenLeft = $derived(panelX + panelWidth - 44 - 4)
 
 	function setValue(key, value) {
 		logoControls.update((s) => ({ ...s, [key]: value }))
@@ -203,17 +210,17 @@
 	/>
 {/snippet}
 
-<div class="relative h-11 w-11" bind:this={container}>
+<div class="relative h-14 w-14 sm:h-[4.5rem] sm:w-[4.5rem]" bind:this={container}>
 	<div
 		class={[
-			'absolute z-10 overflow-hidden rounded-sm border transition-[top,left,width,height,border-color,background-color] duration-300 ease-in-out',
+			'absolute z-10 overflow-hidden transition-[top,left,width,height,border-color,background-color] duration-300 ease-in-out',
 			open
-				? 'w-72 max-w-[calc(100vw-1.5rem)] border-border bg-[color-mix(in_srgb,var(--panel-tint)_72%,transparent)] backdrop-blur-[14px] backdrop-saturate-[1.4]'
-				: 'w-11 border-transparent bg-transparent hover:border-border hover:bg-[color-mix(in_srgb,var(--panel-tint)_72%,transparent)] hover:backdrop-blur-[14px] hover:backdrop-saturate-[1.4]'
+				? 'w-72 max-w-[calc(100vw-1.5rem)] border border-border bg-surface-bg'
+				: 'h-14 w-14 sm:h-[4.5rem] sm:w-[4.5rem]'
 		]}
-		style="top:{open ? panelY + 'px' : '0'};left:{open ? panelX + 'px' : '0'};height:{open
-			? panelHeight + 'px'
-			: '2.75rem'}"
+		style="top:{open ? panelY + 'px' : '0'};left:{open ? panelX + 'px' : '0'}{open
+			? ';height:' + panelHeight + 'px'
+			: ''}"
 	>
 		<div
 			class={[
@@ -224,10 +231,9 @@
 			inert={!open}
 			aria-hidden={!open}
 		>
-			<div class="flex h-11 items-center justify-between pl-12">
-				<span class="text-sm text-muted">Playground</span>
+			<div class="flex h-11 items-center justify-between pr-12">
 				<Button
-					class="h-full border-l border-border px-5 text-sm text-muted transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]"
+					class="h-full border-r border-border px-5 text-sm text-muted transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]"
 					onclick={reset}
 					aria-label="Reset to defaults"
 					title="Reset to defaults"
@@ -235,6 +241,7 @@
 					<RotateCcw class="h-3.5 w-3.5 stroke-2" aria-hidden="true" />
 					<span>Reset</span>
 				</Button>
+				<span class="text-sm text-muted">Playground</span>
 			</div>
 
 			<div class="h-px bg-border"></div>
@@ -290,10 +297,10 @@
 
 	<Button
 		class={[
-			'absolute z-20 rounded-sm border border-transparent text-muted transition-[top,left,width,height,color,border-color,background-color] duration-300 ease-in-out hover:text-base-fg',
+			'absolute z-20 text-muted transition-[top,left,width,height,color,border-color,background-color] duration-300 ease-in-out hover:text-base-fg',
 			open
 				? 'h-11 w-11'
-				: 'h-full w-full hover:border-border hover:bg-[color-mix(in_srgb,var(--panel-tint)_72%,transparent)] hover:backdrop-blur-[14px] hover:backdrop-saturate-[1.4]'
+				: 'h-full w-full border border-border hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]'
 		]}
 		style="top:{open ? iconOpenTop + 'px' : '0'};left:{open ? iconOpenLeft + 'px' : '0'}"
 		onclick={() => setOpen(!open)}
@@ -301,9 +308,9 @@
 		aria-expanded={open}
 		title="Playground"
 	>
-		<WandSparkles
+		<Settings
 			class={[
-				'h-7 w-7 flex-none stroke-[1.75] transition-transform duration-300 ease-in-out',
+				'h-6 w-6 flex-none stroke-[1.75] transition-transform duration-300 ease-in-out sm:h-7 sm:w-7',
 				open && 'scale-[0.7]'
 			]}
 			aria-hidden="true"

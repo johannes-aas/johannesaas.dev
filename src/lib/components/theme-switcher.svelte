@@ -367,7 +367,7 @@
 			<DialogRoot open={open && isMobile} onOpenChange={setOpen}>
 				<DialogOverlay />
 				<DialogContent
-					class="fixed top-1/2 left-1/2 flex w-40 -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-none border border-border bg-surface-bg/95 shadow-lg"
+					class="fixed top-1/2 left-1/2 flex w-40 -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-none border border-border bg-surface-bg shadow-lg"
 				>
 					<DialogTitle class="sr-only">Colour theme</DialogTitle>
 
@@ -424,7 +424,7 @@
 		<!-- sm and up: animated wipe/reveal panel -->
 		<div class="absolute -inset-x-px top-full z-50 hidden sm:block">
 			<div
-				class="flex w-full flex-row items-center gap-2 rounded-none border border-border bg-surface-bg/95 px-4 py-4 sm:gap-3 sm:px-6 sm:py-4"
+				class="flex w-full flex-row items-center gap-2 rounded-none border border-border bg-surface-bg px-4 py-4 sm:gap-3 sm:px-6 sm:py-4"
 				transition:fade={{ duration: 160 }}
 			>
 				<Sun

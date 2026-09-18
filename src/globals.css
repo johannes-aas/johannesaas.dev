@@ -20,7 +20,6 @@
 	--color-border: var(--border);
 	--color-accent: var(--accent);
 	--color-cursor: var(--cursor);
-	--color-panel-tint: var(--panel-tint);
 }
 
 /*
@@ -32,12 +31,6 @@
 	(rose → violet → blue → cyan → emerald → green), and the 3→4 step is the
 	biggest jump in the set since it's also where light-on-dark-text flips to
 	dark-on-light-text.
-
-	--panel-tint feeds the translucent panel look used by the logo settings
-	panels in logo-settings.svelte. It's defined per-theme here — rather than
-	computed once from --base-bg and overridden for dark themes wherever it's
-	used — so every consumer just reads one variable instead of duplicating the
-	light/dark branch itself.
 */
 
 :root {
@@ -50,7 +43,6 @@
 	--border: oklch(86.19% 0.0325 17);
 	--accent: oklch(59.15% 0.2321 17);
 	--cursor: oklch(66.68% 0.218 17);
-	--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
 }
 
 /*
@@ -147,7 +139,6 @@
 	--border: oklch(86.19% 0.0325 17);
 	--accent: oklch(59.15% 0.2321 17);
 	--cursor: oklch(66.68% 0.218 17);
-	--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
 }
 
 /* THEME 2: Wisteria — light violet-white, violet accent */
@@ -160,7 +151,6 @@
 	--border: oklch(84.13% 0.0561 296.63);
 	--accent: oklch(54.13% 0.2466 293.01);
 	--cursor: oklch(60.56% 0.2189 292.72);
-	--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
 }
 
 /* THEME 3: Skyline — dusty light blue, strong blue accent */
@@ -173,14 +163,13 @@
 	--border: oklch(79.07% 0.0385 258.37);
 	--accent: oklch(54.61% 0.2152 262.88);
 	--cursor: oklch(62.31% 0.1880 259.81);
-	--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
 }
 
 /* ---------- DARK ---------- */
 
-/* on dark themes the tint/border lighten instead of darken, so the panel
-   still reads as a raised surface against the dark backdrop — darkening
-   further would just vanish into it */
+/* on dark themes the border lightens instead of darkens, so surfaces still
+   read as raised against the dark backdrop — darkening further would just
+   vanish into it */
 
 /* THEME 4: Tidepool — dark cyan-slate, bright cyan accent */
 .theme-4 {
@@ -192,7 +181,6 @@
 	--border: oklch(38.47% 0.0535 221.78);
 	--accent: oklch(79.71% 0.1339 211.53);
 	--cursor: oklch(71.48% 0.1257 215.22);
-	--panel-tint: color-mix(in srgb, var(--base-bg) 82%, #fff);
 }
 
 /* THEME 5: Thicket — dark emerald, spring-green accent */
@@ -205,7 +193,6 @@
 	--border: oklch(31.85% 0.0455 172.57);
 	--accent: oklch(77.29% 0.1535 163.22);
 	--cursor: oklch(69.59% 0.1491 162.48);
-	--panel-tint: color-mix(in srgb, var(--base-bg) 82%, #fff);
 }
 
 /* THEME 6: Nocturne — near-black forest green, green accent */
@@ -218,7 +205,6 @@
 	--border: oklch(26.18% 0.0387 154.79);
 	--accent: oklch(80.03% 0.1821 151.71);
 	--cursor: oklch(72.27% 0.1920 149.58);
-	--panel-tint: color-mix(in srgb, var(--base-bg) 82%, #fff);
 }
 
 /*
