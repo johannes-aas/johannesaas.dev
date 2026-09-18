@@ -7,6 +7,7 @@
 	import Sun from '@lucide/svelte/icons/sun'
 	import Moon from '@lucide/svelte/icons/moon'
 	import X from '@lucide/svelte/icons/x'
+	import Palette from '@lucide/svelte/icons/palette'
 
 	/* ordered lightest to darkest — colours themselves live in globals.css as
      --theme-N-swatch (read directly per-button below via var(--{id}-swatch)),
@@ -16,8 +17,6 @@
      the same square fades faintly in on hover for unselected swatches. */
 	const ids = ['theme-1', 'theme-2', 'theme-3', 'theme-4', 'theme-5', 'theme-6']
 	const last = ids.length - 1
-	/* themes at this index and beyond are dark, so the button shows a moon */
-	const firstDark = 3
 
 	let themeIndex = $state(0)
 	let open = $state(false)
@@ -328,7 +327,7 @@
 		aria-expanded={open}
 	>
 		<span class="relative grid h-6 w-6 place-items-center sm:h-7 sm:w-7">
-			<!-- sun/moon -> X only crossfades at sm+ — the base scale-100/opacity-100
+			<!-- palette -> X only crossfades at sm+ — the base scale-100/opacity-100
 			     here always wins below that breakpoint since the sm: overrides
 			     below don't apply yet, so the trigger icon never changes on the
 			     small-screen panel (which has its own explicit close button) -->
@@ -338,11 +337,7 @@
 					open && 'sm:scale-75 sm:opacity-0'
 				]}
 			>
-				{#if themeIndex >= firstDark}
-					<Moon class="h-6 w-6 stroke-[1.75] sm:h-7 sm:w-7" aria-hidden="true" />
-				{:else}
-					<Sun class="h-6 w-6 stroke-[1.75] sm:h-7 sm:w-7" aria-hidden="true" />
-				{/if}
+				<Palette class="h-6 w-6 stroke-[1.75] sm:h-7 sm:w-7" aria-hidden="true" />
 			</span>
 			<span
 				class={[
