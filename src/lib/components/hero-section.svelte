@@ -472,12 +472,12 @@
 
 <section
 	bind:this={heroEl}
-	class="flex w-full flex-col items-center bg-[radial-gradient(circle_320px_at_50%_360px,color-mix(in_srgb,var(--accent)_14%,var(--base-bg)),var(--base-bg)_100%)] pt-10 sm:pt-0 portrait:items-start"
+	class="flex w-full flex-col items-center bg-[radial-gradient(circle_320px_at_50%_360px,color-mix(in_srgb,var(--accent)_14%,var(--base-bg)),var(--base-bg)_100%)] py-10 sm:pt-0 portrait:items-start"
 >
 	<div class="relative mx-auto">
 		<svg
 			bind:this={svgEl}
-			class="pointer-events-none h-auto w-auto overflow-visible p-4 md:p-10 portrait:h-auto portrait:w-[clamp(300px,calc(100svw),600px)] landscape:h-[clamp(400px,calc(100svh-5rem),700px)] landscape:w-auto"
+			class="pointer-events-none h-auto w-auto overflow-visible p-6 md:p-10 portrait:h-auto portrait:w-[clamp(300px,calc(100svw),600px)] landscape:h-[clamp(400px,calc(100svh-5rem),700px)] landscape:w-auto"
 			viewBox="0 0 200 200"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
