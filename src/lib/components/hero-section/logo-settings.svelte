@@ -308,7 +308,7 @@
 	>
 		<Settings
 			class={[
-				'h-6 w-6 flex-none stroke-[1.75] transition-transform duration-300 ease-in-out sm:h-7 sm:w-7',
+				'h-5 w-5 flex-none stroke-[1.75] transition-transform duration-300 ease-in-out sm:h-6 sm:w-6',
 				open && 'scale-[0.7]'
 			]}
 			aria-hidden="true"

@@ -326,7 +326,7 @@
 		aria-label="Colour theme"
 		aria-expanded={open}
 	>
-		<span class="relative grid h-6 w-6 place-items-center sm:h-7 sm:w-7">
+		<span class="relative grid h-5 w-5 place-items-center sm:h-6 sm:w-6">
 			<!-- palette -> X only crossfades at sm+ — the base scale-100/opacity-100
 			     here always wins below that breakpoint since the sm: overrides
 			     below don't apply yet, so the trigger icon never changes on the
@@ -337,7 +337,7 @@
 					open && 'sm:scale-75 sm:opacity-0'
 				]}
 			>
-				<Palette class="h-6 w-6 stroke-[1.75] sm:h-7 sm:w-7" aria-hidden="true" />
+				<Palette class="h-5 w-5 stroke-[1.75] sm:h-6 sm:w-6" aria-hidden="true" />
 			</span>
 			<span
 				class={[
@@ -345,7 +345,7 @@
 					open && 'sm:scale-100 sm:opacity-100'
 				]}
 			>
-				<X class="h-6 w-6 stroke-[1.75] sm:h-7 sm:w-7" aria-hidden="true" />
+				<X class="h-5 w-5 stroke-[1.75] sm:h-6 sm:w-6" aria-hidden="true" />
 			</span>
 		</span>
 	</Button>
@@ -378,7 +378,7 @@
 						<X class="h-6 w-6 stroke-[1.5]" aria-hidden="true" />
 					</Button>
 
-					<div class="flex w-full flex-col items-center gap-2 px-3 py-4">
+					<div class="flex w-full flex-col items-center gap-3 px-3 py-4">
 						<Sun class="h-6 w-6 flex-none stroke-base-fg stroke-[1.5]" aria-hidden="true" />
 
 						<div
@@ -443,7 +443,7 @@
 							tabindex={i === themeIndex ? 0 : -1}
 							aria-disabled={transitioning}
 							class={[
-								'theme-swatch group relative h-16 flex-1 border border-border outline-none motion-reduce:animate-none motion-reduce:transition-none sm:h-8',
+								'theme-swatch group relative h-16 flex-1 border border-border outline-none motion-reduce:animate-none motion-reduce:transition-none sm:h-6',
 								i === themeIndex && 'selected',
 								i !== themeIndex && 'hover:border-[var(--swatch-mark)]',
 								transitioning && i !== themeIndex && 'opacity-0 delay-0 duration-150',

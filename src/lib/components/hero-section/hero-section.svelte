@@ -23,7 +23,7 @@
 
 	const NAMES = [
 		// pairs with the left stroke
-		{ text: 'Johannes', position: 'top-[15%] left-0 min-[600px]:-left-[8%] lg:-left-[19%]' },
+		{ text: 'Johannes', position: 'top-[13%] left-0 min-[600px]:-left-[8%] lg:-left-[19%]' },
 		// pairs with the top-right arm
 		{ text: 'Hansen', position: 'top-[37%] left-[40%]' },
 		// pairs with the bottom-right wedge
@@ -34,10 +34,10 @@
 	// a beat of stillness before the first name, and long enough that the rewind
 	// to the empty state gets painted before the CSS has anything to animate
 	const INTRO_DELAY = 700
-	const PATH_STAGGER = 620
-	const LAYERS_DELAY = 2450
+	const PATH_STAGGER = 600
+	const LAYERS_DELAY = 2400
 	const LAYER_STAGGER = 110
-	const SETTLE_TIME = 700
+	const SETTLE_TIME = 600
 
 	// the fan-out rides a lazier trail than the cursor does
 	const INTRO_SMOOTHING = 0.5
@@ -408,12 +408,12 @@
 
 <section
 	bind:this={heroEl}
-	class="relative flex w-full flex-col items-center bg-[radial-gradient(circle_320px_at_50%_360px,color-mix(in_srgb,var(--accent)_14%,var(--base-bg)),var(--base-bg)_100%)] py-10 sm:py-0 portrait:items-start"
+	class="relative flex w-full flex-col items-center bg-[radial-gradient(circle_320px_at_50%_360px,color-mix(in_srgb,var(--accent)_14%,var(--base-bg)),var(--base-bg)_100%)] justify-center py-10 lg:py-0 portrait:items-start landscape:min-h-[clamp(400px,calc(100svh-5rem),700px)]"
 >
 	<div class="relative mx-auto">
 		<svg
 			bind:this={svgEl}
-			class="pointer-events-none h-auto w-auto overflow-visible p-6 md:p-10 portrait:h-auto portrait:w-[clamp(300px,calc(100svw),600px)] landscape:h-[clamp(400px,calc(100svh-5rem),700px)] landscape:w-auto"
+			class="pointer-events-none h-auto w-auto overflow-visible p-6 md:p-10 portrait:h-auto portrait:w-[clamp(300px,calc(100svw),600px)] landscape:h-[clamp(400px,calc(100svh-5rem),620px)] landscape:w-auto"
 			viewBox="0 0 200 200"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
@@ -454,7 +454,7 @@
 		</h1>
 	</div>
 	<div
-		class="mt-8 flex flex-col items-start gap-2 lg:absolute lg:bottom-6 lg:left-6 lg:z-10 lg:mt-0"
+		class="mx-auto mt-8 flex w-[clamp(300px,100svw,600px)] landscape:w-[clamp(400px,calc(100svh-5rem),620px)] flex-col items-start gap-2 px-6 md:px-10 lg:absolute lg:bottom-6 lg:left-6 lg:z-10 lg:mx-0 lg:mt-0 lg:w-auto lg:landscape:w-auto lg:px-0"
 	>
 		<div class="relative size-24 overflow-hidden border border-border">
 			<img
