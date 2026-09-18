@@ -28,21 +28,21 @@
 	it, so dragging the theme slider downward reads as a single dimming gradient.
 	Each step keeps its own hue so they stay distinguishable, not just steps of grey.
 	The hues themselves walk round the wheel in the same order as the swatches below
-	(rose → violet → blue → cyan → emerald → green), and the 3→4 step is the
+	(orange → violet → blue → cyan → emerald → green), and the 3→4 step is the
 	biggest jump in the set since it's also where light-on-dark-text flips to
 	dark-on-light-text.
 */
 
 :root {
 	/* defaults mirror theme-1, the lightest step */
-	--base-bg: oklch(98.00% 0.0096 17);
-	--base-fg: oklch(25.11% 0.0416 17);
-	--surface-bg: oklch(94.00% 0.0176 17);
-	--surface-fg: oklch(35.19% 0.0448 17);
-	--muted: oklch(56.24% 0.0419 17);
-	--border: oklch(68.00% 0.0750 17);
-	--accent: oklch(59.15% 0.2321 17);
-	--cursor: oklch(66.68% 0.218 17);
+	--base-bg: oklch(97.60% 0.0060 90);
+	--base-fg: oklch(26.30% 0.0150 95);
+	--surface-bg: oklch(94.80% 0.0110 82);
+	--surface-fg: oklch(36.00% 0.0170 95);
+	--muted: oklch(54.00% 0.0170 95);
+	--border: oklch(84.00% 0.0170 88);
+	--accent: oklch(65.00% 0.1920 43);
+	--cursor: lab(66.073% 72.4864 134.737);
 }
 
 /*
@@ -51,7 +51,7 @@
 	any theme's colour while the page is in a *different* theme, by reading
 	--theme-N-swatch directly, without applying that theme's full class (which
 	would repaint the button's own border/background along with everything
-	else). Hues loosely follow the Tailwind stops rose-600, violet-200, blue-400,
+	else). Hues loosely follow the Tailwind stops orange-100, violet-200, blue-400,
 	cyan-600, emerald-800, green-950 — a hand-picked light-to-dark run across
 	the palette — rather than deriving from --base-bg/--accent, so the six
 	swatches read as one deliberate spectrum instead of each theme's own,
@@ -63,7 +63,7 @@
 	how pale they're meant to read.
 */
 :root {
-	--theme-1-swatch: oklch(96% 0.0194 17);
+	--theme-1-swatch: oklch(96% 0.0100 88);
 	--theme-2-swatch: oklch(88% 0.0633 293.28);
 	--theme-3-swatch: oklch(71.37% 0.1489 254.62);
 	--theme-4-swatch: oklch(60.89% 0.1100 221.72);
@@ -80,7 +80,7 @@
 :root {
 	/* theme 1 alone skips the darkened-right-edge treatment below — its base
 	   colour is already near-white, so darkening it read as dingy rather than
-	   as a shade of itself. White fading to a mere hint of the theme's own red
+	   as a shade of itself. White fading to a mere hint of the theme's own orange
 	   accent keeps the same left-to-right idea without the murkiness. */
 	--theme-1-swatch-from: white;
 	--theme-1-swatch-to: color-mix(in oklch, white, var(--theme-1-accent) 10%);
@@ -108,7 +108,7 @@
 	further down — if one changes, update both.
 */
 :root {
-	--theme-1-accent: oklch(59.15% 0.2321 17);
+	--theme-1-accent: oklch(65.00% 0.1920 43);
 	--theme-2-accent: oklch(54.13% 0.2466 293.01);
 	--theme-3-accent: oklch(54.61% 0.2152 262.88);
 	--theme-4-accent: oklch(79.71% 0.1339 211.53);
@@ -129,16 +129,16 @@
 
 /* ---------- LIGHT ---------- */
 
-/* THEME 1: Blossom — pale rose-white, rose-red accent */
+/* THEME 1: Citrus — warm paper-white, orange accent */
 .theme-1 {
-	--base-bg: oklch(98.00% 0.0096 17);
-	--base-fg: oklch(25.11% 0.0416 17);
-	--surface-bg: oklch(94.00% 0.0176 17);
-	--surface-fg: oklch(35.19% 0.0448 17);
-	--muted: oklch(56.24% 0.0419 17);
-	--border: oklch(68.00% 0.0750 17);
-	--accent: oklch(59.15% 0.2321 17);
-	--cursor: oklch(66.68% 0.218 17);
+	--base-bg: oklch(97.60% 0.0060 90);
+	--base-fg: oklch(26.30% 0.0150 95);
+	--surface-bg: oklch(94.80% 0.0110 82);
+	--surface-fg: oklch(36.00% 0.0170 95);
+	--muted: oklch(54.00% 0.0170 95);
+	--border: oklch(84.00% 0.0170 88);
+	--accent: oklch(65.00% 0.1920 43);
+	--cursor: lab(66.073% 72.4864 134.737);
 }
 
 /* THEME 2: Wisteria — light violet-white, violet accent */
