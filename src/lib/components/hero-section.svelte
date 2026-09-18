@@ -453,7 +453,21 @@
 			{/each}
 		</h1>
 	</div>
-	<div class="absolute top-1/2 right-[-1px] z-20 hidden -translate-y-1/2 md:block">
+	<div
+		class="mt-8 flex flex-col items-start gap-2 lg:absolute lg:bottom-6 lg:left-6 lg:z-10 lg:mt-0"
+	>
+		<div class="relative size-24 overflow-hidden border border-border">
+			<img
+				src="/images/johannes2.jpg"
+				alt="Johannes"
+				class="size-24 -scale-x-100 object-cover grayscale-25"
+			/>
+			<div class="absolute inset-0 bg-accent mix-blend-color opacity-30"></div>
+		</div>
+		<p class="text-2xl leading-6 tracking-tight text-base-fg">Frontend developer</p>
+		<h3 class="text-xl leading-5 tracking-tight text-muted">Design enthusiast</h3>
+	</div>
+	<div class="absolute top-0 right-0 z-20 -mr-px -mt-px hidden md:block">
 		<LogoSettings bind:open={settingsOpen} />
 	</div>
 </section>
