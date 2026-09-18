@@ -24,10 +24,14 @@
 }
 
 /*
-	Eight themes forming one continuous light-to-dark spectrum: themes 1–4 are
-	light, 5–8 are dark, and each --base-bg is strictly darker than the one before
+	Six themes forming one continuous light-to-dark spectrum: themes 1–3 are
+	light, 4–6 are dark, and each --base-bg is strictly darker than the one before
 	it, so dragging the theme slider downward reads as a single dimming gradient.
 	Each step keeps its own hue so they stay distinguishable, not just steps of grey.
+	The hues themselves walk round the wheel in the same order as the swatches below
+	(rose → violet → blue → cyan → emerald → green), and the 3→4 step is the
+	biggest jump in the set since it's also where light-on-dark-text flips to
+	dark-on-light-text.
 
 	--panel-tint feeds the translucent panel look used by the logo settings
 	panels in logo-settings.svelte. It's defined per-theme here — rather than
@@ -38,14 +42,14 @@
 
 :root {
 	/* defaults mirror theme-1, the lightest step */
-	--base-bg: rgb(250, 250, 250);
-	--base-fg: rgb(28, 30, 30);
-	--surface-bg: rgb(238, 239, 239);
-	--surface-fg: rgb(60, 64, 64);
-	--muted: rgb(104, 110, 110);
-	--border: rgb(206, 212, 212);
-	--accent: rgb(74, 142, 142);
-	--cursor: rgb(42, 174, 174);
+	--base-bg: oklch(98.00% 0.0096 17);
+	--base-fg: oklch(25.11% 0.0416 17);
+	--surface-bg: oklch(94.00% 0.0176 17);
+	--surface-fg: oklch(35.19% 0.0448 17);
+	--muted: oklch(56.24% 0.0419 17);
+	--border: oklch(86.19% 0.0325 17);
+	--accent: oklch(59.15% 0.2321 17);
+	--cursor: oklch(66.68% 0.218 17);
 	--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
 }
 
@@ -55,72 +59,120 @@
 	any theme's colour while the page is in a *different* theme, by reading
 	--theme-N-swatch directly, without applying that theme's full class (which
 	would repaint the button's own border/background along with everything
-	else). Tuned by hand (not derived from --base-bg/--accent) so the eight
-	swatches read as one deliberate light-to-dark spectrum instead of each
-	theme's own, unrelated lightness curve.
+	else). Hues loosely follow the Tailwind stops rose-600, violet-200, blue-400,
+	cyan-600, emerald-800, green-950 — a hand-picked light-to-dark run across
+	the palette — rather than deriving from --base-bg/--accent, so the six
+	swatches read as one deliberate spectrum instead of each theme's own,
+	unrelated lightness curve. Chroma is pushed to ~98% of the sRGB gamut's
+	max at each swatch's own lightness so the bar reads as vivid rather than
+	muted. Themes 1–2's lightness is nudged down just slightly from their
+	Tailwind stop (which is near-white, and near-white has almost no chroma
+	headroom in sRGB) so they can show a little more colour without losing
+	how pale they're meant to read.
 */
 :root {
-	--theme-1-swatch: rgb(215, 244, 244);
-	--theme-2-swatch: rgb(233, 188, 165);
-	--theme-3-swatch: rgb(121, 216, 184);
-	--theme-4-swatch: rgb(70, 126, 206);
-	--theme-5-swatch: rgb(94, 49, 170);
-	--theme-6-swatch: rgb(38, 130, 69);
-	--theme-7-swatch: rgb(25, 51, 93);
-	--theme-8-swatch: rgb(18, 21, 48);
+	--theme-1-swatch: oklch(96% 0.0194 17);
+	--theme-2-swatch: oklch(88% 0.0633 293.28);
+	--theme-3-swatch: oklch(71.37% 0.1489 254.62);
+	--theme-4-swatch: oklch(60.89% 0.1100 221.72);
+	--theme-5-swatch: oklch(43.18% 0.0868 166.91);
+	--theme-6-swatch: oklch(26.64% 0.0674 152.93);
+}
+
+/*
+	Very subtle per-swatch gradient (lighter on the left, darker on the right
+	of that same swatch colour) so a row of swatches reads as a smoother ramp
+	instead of flat blocks — each swatch's own colour is still what it
+	previews, this just adds a slight sense of depth/direction to it.
+*/
+:root {
+	/* theme 1 alone skips the darkened-right-edge treatment below — its base
+	   colour is already near-white, so darkening it read as dingy rather than
+	   as a shade of itself. White fading to a mere hint of the theme's own red
+	   accent keeps the same left-to-right idea without the murkiness. */
+	--theme-1-swatch-from: white;
+	--theme-1-swatch-to: color-mix(in oklch, white, var(--theme-1-accent) 10%);
+	--theme-2-swatch-from: color-mix(in oklch, var(--theme-2-swatch), white 6%);
+	--theme-2-swatch-to: color-mix(in oklch, var(--theme-2-swatch), black 6%);
+	--theme-3-swatch-from: color-mix(in oklch, var(--theme-3-swatch), white 6%);
+	--theme-3-swatch-to: color-mix(in oklch, var(--theme-3-swatch), black 6%);
+	--theme-4-swatch-from: color-mix(in oklch, var(--theme-4-swatch), white 6%);
+	--theme-4-swatch-to: color-mix(in oklch, var(--theme-4-swatch), black 6%);
+	--theme-5-swatch-from: color-mix(in oklch, var(--theme-5-swatch), white 6%);
+	--theme-5-swatch-to: color-mix(in oklch, var(--theme-5-swatch), black 6%);
+	/* theme 6's base is already near-black, where the same 6% mix used above
+	   reads as a much stronger jump than it does on the lighter swatches —
+	   toned down to 3% so it stays just as subtle as the rest. */
+	--theme-6-swatch-from: color-mix(in oklch, var(--theme-6-swatch), white 3%);
+	--theme-6-swatch-to: color-mix(in oklch, var(--theme-6-swatch), black 3%);
+}
+
+/*
+	Flat, always-on copy of each theme's own --accent (mirrors --theme-N-swatch
+	above and exists for the same reason: a swatch button needs to show
+	*every* theme's accent at once, regardless of which theme's class is
+	actually applied to <html> right now, so these can't just read the live
+	--accent). Kept in sync by hand with each .theme-N block's own --accent
+	further down — if one changes, update both.
+*/
+:root {
+	--theme-1-accent: oklch(59.15% 0.2321 17);
+	--theme-2-accent: oklch(54.13% 0.2466 293.01);
+	--theme-3-accent: oklch(54.61% 0.2152 262.88);
+	--theme-4-accent: oklch(79.71% 0.1339 211.53);
+	--theme-5-accent: oklch(77.29% 0.1535 163.22);
+	--theme-6-accent: oklch(80.03% 0.1821 151.71);
+}
+
+/* Selection/hover marker colour for each swatch — that theme's own accent,
+   so the marker reads as belonging to the swatch it sits on. */
+:root {
+	--theme-1-swatch-mark: var(--theme-1-accent);
+	--theme-2-swatch-mark: var(--theme-2-accent);
+	--theme-3-swatch-mark: var(--theme-3-accent);
+	--theme-4-swatch-mark: var(--theme-4-accent);
+	--theme-5-swatch-mark: var(--theme-5-accent);
+	--theme-6-swatch-mark: var(--theme-6-accent);
 }
 
 /* ---------- LIGHT ---------- */
 
-/* THEME 1: Paper — neutral off-white, teal accent */
+/* THEME 1: Blossom — pale rose-white, rose-red accent */
 .theme-1 {
-	--base-bg: rgb(250, 250, 250);
-	--base-fg: rgb(28, 30, 30);
-	--surface-bg: rgb(238, 239, 239);
-	--surface-fg: rgb(60, 64, 64);
-	--muted: rgb(104, 110, 110);
-	--border: rgb(206, 212, 212);
-	--accent: rgb(74, 142, 142);
-	--cursor: rgb(42, 174, 174);
+	--base-bg: oklch(98.00% 0.0096 17);
+	--base-fg: oklch(25.11% 0.0416 17);
+	--surface-bg: oklch(94.00% 0.0176 17);
+	--surface-fg: oklch(35.19% 0.0448 17);
+	--muted: oklch(56.24% 0.0419 17);
+	--border: oklch(86.19% 0.0325 17);
+	--accent: oklch(59.15% 0.2321 17);
+	--cursor: oklch(66.68% 0.218 17);
 	--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
 }
 
-/* THEME 2: Warm Sand — warm cream, terracotta accent */
+/* THEME 2: Wisteria — light violet-white, violet accent */
 .theme-2 {
-	--base-bg: rgb(245, 238, 232);
-	--base-fg: rgb(48, 40, 34);
-	--surface-bg: rgb(236, 227, 218);
-	--surface-fg: rgb(82, 70, 60);
-	--muted: rgb(124, 108, 96);
-	--border: rgb(216, 200, 186);
-	--accent: rgb(198, 102, 64);
-	--cursor: rgb(235, 86, 27);
+	--base-bg: oklch(95.06% 0.0204 298.19);
+	--base-fg: oklch(26.84% 0.0552 294.67);
+	--surface-bg: oklch(91.09% 0.0358 297.99);
+	--surface-fg: oklch(36.12% 0.0652 295.04);
+	--muted: oklch(55.84% 0.0654 297.35);
+	--border: oklch(84.13% 0.0561 296.63);
+	--accent: oklch(54.13% 0.2466 293.01);
+	--cursor: oklch(60.56% 0.2189 292.72);
 	--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
 }
 
-/* THEME 3: Sea Glass — cool mint, green-teal accent */
+/* THEME 3: Skyline — dusty light blue, strong blue accent */
 .theme-3 {
-	--base-bg: rgb(220, 230, 226);
-	--base-fg: rgb(24, 46, 40);
-	--surface-bg: rgb(206, 221, 215);
-	--surface-fg: rgb(52, 82, 74);
-	--muted: rgb(88, 116, 108);
-	--border: rgb(184, 206, 198);
-	--accent: rgb(20, 142, 110);
-	--cursor: rgb(4, 199, 148);
-	--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
-}
-
-/* THEME 4: Overcast — dusty blue, strong blue accent */
-.theme-4 {
-	--base-bg: rgb(207, 217, 231);
-	--base-fg: rgb(22, 36, 56);
-	--surface-bg: rgb(192, 204, 221);
-	--surface-fg: rgb(48, 66, 96);
-	--muted: rgb(84, 100, 128);
-	--border: rgb(168, 184, 206);
-	--accent: rgb(38, 96, 196);
-	--cursor: rgb(5, 87, 229);
+	--base-bg: oklch(90.32% 0.0249 257.65);
+	--base-fg: oklch(25.27% 0.0497 260.63);
+	--surface-bg: oklch(86.32% 0.0312 258.94);
+	--surface-fg: oklch(37.15% 0.0601 261.43);
+	--muted: oklch(50.90% 0.0518 262.78);
+	--border: oklch(79.07% 0.0385 258.37);
+	--accent: oklch(54.61% 0.2152 262.88);
+	--cursor: oklch(62.31% 0.1880 259.81);
 	--panel-tint: color-mix(in srgb, var(--base-bg) 88%, #000);
 }
 
@@ -130,55 +182,42 @@
    still reads as a raised surface against the dark backdrop — darkening
    further would just vanish into it */
 
-/* THEME 5: Plum Dusk — muted violet, lilac accent */
+/* THEME 4: Tidepool — dark cyan-slate, bright cyan accent */
+.theme-4 {
+	--base-bg: oklch(26.85% 0.0366 222.63);
+	--base-fg: oklch(94.00% 0.0291 210.04);
+	--surface-bg: oklch(32.03% 0.0445 221.50);
+	--surface-fg: oklch(88.20% 0.0412 211.86);
+	--muted: oklch(69.12% 0.0505 216.45);
+	--border: oklch(38.47% 0.0535 221.78);
+	--accent: oklch(79.71% 0.1339 211.53);
+	--cursor: oklch(71.48% 0.1257 215.22);
+	--panel-tint: color-mix(in srgb, var(--base-bg) 82%, #fff);
+}
+
+/* THEME 5: Thicket — dark emerald, spring-green accent */
 .theme-5 {
-	--base-bg: rgb(62, 53, 74);
-	--base-fg: rgb(234, 228, 242);
-	--surface-bg: rgb(76, 65, 90);
-	--surface-fg: rgb(212, 204, 224);
-	--muted: rgb(166, 156, 182);
-	--border: rgb(86, 74, 100);
-	--accent: rgb(184, 142, 240);
-	--cursor: rgb(153, 80, 251);
+	--base-bg: oklch(22.33% 0.0306 173.23);
+	--base-fg: oklch(92.42% 0.0358 164.97);
+	--surface-bg: oklch(26.80% 0.0382 172.71);
+	--surface-fg: oklch(85.17% 0.0440 166.60);
+	--muted: oklch(63.70% 0.0535 166.37);
+	--border: oklch(31.85% 0.0455 172.57);
+	--accent: oklch(77.29% 0.1535 163.22);
+	--cursor: oklch(69.59% 0.1491 162.48);
 	--panel-tint: color-mix(in srgb, var(--base-bg) 82%, #fff);
 }
 
-/* THEME 6: Deep Forest — desaturated green, spring-green accent */
+/* THEME 6: Nocturne — near-black forest green, green accent */
 .theme-6 {
-	--base-bg: rgb(35, 46, 40);
-	--base-fg: rgb(222, 234, 226);
-	--surface-bg: rgb(47, 60, 52);
-	--surface-fg: rgb(198, 212, 202);
-	--muted: rgb(150, 168, 156);
-	--border: rgb(64, 80, 70);
-	--accent: rgb(72, 194, 126);
-	--cursor: rgb(35, 231, 122);
-	--panel-tint: color-mix(in srgb, var(--base-bg) 82%, #fff);
-}
-
-/* THEME 7: Midnight — cool navy slate, azure accent */
-.theme-7 {
-	--base-bg: rgb(25, 29, 39);
-	--base-fg: rgb(222, 228, 238);
-	--surface-bg: rgb(35, 42, 54);
-	--surface-fg: rgb(196, 204, 218);
-	--muted: rgb(142, 152, 170);
-	--border: rgb(50, 58, 72);
-	--accent: rgb(96, 148, 244);
-	--cursor: rgb(38, 113, 251);
-	--panel-tint: color-mix(in srgb, var(--base-bg) 82%, #fff);
-}
-
-/* THEME 8: Void — near-black neutral, periwinkle accent */
-.theme-8 {
-	--base-bg: rgb(15, 15, 18);
-	--base-fg: rgb(228, 228, 230);
-	--surface-bg: rgb(26, 26, 29);
-	--surface-fg: rgb(198, 198, 204);
-	--muted: rgb(138, 138, 148);
-	--border: rgb(40, 40, 46);
-	--accent: rgb(140, 152, 216);
-	--cursor: rgb(71, 97, 234);
+	--base-bg: oklch(17.59% 0.0253 156.26);
+	--base-fg: oklch(91.64% 0.0317 154.13);
+	--surface-bg: oklch(20.75% 0.0319 154.22);
+	--surface-fg: oklch(84.36% 0.0407 154.36);
+	--muted: oklch(63.07% 0.0574 154.58);
+	--border: oklch(26.18% 0.0387 154.79);
+	--accent: oklch(80.03% 0.1821 151.71);
+	--cursor: oklch(72.27% 0.1920 149.58);
 	--panel-tint: color-mix(in srgb, var(--base-bg) 82%, #fff);
 }
 

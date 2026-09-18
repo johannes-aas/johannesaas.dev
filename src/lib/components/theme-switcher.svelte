@@ -7,29 +7,17 @@
 	import Sun from '@lucide/svelte/icons/sun'
 	import Moon from '@lucide/svelte/icons/moon'
 	import X from '@lucide/svelte/icons/x'
-	import Check from '@lucide/svelte/icons/check'
 
 	/* ordered lightest to darkest — colours themselves live in globals.css as
      --theme-N-swatch (read directly per-button below via var(--{id}-swatch)),
      so a button can show any theme's preview colour without applying that
      theme's full class (which would also repaint its own border/etc the rest
-     of the time). The selected swatch's checkmark uses the live var(--accent)
-     instead, since the selected theme is always the one currently applied. */
-	const themes = [
-		{ id: 'theme-1', name: 'Paper' },
-		{ id: 'theme-2', name: 'Warm Sand' },
-		{ id: 'theme-3', name: 'Sea Glass' },
-		{ id: 'theme-4', name: 'Overcast' },
-		{ id: 'theme-5', name: 'Plum Dusk' },
-		{ id: 'theme-6', name: 'Deep Forest' },
-		{ id: 'theme-7', name: 'Midnight' },
-		{ id: 'theme-8', name: 'Void' }
-	]
-
-	const ids = themes.map((t) => t.id)
-	const last = themes.length - 1
+     of the time). The selected swatch shows a filled square at full opacity;
+     the same square fades faintly in on hover for unselected swatches. */
+	const ids = ['theme-1', 'theme-2', 'theme-3', 'theme-4', 'theme-5', 'theme-6']
+	const last = ids.length - 1
 	/* themes at this index and beyond are dark, so the button shows a moon */
-	const firstDark = 4
+	const firstDark = 3
 
 	let themeIndex = $state(0)
 	let open = $state(false)
@@ -42,8 +30,8 @@
 	let isMobile = $state(false)
 	let container
 	let toggleEl = $state(null)
-	let buttonEls = $state(Array(themes.length).fill(null))
-	let mobileButtonEls = $state(Array(themes.length).fill(null))
+	let buttonEls = $state(Array(ids.length).fill(null))
+	let mobileButtonEls = $state(Array(ids.length).fill(null))
 	let transitionTimer
 	let jumpTimer
 	/* true for the duration of the reveal/cross-fade animation — swatches are
@@ -335,13 +323,16 @@
 		onclick={toggle}
 		aria-label="Colour theme"
 		aria-expanded={open}
-		title="Colour theme: {themes[themeIndex].name}"
 	>
 		<span class="relative grid h-6 w-6 place-items-center sm:h-7 sm:w-7">
+			<!-- sun/moon -> X only crossfades at sm+ — the base scale-100/opacity-100
+			     here always wins below that breakpoint since the sm: overrides
+			     below don't apply yet, so the trigger icon never changes on the
+			     small-screen panel (which has its own explicit close button) -->
 			<span
 				class={[
-					'absolute inset-0 grid place-items-center transition-all duration-200 ease-out',
-					open ? 'scale-75 opacity-0' : 'scale-100 opacity-100'
+					'absolute inset-0 grid place-items-center scale-100 opacity-100 transition-all duration-200 ease-out',
+					open && 'sm:scale-75 sm:opacity-0'
 				]}
 			>
 				{#if themeIndex >= firstDark}
@@ -352,8 +343,8 @@
 			</span>
 			<span
 				class={[
-					'absolute inset-0 grid place-items-center transition-all duration-200 ease-out',
-					open ? 'scale-100 opacity-100' : 'scale-75 opacity-0'
+					'absolute inset-0 grid place-items-center scale-75 opacity-0 transition-all duration-200 ease-out',
+					open && 'sm:scale-100 sm:opacity-100'
 				]}
 			>
 				<X class="h-6 w-6 stroke-[1.75] sm:h-7 sm:w-7" aria-hidden="true" />
@@ -397,27 +388,29 @@
 							role="radiogroup"
 							aria-label="Colour theme"
 						>
-							{#each themes as t, i (t.id)}
+							{#each ids as id, i (id)}
 								<Button
 									type="button"
 									role="radio"
 									aria-checked={i === themeIndex}
-									aria-label={t.name}
-									title={t.name}
 									tabindex={i === themeIndex ? 0 : -1}
 									class={[
 										'relative h-9 w-full flex-none border border-border outline-none',
 										i === themeIndex && 'selected'
 									]}
-									style="background-color: var(--{t.id}-swatch);"
+									style="background-image: linear-gradient(to right, var(--{id}-swatch-from), var(--{id}-swatch-to)); --swatch-mark: var(--{id}-swatch-mark);"
 									bind:ref={mobileButtonEls[i]}
 									onclick={() => setThemeImmediate(i)}
 									onkeydown={(event) =>
 										onButtonKeyDown(event, i, setThemeImmediate, mobileButtonEls)}
 								>
-									{#if i === themeIndex}
-										<Check class="h-3.5 w-3.5 stroke-[2.5] text-base-fg" aria-hidden="true" />
-									{/if}
+									<span
+										class={[
+											'h-3.5 w-3.5 bg-[var(--swatch-mark)]',
+											i === themeIndex ? 'opacity-100' : 'opacity-0'
+										]}
+										aria-hidden="true"
+									></span>
 								</Button>
 							{/each}
 						</div>
@@ -444,30 +437,32 @@
 					role="radiogroup"
 					aria-label="Colour theme"
 				>
-					{#each themes as t, i (t.id)}
+					{#each ids as id, i (id)}
 						<Button
 							type="button"
 							role="radio"
 							aria-checked={i === themeIndex}
-							aria-label={t.name}
-							title={t.name}
 							tabindex={i === themeIndex ? 0 : -1}
 							aria-disabled={transitioning}
 							class={[
-								'theme-swatch relative h-16 flex-1 border border-border outline-none motion-reduce:animate-none motion-reduce:transition-none sm:h-8',
+								'theme-swatch group relative h-16 flex-1 border border-border outline-none motion-reduce:animate-none motion-reduce:transition-none sm:h-8',
 								i === themeIndex && 'selected',
-								i !== themeIndex && 'hover:brightness-[1.15]',
+								i !== themeIndex && 'hover:border-[var(--swatch-mark)]',
 								transitioning && i !== themeIndex && 'opacity-0 delay-0 duration-150',
 								justRevealed && i !== themeIndex && 'jump'
 							]}
-							style="--swatch-color: var(--{t.id}-swatch); --stagger-delay: {i * 40}ms;"
+							style="--swatch-from: var(--{id}-swatch-from); --swatch-to: var(--{id}-swatch-to); --swatch-mark: var(--{id}-swatch-mark); --stagger-delay: {i * 40}ms;"
 							bind:ref={buttonEls[i]}
 							onclick={() => setTheme(i)}
 							onkeydown={(event) => onButtonKeyDown(event, i, setTheme, buttonEls)}
 						>
-							{#if i === themeIndex}
-								<Check class="h-3.5 w-3.5 stroke-[2.5] text-base-fg" aria-hidden="true" />
-							{/if}
+							<span
+								class={[
+									'h-3.5 w-3.5 bg-[var(--swatch-mark)] transition-opacity duration-150',
+									i === themeIndex ? 'opacity-100' : 'opacity-0 group-hover:opacity-30'
+								]}
+								aria-hidden="true"
+							></span>
 						</Button>
 					{/each}
 				</div>
@@ -485,10 +480,12 @@
 	/* :global — the swatch is now the Button component's own root element
 	   rather than one Svelte scopes CSS onto directly here */
 	:global(.theme-swatch) {
-		/* --swatch-color (set inline, per-button) mirrors that theme's --swatch
-		   value from globals.css, so every button shows its own place on the
-		   light-to-dark spectrum at all times, not just on hover */
-		background-color: var(--swatch-color);
+		/* --swatch-from/-to (set inline, per-button) mirror that theme's
+		   --theme-N-swatch-from/-to values from globals.css, so every button
+		   shows its own place on the light-to-dark spectrum at all times, not
+		   just on hover — as a subtle left-to-right gradient rather than a flat
+		   fill, so a row of swatches reads a little smoother end to end */
+		background-image: linear-gradient(to right, var(--swatch-from), var(--swatch-to));
 		/* fade-in duration for when opacity-0/duration-150/delay-0 (applied via the
 		   class array while transitioning) are removed — deliberately slower than
 		   the wipe-out, so the other swatches settle back in gently once the
