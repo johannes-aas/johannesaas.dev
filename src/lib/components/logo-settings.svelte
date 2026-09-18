@@ -109,10 +109,8 @@
 		panelWidth = targetWidth
 
 		// ideal, pre-clamp position: right edge pinned to the trigger (grows
-		// leftward), vertically centered on the trigger (grows both ways).
-		// +1 so the panel's own right border lands exactly on the page's right
-		// border rather than a hairline short of it.
-		const idealLeft = rect.right - targetWidth + 1
+		// leftward), vertically centered on the trigger (grows both ways)
+		const idealLeft = rect.right - targetWidth
 		const idealTop = rect.top + rect.height / 2 - panelHeight / 2
 
 		// clamp horizontally into the viewport, then convert back to
