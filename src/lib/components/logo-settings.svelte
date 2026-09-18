@@ -90,11 +90,11 @@
 	// panel starts opening, Floating UI would always measure it still at its
 	// closed size, never the open size it's animating toward.
 	//
-	// Vertically it always grows centered on the trigger, even if that runs it
-	// past the bottom of the screen or above the top of the current viewport
-	// (the user can just scroll up to see it) — the only thing it's clamped
-	// against is the actual top of the page (scroll position 0), since there's
-	// nothing above that to scroll to.
+	// Vertically it always grows downward from the trigger's own top edge, even
+	// if that runs it past the bottom of the screen (the user can just scroll
+	// down to see it) — the only thing it's clamped against is the actual top
+	// of the page (scroll position 0), since there's nothing above that to
+	// scroll to.
 	const PANEL_WIDTH = 288 // 18rem, in px — keep in sync with the open panel's w-72
 	const EDGE_PADDING = 8
 
@@ -109,9 +109,9 @@
 		panelWidth = targetWidth
 
 		// ideal, pre-clamp position: right edge pinned to the trigger (grows
-		// leftward), vertically centered on the trigger (grows both ways)
+		// leftward), top edge pinned to the trigger (grows downward)
 		const idealLeft = rect.right - targetWidth
-		const idealTop = rect.top + rect.height / 2 - panelHeight / 2
+		const idealTop = rect.top
 
 		// clamp horizontally into the viewport, then convert back to
 		// container-relative coordinates — what `left`/`top: Npx` mean for an
@@ -211,9 +211,9 @@
 <div class="relative h-14 w-14 sm:h-[4.5rem] sm:w-[4.5rem]" bind:this={container}>
 	<div
 		class={[
-			'absolute z-10 overflow-hidden transition-[top,left,width,height,border-color,background-color] duration-300 ease-in-out',
+			'absolute z-10 overflow-hidden border border-border transition-[top,left,width,height,background-color] duration-300 ease-in-out',
 			open
-				? 'w-72 max-w-[calc(100vw-1.5rem)] border border-border bg-surface-bg'
+				? 'w-72 max-w-[calc(100vw-1.5rem)] bg-surface-bg'
 				: 'h-14 w-14 sm:h-[4.5rem] sm:w-[4.5rem]'
 		]}
 		style="top:{open ? panelY + 'px' : '0'};left:{open ? panelX + 'px' : '0'}{open
@@ -295,10 +295,10 @@
 
 	<Button
 		class={[
-			'absolute z-20 text-muted transition-[top,left,width,height,color,border-color,background-color] duration-300 ease-in-out hover:text-base-fg',
+			'absolute z-20 text-muted transition-[top,left,width,height,color,background-color] duration-300 ease-in-out hover:text-base-fg',
 			open
 				? 'h-11 w-11'
-				: 'h-full w-full border border-border hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]'
+				: 'h-full w-full hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]'
 		]}
 		style="top:{open ? iconOpenTop + 'px' : '0'};left:{open ? iconOpenLeft + 'px' : '0'}"
 		onclick={() => setOpen(!open)}

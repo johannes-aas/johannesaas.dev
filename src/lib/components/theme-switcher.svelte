@@ -306,17 +306,20 @@
 
 <svelte:window onpointerdown={onWindowPointerDown} onkeydown={onWindowKeyDown} />
 
-<div class="flex items-center justify-center" bind:this={container}>
+<div class="flex items-center justify-center self-stretch" bind:this={container}>
 	<Button
 		class={[
-			/* fixed to match header.svelte nav's own rendered height (py-3 + h-8
-			   logo = 56px; sm:py-4 + sm:h-10 logo = 72px) rather than deriving it
-			   from aspect-ratio + flex-stretch — that combination sizes this
-			   button's width from its pre-stretch (unstretched, content-sized)
-			   height during the row's initial layout pass, then only stretches
-			   the height afterwards, so the button renders wider than the space
-			   the row actually reserved for it and spills past the header's edge */
-			'grid h-14 w-14 flex-none place-items-center border-l border-border text-muted transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)] hover:text-base-fg sm:h-[4.5rem] sm:w-[4.5rem]',
+			/* height comes from self-stretch cascading up through controls-nav.svelte
+			   and this component's own wrapper div to the header row's own height —
+			   width stays independently fixed (not aspect-ratio-derived), so this
+			   doesn't hit the old aspect-ratio+stretch bug where the pre-stretch
+			   (unstretched, content-sized) height picked the wrong width during the
+			   row's initial layout pass. Stretch is what lets the negative -mt-px/
+			   -mb-px margins below actually overlap the header's own top/bottom
+			   grid lines — with align-items:center, symmetric vertical margins have
+			   no visual effect at all, since the box re-centers on its margin box
+			   regardless of the margin's sign or size */
+			'grid w-14 flex-none place-items-center self-stretch border border-border -mr-px -mt-px -mb-px text-muted transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)] hover:text-base-fg sm:w-[4.5rem]',
 			open && 'bg-[color-mix(in_srgb,var(--muted)_14%,transparent)] text-base-fg'
 		]}
 		bind:ref={toggleEl}
@@ -422,9 +425,9 @@
 		</div>
 
 		<!-- sm and up: animated wipe/reveal panel -->
-		<div class="absolute -inset-x-px top-full z-50 hidden sm:block">
+		<div class="absolute inset-x-0 top-full z-50 -mx-px hidden sm:block">
 			<div
-				class="flex w-full flex-row items-center gap-2 rounded-none border border-border bg-surface-bg px-4 py-4 sm:gap-3 sm:px-6 sm:py-4"
+				class="flex w-full flex-row items-center gap-2 rounded-none border border-border bg-surface-bg px-4 py-4 sm:h-[4.5rem] sm:gap-3 sm:px-6 sm:py-0"
 				transition:fade={{ duration: 160 }}
 			>
 				<Sun

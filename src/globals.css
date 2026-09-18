@@ -40,7 +40,7 @@
 	--surface-bg: oklch(94.00% 0.0176 17);
 	--surface-fg: oklch(35.19% 0.0448 17);
 	--muted: oklch(56.24% 0.0419 17);
-	--border: oklch(86.19% 0.0325 17);
+	--border: oklch(68.00% 0.0750 17);
 	--accent: oklch(59.15% 0.2321 17);
 	--cursor: oklch(66.68% 0.218 17);
 }
@@ -113,7 +113,7 @@
 	--theme-3-accent: oklch(54.61% 0.2152 262.88);
 	--theme-4-accent: oklch(79.71% 0.1339 211.53);
 	--theme-5-accent: oklch(77.29% 0.1535 163.22);
-	--theme-6-accent: oklch(80.03% 0.1821 151.71);
+	--theme-6-accent: oklch(78.00% 0.1450 151.71);
 }
 
 /* Selection/hover marker colour for each swatch — that theme's own accent,
@@ -136,7 +136,7 @@
 	--surface-bg: oklch(94.00% 0.0176 17);
 	--surface-fg: oklch(35.19% 0.0448 17);
 	--muted: oklch(56.24% 0.0419 17);
-	--border: oklch(86.19% 0.0325 17);
+	--border: oklch(68.00% 0.0750 17);
 	--accent: oklch(59.15% 0.2321 17);
 	--cursor: oklch(66.68% 0.218 17);
 }
@@ -148,7 +148,7 @@
 	--surface-bg: oklch(91.09% 0.0358 297.99);
 	--surface-fg: oklch(36.12% 0.0652 295.04);
 	--muted: oklch(55.84% 0.0654 297.35);
-	--border: oklch(84.13% 0.0561 296.63);
+	--border: oklch(64.00% 0.1100 296.63);
 	--accent: oklch(54.13% 0.2466 293.01);
 	--cursor: oklch(60.56% 0.2189 292.72);
 }
@@ -160,7 +160,7 @@
 	--surface-bg: oklch(86.32% 0.0312 258.94);
 	--surface-fg: oklch(37.15% 0.0601 261.43);
 	--muted: oklch(50.90% 0.0518 262.78);
-	--border: oklch(79.07% 0.0385 258.37);
+	--border: oklch(60.00% 0.0900 258.37);
 	--accent: oklch(54.61% 0.2152 262.88);
 	--cursor: oklch(62.31% 0.1880 259.81);
 }
@@ -178,7 +178,7 @@
 	--surface-bg: oklch(32.03% 0.0445 221.50);
 	--surface-fg: oklch(88.20% 0.0412 211.86);
 	--muted: oklch(69.12% 0.0505 216.45);
-	--border: oklch(38.47% 0.0535 221.78);
+	--border: oklch(56.00% 0.1000 221.78);
 	--accent: oklch(79.71% 0.1339 211.53);
 	--cursor: oklch(71.48% 0.1257 215.22);
 }
@@ -190,21 +190,21 @@
 	--surface-bg: oklch(26.80% 0.0382 172.71);
 	--surface-fg: oklch(85.17% 0.0440 166.60);
 	--muted: oklch(63.70% 0.0535 166.37);
-	--border: oklch(31.85% 0.0455 172.57);
+	--border: oklch(50.00% 0.0900 172.57);
 	--accent: oklch(77.29% 0.1535 163.22);
 	--cursor: oklch(69.59% 0.1491 162.48);
 }
 
 /* THEME 6: Nocturne — near-black forest green, green accent */
 .theme-6 {
-	--base-bg: oklch(17.59% 0.0253 156.26);
-	--base-fg: oklch(91.64% 0.0317 154.13);
-	--surface-bg: oklch(20.75% 0.0319 154.22);
-	--surface-fg: oklch(84.36% 0.0407 154.36);
-	--muted: oklch(63.07% 0.0574 154.58);
-	--border: oklch(26.18% 0.0387 154.79);
-	--accent: oklch(80.03% 0.1821 151.71);
-	--cursor: oklch(72.27% 0.1920 149.58);
+	--base-bg: oklch(17.59% 0.0200 156.26);
+	--base-fg: oklch(91.64% 0.0260 154.13);
+	--surface-bg: oklch(20.75% 0.0260 154.22);
+	--surface-fg: oklch(84.36% 0.0340 154.36);
+	--muted: oklch(63.07% 0.0480 154.58);
+	--border: oklch(44.00% 0.0650 154.79);
+	--accent: oklch(78.00% 0.1450 151.71);
+	--cursor: oklch(70.00% 0.1500 149.58);
 }
 
 /*
@@ -432,21 +432,14 @@ h2,
 h3,
 .display {
 	font-family:
-		'Funnel Display',
-		ui-sans-serif,
-		system-ui,
-		-apple-system,
-		Segoe UI,
-		Roboto,
-		Noto Sans,
-		Ubuntu,
-		Cantarell,
-		Helvetica Neue,
-		Arial,
-		'Apple Color Emoji',
-		'Segoe UI Emoji',
-		'Segoe UI Symbol',
-		sans-serif;
+		'Playfair Display',
+		ui-serif,
+		Georgia,
+		Cambria,
+		'Times New Roman',
+		Times,
+		serif;
+	font-style: italic;
 }
 
 /*
