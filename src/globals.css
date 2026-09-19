@@ -17,9 +17,15 @@
 	--color-surface-bg: var(--surface-bg);
 	--color-surface-fg: var(--surface-fg);
 	--color-muted: var(--muted);
+	--color-panel-bg: var(--panel-bg);
 	--color-border: var(--border);
+	--color-border-subtle: var(--border-subtle);
 	--color-accent: var(--accent);
 	--color-cursor: var(--cursor);
+
+	--font-sans: 'Funnel Sans', sans-serif;
+	--font-display:
+		'Playfair Display', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
 }
 
 /*
@@ -35,13 +41,15 @@
 
 :root {
 	/* defaults mirror theme-1, the lightest step */
-	--base-bg: oklch(97.60% 0.0060 90);
-	--base-fg: oklch(26.30% 0.0150 95);
+	--base-bg: oklch(99.00% 0.0030 90);
+	--base-fg: oklch(21.50% 0.0150 95);
 	--surface-bg: oklch(94.80% 0.0110 82);
 	--surface-fg: oklch(36.00% 0.0170 95);
+	--panel-bg: oklch(93.50% 0.0030 90);
 	--muted: oklch(54.00% 0.0170 95);
 	--border: oklch(84.00% 0.0170 88);
-	--accent: oklch(65.00% 0.1920 43);
+	--border-subtle: oklch(91.00% 0.0100 88);
+	--accent: oklch(70.10% 0.1637 43);
 	--cursor: lab(66.073% 72.4864 134.737);
 }
 
@@ -108,12 +116,12 @@
 	further down — if one changes, update both.
 */
 :root {
-	--theme-1-accent: oklch(65.00% 0.1920 43);
-	--theme-2-accent: oklch(54.13% 0.2466 293.01);
-	--theme-3-accent: oklch(54.61% 0.2152 262.88);
-	--theme-4-accent: oklch(79.71% 0.1339 211.53);
-	--theme-5-accent: oklch(77.29% 0.1535 163.22);
-	--theme-6-accent: oklch(78.00% 0.1450 151.71);
+	--theme-1-accent: oklch(70.10% 0.1637 43);
+	--theme-2-accent: oklch(60.27% 0.2127 293.01);
+	--theme-3-accent: oklch(59.97% 0.1866 262.88);
+	--theme-4-accent: oklch(71.78% 0.1193 211.53);
+	--theme-5-accent: oklch(69.26% 0.1338 163.22);
+	--theme-6-accent: oklch(68.55% 0.1243 151.71);
 }
 
 /* Selection/hover marker colour for each swatch — that theme's own accent,
@@ -131,13 +139,15 @@
 
 /* THEME 1: Citrus — warm paper-white, orange accent */
 .theme-1 {
-	--base-bg: oklch(97.60% 0.0060 90);
-	--base-fg: oklch(26.30% 0.0150 95);
+	--base-bg: oklch(99.00% 0.0030 90);
+	--base-fg: oklch(21.50% 0.0150 95);
 	--surface-bg: oklch(94.80% 0.0110 82);
 	--surface-fg: oklch(36.00% 0.0170 95);
+	--panel-bg: oklch(96% 0.0030 90);
 	--muted: oklch(54.00% 0.0170 95);
 	--border: oklch(84.00% 0.0170 88);
-	--accent: oklch(65.00% 0.1920 43);
+	--border-subtle: oklch(89.00% 0.0100 88);
+	--accent: oklch(70.10% 0.1637 43);
 	--cursor: lab(66.073% 72.4864 134.737);
 }
 
@@ -147,10 +157,12 @@
 	--base-fg: oklch(26.84% 0.0552 294.67);
 	--surface-bg: oklch(91.09% 0.0358 297.99);
 	--surface-fg: oklch(36.12% 0.0652 295.04);
-	--muted: oklch(55.84% 0.0654 297.35);
-	--border: oklch(64.00% 0.1100 296.63);
-	--accent: oklch(54.13% 0.2466 293.01);
-	--cursor: oklch(60.56% 0.2189 292.72);
+	--panel-bg: oklch(97.40% 0.0030 298);
+	--muted: oklch(46.00% 0.0654 297.35);
+	--border: oklch(41.475% 0.07019 297.489);
+	--border-subtle: oklch(87.00% 0.0300 297);
+	--accent: oklch(60.27% 0.1306 293.01);
+	--cursor: oklch(60.221% 0.33667 291.536);
 }
 
 /* THEME 3: Skyline — dusty light blue, strong blue accent */
@@ -159,10 +171,12 @@
 	--base-fg: oklch(25.27% 0.0497 260.63);
 	--surface-bg: oklch(86.32% 0.0312 258.94);
 	--surface-fg: oklch(37.15% 0.0601 261.43);
-	--muted: oklch(50.90% 0.0518 262.78);
+	--panel-bg: oklch(96.20% 0.0040 258);
+	--muted: oklch(42.00% 0.0518 262.78);
 	--border: oklch(60.00% 0.0900 258.37);
-	--accent: oklch(54.61% 0.2152 262.88);
-	--cursor: oklch(62.31% 0.1880 259.81);
+	--border-subtle: oklch(80.00% 0.0350 258);
+	--accent: oklch(66.51% 0.1635 259.81);
+	--cursor: oklch(54.61% 0.2152 262.88);
 }
 
 /* ---------- DARK ---------- */
@@ -174,36 +188,42 @@
 /* THEME 4: Tidepool — dark cyan-slate, bright cyan accent */
 .theme-4 {
 	--base-bg: oklch(26.85% 0.0366 222.63);
-	--base-fg: oklch(94.00% 0.0291 210.04);
+	--base-fg: oklch(97.50% 0.0120 210.04);
 	--surface-bg: oklch(32.03% 0.0445 221.50);
 	--surface-fg: oklch(88.20% 0.0412 211.86);
-	--muted: oklch(69.12% 0.0505 216.45);
+	--panel-bg: oklch(31.50% 0.0240 222);
+	--muted: oklch(85.00% 0.0420 216.45);
 	--border: oklch(56.00% 0.1000 221.78);
-	--accent: oklch(79.71% 0.1339 211.53);
+	--border-subtle: oklch(37.188% 0.0388 222.047);
+	--accent: oklch(71.78% 0.1193 211.53);
 	--cursor: oklch(71.48% 0.1257 215.22);
 }
 
 /* THEME 5: Thicket — dark emerald, spring-green accent */
 .theme-5 {
-	--base-bg: oklch(22.33% 0.0306 173.23);
-	--base-fg: oklch(92.42% 0.0358 164.97);
+	--base-bg: oklch(23.721% 0.02168 170.185);
+	--base-fg: oklch(97.00% 0.0130 164.97);
 	--surface-bg: oklch(26.80% 0.0382 172.71);
 	--surface-fg: oklch(85.17% 0.0440 166.60);
-	--muted: oklch(63.70% 0.0535 166.37);
+	--panel-bg: oklch(22.39% 0.00358 165.108);
+	--muted: oklch(83.50% 0.0440 166.37);
 	--border: oklch(50.00% 0.0900 172.57);
-	--accent: oklch(77.29% 0.1535 163.22);
-	--cursor: oklch(69.59% 0.1491 162.48);
+	--border-subtle: oklch(31.116% 0.02589 171.939);
+	--accent: oklch(59.61% 0.1230 162.631);
+	--cursor: oklch(66.513% 0.18883 147.385);
 }
 
 /* THEME 6: Nocturne — near-black forest green, green accent */
 .theme-6 {
-	--base-bg: oklch(17.59% 0.0200 156.26);
-	--base-fg: oklch(91.64% 0.0260 154.13);
+	--base-bg: oklch(15.001% 0.00655 156.781);
+	--base-fg: oklch(97.00% 0.0130 154.13);
 	--surface-bg: oklch(20.75% 0.0260 154.22);
 	--surface-fg: oklch(84.36% 0.0340 154.36);
-	--muted: oklch(63.07% 0.0480 154.58);
-	--border: oklch(44.00% 0.0650 154.79);
-	--accent: oklch(78.00% 0.1450 151.71);
+	--panel-bg: oklch(27.929% 0.00798 170.005);
+	--muted: oklch(83.50% 0.0410 154.58);
+	--border: oklch(66.046% 0.09011 155.983);
+	--border-subtle: oklch(21.174% 0.02463 151.732);
+	--accent: oklch(56.86% 0.1311 154.616);
 	--cursor: oklch(70.00% 0.1500 149.58);
 }
 
@@ -427,19 +447,21 @@ body {
 	animation-duration: 900ms;
 }
 
-h1,
-h2,
-h3,
-.display {
-	font-family:
-		'Playfair Display',
-		ui-serif,
-		Georgia,
-		Cambria,
-		'Times New Roman',
-		Times,
-		serif;
-	font-style: italic;
+@layer base {
+	h1,
+	h2,
+	h3,
+	.display {
+		font-family:
+			'Playfair Display',
+			ui-serif,
+			Georgia,
+			Cambria,
+			'Times New Roman',
+			Times,
+			serif;
+		font-style: italic;
+	}
 }
 
 /*

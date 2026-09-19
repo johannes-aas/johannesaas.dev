@@ -318,8 +318,8 @@
 			   grid lines — with align-items:center, symmetric vertical margins have
 			   no visual effect at all, since the box re-centers on its margin box
 			   regardless of the margin's sign or size */
-			'grid w-14 flex-none place-items-center self-stretch border border-border -mr-px -mt-px -mb-px text-muted transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)] hover:text-base-fg sm:w-[4.5rem]',
-			open && 'bg-[color-mix(in_srgb,var(--muted)_14%,transparent)] text-base-fg'
+			'grid w-14 flex-none place-items-center self-stretch border border-border-subtle -mr-px -mt-px -mb-px text-muted transition-colors duration-200 hover:text-base-fg sm:w-[4.5rem]',
+			open && 'bg-panel-bg text-base-fg'
 		]}
 		bind:ref={toggleEl}
 		onclick={toggle}
@@ -365,13 +365,13 @@
 			<DialogRoot open={open && isMobile} onOpenChange={setOpen}>
 				<DialogOverlay />
 				<DialogContent
-					class="fixed top-1/2 left-1/2 flex w-40 -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-none border border-border bg-surface-bg shadow-lg"
+					class="fixed top-1/2 left-1/2 flex w-40 -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-none border border-border-subtle bg-panel-bg shadow-lg"
 				>
 					<DialogTitle class="sr-only">Colour theme</DialogTitle>
 
 					<Button
 						type="button"
-						class="flex w-full items-center justify-center border-b border-border py-4 text-base-fg outline-none"
+						class="flex w-full items-center justify-center border-b border-border-subtle py-4 text-base-fg outline-none"
 						aria-label="Close"
 						onclick={() => setOpen(false)}
 					>
@@ -393,7 +393,7 @@
 									aria-checked={i === themeIndex}
 									tabindex={i === themeIndex ? 0 : -1}
 									class={[
-										'relative h-9 w-full flex-none border border-border outline-none',
+										'relative h-9 w-full flex-none border border-border-subtle outline-none',
 										i === themeIndex && 'selected'
 									]}
 									style="background-image: linear-gradient(to right, var(--{id}-swatch-from), var(--{id}-swatch-to)); --swatch-mark: var(--{id}-swatch-mark);"
@@ -422,7 +422,7 @@
 		<!-- sm and up: animated wipe/reveal panel -->
 		<div class="absolute inset-x-0 top-full z-50 -mx-px hidden sm:block">
 			<div
-				class="flex w-full flex-row items-center gap-2 rounded-none border border-border bg-surface-bg px-4 py-4 sm:h-[4.5rem] sm:gap-3 sm:px-6 sm:py-0"
+				class="flex w-full flex-row items-center gap-2 rounded-none border border-border-subtle bg-panel-bg px-4 py-4 sm:h-[4.5rem] sm:gap-3 sm:px-6 sm:py-0"
 				transition:fade={{ duration: 160 }}
 			>
 				<Sun
@@ -443,7 +443,7 @@
 							tabindex={i === themeIndex ? 0 : -1}
 							aria-disabled={transitioning}
 							class={[
-								'theme-swatch group relative h-16 flex-1 border border-border outline-none motion-reduce:animate-none motion-reduce:transition-none sm:h-6',
+								'theme-swatch group relative h-16 flex-1 border border-border-subtle outline-none motion-reduce:animate-none motion-reduce:transition-none sm:h-6',
 								i === themeIndex && 'selected',
 								i !== themeIndex && 'hover:border-[var(--swatch-mark)]',
 								transitioning && i !== themeIndex && 'opacity-0 delay-0 duration-150',

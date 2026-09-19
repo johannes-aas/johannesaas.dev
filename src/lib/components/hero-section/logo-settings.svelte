@@ -9,10 +9,12 @@
 	import { ToggleGroupRoot, ToggleGroupItem } from '$lib/components/toggle-group'
 	import Button from '$lib/components/button.svelte'
 	import Settings from '@lucide/svelte/icons/settings'
+	import X from '@lucide/svelte/icons/x'
 	import RotateCcw from '@lucide/svelte/icons/rotate-ccw'
 	import Play from '@lucide/svelte/icons/play'
 	import Magnet from '@lucide/svelte/icons/magnet'
 	import { Shuffle } from '@lucide/svelte'
+	import { tick } from 'svelte'
 
 	// natural height of the (always-mounted, fixed-width) content column, fed
 	// into the panel's own height transition — measured off content that never
@@ -78,6 +80,7 @@
 
 	let { open = $bindable(false) } = $props()
 	let container
+	let trigger = $state(null)
 
 	// Grows the panel leftward from the trigger's own right edge (horizontally),
 	// clamped back on screen if that would overflow — the same "place it, then
@@ -113,11 +116,11 @@
 		const idealLeft = rect.right - targetWidth
 		const idealTop = rect.top
 
-		// clamp horizontally into the viewport, then convert back to
-		// container-relative coordinates — what `left`/`top: Npx` mean for an
-		// absolutely positioned child of `container`
-		const maxLeft = window.innerWidth - targetWidth - EDGE_PADDING
-		panelX = Math.min(Math.max(idealLeft, EDGE_PADDING), maxLeft) - rect.left
+		// clamp against the left edge only — the trigger sits flush with the
+		// right edge of the screen, so the panel stays flush with it too — then
+		// convert back to container-relative coordinates — what `left`/`top: Npx`
+		// mean for an absolutely positioned child of `container`
+		panelX = Math.max(idealLeft, EDGE_PADDING) - rect.left
 
 		// clamp vertically against the page's own top edge, not the viewport's —
 		// idealTop is viewport-relative, so shift it into document space (adding
@@ -126,14 +129,6 @@
 		const clampedTopInDocument = Math.max(idealTopInDocument, EDGE_PADDING)
 		panelY = clampedTopInDocument - window.scrollY - rect.top
 	}
-
-	// the icon sits 0.5rem inside the panel's own top-right corner — same
-	// coordinate space as panelX/panelY, since both are absolute within container.
-	// Anchored off the panel's actual (possibly clamped) right edge rather than
-	// the container's own bounds, so it tracks the panel exactly even when the
-	// clamp above has shifted the panel away from the trigger.
-	let iconOpenTop = $derived(panelY + 1)
-	let iconOpenLeft = $derived(panelX + panelWidth - 44 - 4)
 
 	function setValue(key, value) {
 		logoControls.update((s) => ({ ...s, [key]: value }))
@@ -181,7 +176,8 @@
 	function onWindowKeyDown(event) {
 		if (open && event.key === 'Escape') {
 			setOpen(false)
-			container?.querySelector('button')?.focus()
+			// the trigger is inert until the close renders, so wait for it
+			tick().then(() => trigger?.focus())
 		}
 	}
 </script>
@@ -211,10 +207,10 @@
 <div class="relative h-14 w-14 sm:h-[4.5rem] sm:w-[4.5rem]" bind:this={container}>
 	<div
 		class={[
-			'absolute z-10 overflow-hidden border border-border transition-[top,left,width,height,background-color] duration-300 ease-in-out',
+			'absolute z-10 overflow-hidden border transition-[top,left,width,height,background-color] duration-300 ease-in-out',
 			open
-				? 'w-72 max-w-[calc(100vw-1.5rem)] bg-surface-bg'
-				: 'h-14 w-14 sm:h-[4.5rem] sm:w-[4.5rem]'
+				? 'w-72 max-w-[calc(100vw-1.5rem)] border-border-subtle bg-panel-bg'
+				: 'h-14 w-14 border-border-subtle sm:h-[4.5rem] sm:w-[4.5rem]'
 		]}
 		style="top:{open ? panelY + 'px' : '0'};left:{open ? panelX + 'px' : '0'}{open
 			? ';height:' + panelHeight + 'px'
@@ -229,20 +225,24 @@
 			inert={!open}
 			aria-hidden={!open}
 		>
-			<div class="flex h-11 items-center justify-between pr-12">
+			<div class="flex h-13 items-stretch justify-between">
 				<Button
-					class="h-full border-r border-border px-5 text-sm text-muted transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]"
-					onclick={reset}
-					aria-label="Reset to defaults"
-					title="Reset to defaults"
+					class="h-full w-1/2 border-r border-border-subtle text-sm text-muted transition-colors duration-200 hover:text-base-fg"
+					onclick={randomize}
 				>
-					<RotateCcw class="h-3.5 w-3.5 stroke-2" aria-hidden="true" />
-					<span>Reset</span>
+					<Shuffle class="h-3.5 w-3.5 stroke-2" aria-hidden="true" />
+					<span>Randomize</span>
 				</Button>
-				<span class="text-sm text-muted">Playground</span>
+				<Button
+					class="w-[calc(3.5rem+1px)] border-l border-border-subtle text-muted transition-colors duration-200 hover:text-base-fg sm:w-[calc(4.5rem+1px)]"
+					onclick={() => setOpen(false)}
+					aria-label="Close logo settings"
+				>
+					<X class="h-5 w-5 stroke-[1.75]" aria-hidden="true" />
+				</Button>
 			</div>
 
-			<div class="h-px bg-border"></div>
+			<div class="h-px bg-border-subtle"></div>
 
 			<div class="flex flex-col gap-2.5 px-4 pt-3.5 pb-4">
 				<span class="font-mono text-xs tracking-[0.16em] text-muted uppercase">Form</span>
@@ -251,7 +251,7 @@
 				{/each}
 			</div>
 
-			<div class="h-px bg-border"></div>
+			<div class="h-px bg-border-subtle"></div>
 
 			<div class="flex flex-col gap-2.5 px-4 pt-3.5 pb-4">
 				<span class="font-mono text-xs tracking-[0.16em] text-muted uppercase"> Motion </span>
@@ -274,16 +274,18 @@
 				{/if}
 			</div>
 
-			<div class="flex border-t border-border">
+			<div class="flex border-t border-border-subtle">
 				<Button
-					class="h-11 flex-1 text-sm text-muted transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]"
-					onclick={randomize}
+					class="h-13 flex-1 text-sm text-muted transition-colors duration-200 hover:text-base-fg"
+					onclick={reset}
+					aria-label="Reset to defaults"
+					title="Reset to defaults"
 				>
-					<Shuffle class="h-3.5 w-3.5 stroke-2" aria-hidden="true" />
-					<span>Randomize</span>
+					<RotateCcw class="h-3.5 w-3.5 stroke-2" aria-hidden="true" />
+					<span>Reset</span>
 				</Button>
 				<Button
-					class="h-11 flex-1 border-l border-border bg-accent text-sm text-base-bg transition-opacity duration-200 hover:opacity-90"
+					class="h-13 flex-1 border-l border-border-subtle text-sm text-muted transition-colors duration-200 hover:text-base-fg"
 					onclick={replay}
 				>
 					<Play class="h-3.5 w-3.5 fill-current stroke-current" aria-hidden="true" />
@@ -294,24 +296,16 @@
 	</div>
 
 	<Button
+		bind:ref={trigger}
 		class={[
-			'absolute z-20 text-muted transition-[top,left,width,height,color,background-color] duration-300 ease-in-out hover:text-base-fg',
-			open
-				? 'h-11 w-11'
-				: 'h-full w-full hover:bg-[color-mix(in_srgb,var(--muted)_14%,transparent)]'
+			'absolute inset-0 z-20 text-muted transition-[opacity,color,background-color] duration-200 ease-in-out hover:text-base-fg',
+			open && 'pointer-events-none opacity-0'
 		]}
-		style="top:{open ? iconOpenTop + 'px' : '0'};left:{open ? iconOpenLeft + 'px' : '0'}"
-		onclick={() => setOpen(!open)}
-		aria-label={open ? 'Close playground' : 'Open playground'}
+		onclick={() => setOpen(true)}
+		aria-label="Open logo settings"
 		aria-expanded={open}
-		title="Playground"
+		inert={open}
 	>
-		<Settings
-			class={[
-				'h-5 w-5 flex-none stroke-[1.75] transition-transform duration-300 ease-in-out sm:h-6 sm:w-6',
-				open && 'scale-[0.7]'
-			]}
-			aria-hidden="true"
-		/>
+		<Settings class="h-5 w-5 flex-none stroke-[1.75] sm:h-6 sm:w-6" aria-hidden="true" />
 	</Button>
 </div>

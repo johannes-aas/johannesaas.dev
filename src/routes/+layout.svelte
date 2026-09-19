@@ -119,13 +119,13 @@
 <CustomCursor />
 
 <div class="flex min-h-screen flex-col overflow-x-hidden bg-base-bg">
-	<div class="mx-auto flex w-full max-w-6xl flex-1 flex-col border-x border-border">
+	<div class="mx-auto flex w-full max-w-6xl flex-1 flex-col border-x border-border-subtle">
 		<GridLine />
 		<Header />
 		<GridLine />
 		<main bind:this={mainEl} class="relative flex-grow [view-transition-name:page-content]">
 			<div
-				class="pointer-events-none absolute inset-x-0 -top-px h-px bg-border [view-transition-name:wipe-line]"
+				class="pointer-events-none absolute inset-x-0 -top-px h-px bg-border-subtle [view-transition-name:wipe-line]"
 				aria-hidden="true"
 			></div>
 			{@render children?.()}
