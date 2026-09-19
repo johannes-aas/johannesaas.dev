@@ -454,7 +454,7 @@
 		</h1>
 	</div>
 	<div
-		class="mx-auto mt-8 flex w-[clamp(300px,100svw,600px)] landscape:w-[clamp(400px,calc(100svh-5rem),620px)] flex-col items-start gap-2 px-6 md:px-10 lg:absolute lg:bottom-6 lg:left-6 lg:z-10 lg:mx-0 lg:mt-0 lg:w-auto lg:landscape:w-auto lg:px-0"
+		class="mx-auto mt-8 flex w-[clamp(300px,100svw,600px)] landscape:w-[clamp(400px,calc(100svh-5rem),620px)] flex-col items-start gap-3 px-6 md:px-10 lg:absolute lg:bottom-6 lg:left-6 lg:z-10 lg:mx-0 lg:mt-0 lg:w-auto lg:landscape:w-auto lg:px-0"
 	>
 		<div class="relative size-24 overflow-hidden border border-border">
 			<img
@@ -464,8 +464,8 @@
 			/>
 			<div class="absolute inset-0 bg-accent mix-blend-color opacity-30"></div>
 		</div>
-		<p class="text-2xl leading-6 tracking-tight text-base-fg">Frontend developer</p>
-		<h3 class="text-xl leading-5 tracking-tight text-muted">Design enthusiast</h3>
+		<h3 class="font-sans text-4xl not-italic leading-9 tracking-tight text-base-fg">Frontend <br class="hidden sm:block"/>developer</h3>
+		<h3 class="font-sans not-italic text-2xl leading-7 text-muted">Design enthusiast</h3>
 	</div>
 	<div class="absolute top-0 right-0 z-20 -mr-px -mt-px hidden md:block">
 		<LogoSettings bind:open={settingsOpen} />
