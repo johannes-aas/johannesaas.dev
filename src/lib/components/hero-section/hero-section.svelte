@@ -2,6 +2,10 @@
 	import { onMount } from 'svelte'
 	import { browser } from '$app/environment'
 	import { logoControls, logoScrollDriven, logoReplayRequested } from '$lib/stores/logoControls'
+	import Mail from '@lucide/svelte/icons/mail'
+	import { GithubIcon, LinkedinIcon } from '$lib/components/icons'
+	import GridLine from '$lib/components/grid-line.svelte'
+	import Button from '$lib/components/button.svelte'
 	import LogoSettings from './logo-settings.svelte'
 
 	// user-tunable, see LogoSettings.svelte — driven by the shared store so the
@@ -453,8 +457,9 @@
 			{/each}
 		</h1>
 	</div>
+	<GridLine class="mt-8 lg:hidden" />
 	<div
-		class="mx-auto mt-8 flex w-[clamp(300px,100svw,600px)] landscape:w-[clamp(400px,calc(100svh-5rem),620px)] flex-col items-start gap-3 px-6 md:px-10 lg:absolute lg:bottom-6 lg:left-6 lg:z-10 lg:mx-0 lg:mt-0 lg:w-auto lg:landscape:w-auto lg:px-0"
+		class="mx-auto mt-8 flex w-[clamp(300px,100svw,600px)] landscape:w-[clamp(400px,calc(100svh-5rem),620px)] items-center gap-4 px-6 md:px-10 lg:absolute lg:flex-col lg:items-start lg:gap-3 lg:bottom-6 lg:left-6 lg:z-10 lg:mx-0 lg:mt-0 lg:w-auto lg:landscape:w-auto lg:px-0"
 	>
 		<div class="relative size-24 overflow-hidden border border-border">
 			<img
@@ -464,10 +469,44 @@
 			/>
 			<div class="absolute inset-0 bg-accent mix-blend-color opacity-30"></div>
 		</div>
-		<h3 class="font-sans text-4xl not-italic leading-9 tracking-tight text-base-fg">Frontend <br class="hidden sm:block"/>developer</h3>
-		<h3 class="font-sans not-italic text-2xl leading-7 text-muted">Design enthusiast</h3>
+		<div class="flex flex-col gap-3">
+			<h3 class="text-4xl leading-8 tracking-tight text-base-fg">Frontend <br class="hidden lg:block"/>developer</h3>
+			<h3 class="text-2xl leading-7 text-muted">Design enthusiast</h3>
+		</div>
 	</div>
 	<div class="absolute top-0 right-0 z-20 -mr-px -mt-px hidden md:block">
 		<LogoSettings bind:open={settingsOpen} />
+	</div>
+	<div
+		class="mx-auto mt-6 flex w-[clamp(300px,100svw,600px)] px-6 md:px-10 landscape:w-[clamp(400px,calc(100svh-5rem),620px)] lg:absolute lg:right-0 lg:bottom-0 lg:z-20 lg:mx-0 lg:mt-0 lg:-mr-px lg:-mb-px lg:grid lg:w-auto lg:grid-cols-[4.5rem_4.5rem] lg:px-0 lg:landscape:w-auto"
+	>
+		<!-- 2-column grid from lg up with the top-left cell left empty. Each cell is
+		     4.5rem; buttons in column 2 / row 2 reach 1px further left / up so the
+		     borders overlap instead of doubling -->
+		<Button
+			href="https://github.com/johannes-aas"
+			aria-label="GitHub"
+			target="_blank"
+			rel="noopener noreferrer"
+			class="h-14 flex-1 border border-border-subtle text-muted hover:text-base-fg sm:h-[4.5rem] lg:flex-none lg:col-start-2 lg:-ml-px lg:h-[4.5rem] lg:w-[calc(4.5rem+1px)]"
+		>
+			<GithubIcon class="h-5 w-5 flex-none stroke-[1.75] sm:h-6 sm:w-6" aria-hidden="true" />
+		</Button>
+		<Button
+			href="https://www.linkedin.com/in/johannes-hansen-aas/"
+			aria-label="LinkedIn"
+			target="_blank"
+			rel="noopener noreferrer"
+			class="h-14 flex-1 border border-border-subtle text-muted hover:text-base-fg sm:h-[4.5rem] lg:flex-none -ml-px lg:ml-0 lg:-mt-px lg:h-[calc(4.5rem+1px)] lg:w-[4.5rem]"
+		>
+			<LinkedinIcon class="h-5 w-5 flex-none stroke-[1.75] sm:h-6 sm:w-6" aria-hidden="true" />
+		</Button>
+		<Button
+			href="mailto:johannes.hansen.aas@gmail.com"
+			aria-label="Email"
+			class="h-14 flex-1 border border-border-subtle text-muted hover:text-base-fg sm:h-[4.5rem] lg:flex-none -ml-px lg:-mt-px lg:-ml-px lg:h-[calc(4.5rem+1px)] lg:w-[calc(4.5rem+1px)]"
+		>
+			<Mail class="h-5 w-5 flex-none stroke-[1.75] sm:h-6 sm:w-6" aria-hidden="true" />
+		</Button>
 	</div>
 </section>
