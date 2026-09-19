@@ -1,4 +1,5 @@
 <script>
+	import Button from '$lib/components/button.svelte'
 	import Mail from '@lucide/svelte/icons/mail'
 	import { GithubIcon, LinkedinIcon } from '$lib/components/icons'
 </script>
@@ -24,11 +25,12 @@
 		<span class="text-surface-fg transition-colors group-hover:text-base-fg">LinkedIn</span>
 	</a>
 
-	<a
-		href={`mailto:johannes.hansen.aas@gmail.com`}
+	<Button
+		variant="copy"
+		value="johannes.hansen.aas@gmail.com"
 		class="group flex items-center space-x-3 border border-border bg-surface-bg/50 px-6 py-3 backdrop-blur-sm transition-colors duration-200 hover:border-muted hover:bg-surface-bg/60"
 	>
 		<Mail class="h-5 w-5 text-muted transition-colors group-hover:text-base-fg" />
 		<span class="text-surface-fg transition-colors group-hover:text-base-fg">Email</span>
-	</a>
+	</Button>
 </div>
