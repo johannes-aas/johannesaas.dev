@@ -78,6 +78,22 @@
 
 	let settingsOpen = $state(false)
 
+	// local time in Norway, ticked once a second. Stays null until mounted so the
+	// server-rendered markup never disagrees with the visitor's clock.
+	const osloTime = new Intl.DateTimeFormat('en-GB', {
+		timeZone: 'Europe/Oslo',
+		hour: '2-digit',
+		minute: '2-digit',
+		hourCycle: 'h23',
+		timeZoneName: 'shortOffset'
+	})
+	let clock = $state(null)
+
+	const updateClock = () => {
+		const parts = Object.fromEntries(osloTime.formatToParts(new Date()).map((p) => [p.type, p.value]))
+		clock = { hour: parts.hour, minute: parts.minute, offset: parts.timeZoneName }
+	}
+
 	let innerWidth = 1000
 	let innerHeight = 1000
 	let mouseX = innerWidth / 2 // initialize to center
@@ -349,6 +365,9 @@
 		innerHeight = window.innerHeight
 		updateLogoCenter()
 
+		updateClock()
+		const clockInterval = setInterval(updateClock, 1000)
+
 		// Anything that cannot hover has no cursor to follow, so it scrolls instead.
 		// This is narrower than a touch check: a touchscreen laptop still has a mouse.
 		isTouchDevice = window.matchMedia('(hover: none)').matches
@@ -374,6 +393,7 @@
 		})
 
 		return () => {
+			clearInterval(clockInterval)
 			if (frame !== null) cancelAnimationFrame(frame)
 			clearTimers()
 			cursorTimers.forEach(clearTimeout)
@@ -414,6 +434,17 @@
 	bind:this={heroEl}
 	class="relative flex w-full flex-col items-center bg-[radial-gradient(circle_320px_at_50%_360px,color-mix(in_srgb,var(--accent)_14%,var(--base-bg)),var(--base-bg)_100%)] justify-center py-10 lg:py-0 portrait:items-start landscape:min-h-[clamp(400px,calc(100svh-5rem),700px)]"
 >
+	<div
+		class="absolute top-4 left-6 z-20 flex items-center gap-2 text-xs tracking-wider uppercase text-muted tabular-nums"
+		aria-label="Local time in Norway"
+	>
+		<span>Norway</span>
+		<span class="text-border">-</span>
+		<span class="text-base-fg">
+			{clock?.hour ?? '--'}<span class="animate-pulse text-accent">:</span>{clock?.minute ?? '--'}
+		</span>
+		<span class="text-accent-text">{clock?.offset ?? 'GMT+?'}</span>
+	</div>
 	<div class="relative mx-auto">
 		<svg
 			bind:this={svgEl}
@@ -471,7 +502,7 @@
 		</div>
 		<div class="flex flex-col gap-3">
 			<h3 class="text-4xl leading-8 tracking-tight text-base-fg">Frontend <br class="hidden lg:block"/>developer</h3>
-			<h3 class="text-2xl leading-7 text-muted">Design enthusiast</h3>
+			<h3 class="text-xl leading-7 text-accent-text">Design enthusiast</h3>
 		</div>
 	</div>
 	<div class="absolute top-0 right-0 z-20 -mr-px -mt-px hidden md:block">
@@ -502,8 +533,9 @@
 			<LinkedinIcon class="h-5 w-5 flex-none stroke-[1.75] sm:h-6 sm:w-6" aria-hidden="true" />
 		</Button>
 		<Button
-			href="mailto:johannes.hansen.aas@gmail.com"
-			aria-label="Email"
+			variant="copy"
+			value="johannes.hansen.aas@gmail.com"
+			aria-label="Copy email address"
 			class="h-14 flex-1 border border-border-subtle text-muted hover:text-base-fg sm:h-[4.5rem] lg:flex-none -ml-px lg:-mt-px lg:-ml-px lg:h-[calc(4.5rem+1px)] lg:w-[calc(4.5rem+1px)]"
 		>
 			<Mail class="h-5 w-5 flex-none stroke-[1.75] sm:h-6 sm:w-6" aria-hidden="true" />
