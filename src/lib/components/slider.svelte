@@ -111,20 +111,20 @@
 	onpointerup={endDrag}
 	onpointercancel={endDrag}
 	class={[
-		'relative flex h-9 touch-none items-center justify-between overflow-hidden rounded-sm border border-border-subtle bg-[color-mix(in_oklch,var(--panel-bg),var(--base-fg)_6%)] px-3 transition-opacity duration-200 select-none',
+		'relative flex h-8 touch-none items-center justify-between overflow-hidden rounded-sm border border-border-subtle bg-[color-mix(in_oklch,var(--panel-bg),var(--base-fg)_6%)] px-3 transition-opacity duration-200 select-none',
 		disabled ? 'cursor-not-allowed opacity-40' : 'cursor-ew-resize'
 	]}
 >
 	<div
 		class={[
-			'absolute inset-y-0 bg-[color-mix(in_srgb,var(--accent)_32%,transparent)] transition-[left,width] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
+			'absolute inset-y-0 bg-[color-mix(in_srgb,var(--accent)_40%,transparent)] transition-[left,width] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
 			dragging ? 'duration-0' : 'duration-300'
 		]}
 		style="left:{fill.left}%;width:{fill.width}%"
 	></div>
 	{#each ticks() as left}
 		<div
-			class="absolute top-2.5 bottom-2.5 w-px bg-border-subtle"
+			class="absolute top-2 bottom-2 w-px bg-border-subtle"
 			style="left:{left}%"
 		></div>
 	{/each}

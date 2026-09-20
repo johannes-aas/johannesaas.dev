@@ -536,7 +536,7 @@
 	>
 		<span>Norway</span>
 		<span class="text-base-fg">-</span>
-		<span class="text-base-fg slashed-zero">
+		<span class="font-mono text-base-fg slashed-zero">
 			{clock?.hour ?? '--'}<span class="text-accent-text">:</span>{clock?.minute ?? '--'}
 		</span>
 		<span class="text-accent-text">{clock?.offset ?? 'GMT+?'}</span>
