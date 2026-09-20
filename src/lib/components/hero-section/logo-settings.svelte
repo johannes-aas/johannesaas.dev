@@ -189,7 +189,6 @@
 />
 
 {#snippet sliderRow(spec)}
-	{@const disabled = spec.key === 'speed' && $logoScrollDriven}
 	<Slider
 		label={spec.label}
 		min={spec.min}
@@ -198,7 +197,6 @@
 		decimals={spec.decimals}
 		bipolar={spec.bipolar}
 		value={$logoControls[spec.key]}
-		{disabled}
 		onchange={(v) => setValue(spec.key, v)}
 		onreset={() => resetOne(spec.key)}
 	/>
@@ -251,15 +249,15 @@
 				{/each}
 			</div>
 
-			<div class="h-px bg-border-subtle"></div>
+			{#if !$logoScrollDriven}
+				<div class="h-px bg-border-subtle"></div>
 
-			<div class="flex flex-col gap-2.5 px-4 pt-3.5 pb-4">
-				<span class="font-mono text-xs tracking-[0.16em] text-muted uppercase"> Motion </span>
-				{#each motionSliders as spec (spec.key)}
-					{@render sliderRow(spec)}
-				{/each}
+				<div class="flex flex-col gap-2.5 px-4 pt-3.5 pb-4">
+					<span class="font-mono text-xs tracking-[0.16em] text-muted uppercase"> Motion </span>
+					{#each motionSliders as spec (spec.key)}
+						{@render sliderRow(spec)}
+					{/each}
 
-				{#if !$logoScrollDriven}
 					<div class="flex items-center gap-6">
 						<span class="text-sm text-muted">Spread</span>
 						<ToggleGroupRoot
@@ -271,8 +269,8 @@
 							<ToggleGroupItem value="avoid">Avoid</ToggleGroupItem>
 						</ToggleGroupRoot>
 					</div>
-				{/if}
-			</div>
+				</div>
+			{/if}
 
 			<div class="flex border-t border-border-subtle">
 				<Button
