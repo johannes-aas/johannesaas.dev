@@ -1,5 +1,6 @@
 <script>
 	import { onMount, flushSync } from 'svelte'
+	import { Dialog } from 'bits-ui'
 	import { fade } from 'svelte/transition'
 	import { openPanelCount } from '$lib/stores/panelState'
 	import Button from '$lib/components/button.svelte'
@@ -291,7 +292,7 @@
 	     real DOM, so a click inside the panel can hit-test to <html> instead of
 	     a swatch button — ignore outside-clicks while that's playing so it
 	     doesn't look like a click outside the panel and close it */
-		if (transitioning) return
+		if (transitioning || isMobile) return
 		if (open && container && !container.contains(event.target)) setOpen(false)
 	}
 
@@ -318,7 +319,7 @@
 			   grid lines — with align-items:center, symmetric vertical margins have
 			   no visual effect at all, since the box re-centers on its margin box
 			   regardless of the margin's sign or size */
-			'grid w-14 flex-none place-items-center self-stretch border border-border-subtle -mr-px -mt-px -mb-px text-muted transition-colors duration-200 hover:text-base-fg sm:w-[4.5rem]',
+			'-mt-px -mr-px -mb-px grid w-14 flex-none place-items-center self-stretch border border-border-subtle text-muted transition-colors duration-200 hover:text-base-fg sm:w-[4.5rem]',
 			open && 'bg-panel-bg text-base-fg'
 		]}
 		bind:ref={toggleEl}
@@ -333,7 +334,7 @@
 			     small-screen panel (which has its own explicit close button) -->
 			<span
 				class={[
-					'absolute inset-0 grid place-items-center scale-100 opacity-100 transition-all duration-200 ease-out',
+					'absolute inset-0 grid scale-100 place-items-center opacity-100 transition-all duration-200 ease-out',
 					open && 'sm:scale-75 sm:opacity-0'
 				]}
 			>
@@ -341,7 +342,7 @@
 			</span>
 			<span
 				class={[
-					'absolute inset-0 grid place-items-center scale-75 opacity-0 transition-all duration-200 ease-out',
+					'absolute inset-0 grid scale-75 place-items-center opacity-0 transition-all duration-200 ease-out',
 					open && 'sm:scale-100 sm:opacity-100'
 				]}
 			>
@@ -350,75 +351,75 @@
 		</span>
 	</Button>
 
-	{#if open}
-		<!-- small screens: floating vertical dialog, centered on screen, instant
-		     theme switch with no wipe/reveal animation. Both this and the sm+
-		     panel below stay mounted together and are toggled purely by the
-		     `sm:hidden`/`hidden sm:block` CSS below — but bits-ui's focus trap
-		     and dismiss-on-outside-click layers act via document-level
-		     listeners regardless of CSS visibility, so a CSS-hidden dialog was
-		     still swallowing pointer events meant for the sm+ panel's swatch
-		     buttons. Passing `open && isMobile` (rather than just `open`) into
-		     DialogRoot keeps those layers genuinely inert at desktop widths
-		     without touching which markup is mounted. -->
-		<div class="sm:hidden" transition:fade={{ duration: 160 }}>
-			<DialogRoot open={open && isMobile} onOpenChange={setOpen}>
-				<DialogOverlay />
-				<DialogContent
-					class="fixed top-1/2 left-1/2 flex w-40 -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-none border border-border-subtle bg-panel-bg shadow-lg"
+	<!-- small screens: floating vertical dialog, centered on screen, instant
+	     theme switch with no wipe/reveal animation. Passing `open && isMobile`
+	     (rather than just `open`) into DialogRoot keeps bits-ui's focus trap and
+	     dismiss-on-outside-click layers inert at desktop widths, where they'd
+	     otherwise swallow pointer events meant for the sm+ panel's swatches.
+	     Deliberately not inside `{#if open}` — bits-ui owns mount/unmount here so
+	     it can play the exit animation. Content is portalled to <body> because the
+	     header's backdrop-blur is the containing block for `fixed` descendants,
+	     which centred the dialog on the header instead of the viewport. bits-ui
+	     handles its own outside-click dismissal, so onWindowPointerDown skips
+	     mobile. -->
+	<DialogRoot open={open && isMobile} onOpenChange={setOpen}>
+		<Dialog.Portal>
+			<DialogOverlay />
+			<DialogContent
+				class="fixed top-1/2 left-1/2 flex w-40 -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-none border border-border-subtle bg-panel-bg shadow-lg"
+			>
+				<DialogTitle class="sr-only">Colour theme</DialogTitle>
+
+				<Button
+					type="button"
+					class="flex w-full items-center justify-center border-b border-border-subtle py-4 text-base-fg outline-none"
+					aria-label="Close"
+					onclick={() => setOpen(false)}
 				>
-					<DialogTitle class="sr-only">Colour theme</DialogTitle>
+					<X class="h-6 w-6 stroke-[1.5]" aria-hidden="true" />
+				</Button>
 
-					<Button
-						type="button"
-						class="flex w-full items-center justify-center border-b border-border-subtle py-4 text-base-fg outline-none"
-						aria-label="Close"
-						onclick={() => setOpen(false)}
+				<div class="flex w-full flex-col items-center gap-3 px-3 py-4">
+					<Sun class="h-6 w-6 flex-none stroke-base-fg stroke-[1.5]" aria-hidden="true" />
+
+					<div
+						class="flex w-full flex-col items-center gap-1"
+						role="radiogroup"
+						aria-label="Colour theme"
 					>
-						<X class="h-6 w-6 stroke-[1.5]" aria-hidden="true" />
-					</Button>
-
-					<div class="flex w-full flex-col items-center gap-3 px-3 py-4">
-						<Sun class="h-6 w-6 flex-none stroke-base-fg stroke-[1.5]" aria-hidden="true" />
-
-						<div
-							class="flex w-full flex-col items-center gap-1"
-							role="radiogroup"
-							aria-label="Colour theme"
-						>
-							{#each ids as id, i (id)}
-								<Button
-									type="button"
-									role="radio"
-									aria-checked={i === themeIndex}
-									tabindex={i === themeIndex ? 0 : -1}
+						{#each ids as id, i (id)}
+							<Button
+								type="button"
+								role="radio"
+								aria-checked={i === themeIndex}
+								tabindex={i === themeIndex ? 0 : -1}
+								class={[
+									'relative h-9 w-full flex-none border border-border-subtle outline-none',
+									i === themeIndex && 'selected'
+								]}
+								style="background-image: linear-gradient(to right, var(--{id}-swatch-from), var(--{id}-swatch-to)); --swatch-mark: var(--{id}-swatch-mark);"
+								bind:ref={mobileButtonEls[i]}
+								onclick={() => setThemeImmediate(i)}
+								onkeydown={(event) => onButtonKeyDown(event, i, setThemeImmediate, mobileButtonEls)}
+							>
+								<span
 									class={[
-										'relative h-9 w-full flex-none border border-border-subtle outline-none',
-										i === themeIndex && 'selected'
+										'h-3.5 w-3.5 bg-[var(--swatch-mark)]',
+										i === themeIndex ? 'opacity-100' : 'opacity-0'
 									]}
-									style="background-image: linear-gradient(to right, var(--{id}-swatch-from), var(--{id}-swatch-to)); --swatch-mark: var(--{id}-swatch-mark);"
-									bind:ref={mobileButtonEls[i]}
-									onclick={() => setThemeImmediate(i)}
-									onkeydown={(event) =>
-										onButtonKeyDown(event, i, setThemeImmediate, mobileButtonEls)}
-								>
-									<span
-										class={[
-											'h-3.5 w-3.5 bg-[var(--swatch-mark)]',
-											i === themeIndex ? 'opacity-100' : 'opacity-0'
-										]}
-										aria-hidden="true"
-									></span>
-								</Button>
-							{/each}
-						</div>
-
-						<Moon class="h-6 w-6 flex-none stroke-base-fg stroke-[1.5]" aria-hidden="true" />
+									aria-hidden="true"
+								></span>
+							</Button>
+						{/each}
 					</div>
-				</DialogContent>
-			</DialogRoot>
-		</div>
 
+					<Moon class="h-6 w-6 flex-none stroke-base-fg stroke-[1.5]" aria-hidden="true" />
+				</div>
+			</DialogContent>
+		</Dialog.Portal>
+	</DialogRoot>
+
+	{#if open}
 		<!-- sm and up: animated wipe/reveal panel -->
 		<div class="absolute inset-x-0 top-full z-50 -mx-px hidden sm:block">
 			<div
@@ -449,7 +450,8 @@
 								transitioning && i !== themeIndex && 'opacity-0 delay-0 duration-150',
 								justRevealed && i !== themeIndex && 'jump'
 							]}
-							style="--swatch-from: var(--{id}-swatch-from); --swatch-to: var(--{id}-swatch-to); --swatch-mark: var(--{id}-swatch-mark); --stagger-delay: {i * 40}ms;"
+							style="--swatch-from: var(--{id}-swatch-from); --swatch-to: var(--{id}-swatch-to); --swatch-mark: var(--{id}-swatch-mark); --stagger-delay: {i *
+								40}ms;"
 							bind:ref={buttonEls[i]}
 							onclick={() => setTheme(i)}
 							onkeydown={(event) => onButtonKeyDown(event, i, setTheme, buttonEls)}
