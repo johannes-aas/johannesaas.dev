@@ -79,13 +79,13 @@
 		// group — ignore that so one option always stays selected
 		if (v) onValueChange(v)
 	}}
-	class={cn('relative flex w-full overflow-hidden rounded-sm border border-border', className)}
+	class={cn('relative flex w-full overflow-hidden rounded-sm border border-border-subtle', className)}
 	{...restProps}
 >
 	{#if thumbVisible}
 		<div
 			aria-hidden="true"
-			class="pointer-events-none absolute inset-y-0 bg-accent transition-[transform,width] duration-200 ease-in-out"
+			class="pointer-events-none absolute inset-y-0 rounded-sm bg-accent transition-[transform,width] duration-200 ease-in-out"
 			style="width:{thumbWidth}px;transform:translateX({thumbLeft}px)"
 		></div>
 	{/if}

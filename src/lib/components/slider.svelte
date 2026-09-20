@@ -111,7 +111,7 @@
 	onpointerup={endDrag}
 	onpointercancel={endDrag}
 	class={[
-		'relative flex h-9 touch-none items-center justify-between overflow-hidden rounded-sm border border-[color-mix(in_oklch,var(--panel-bg),var(--border)_35%)] bg-[color-mix(in_oklch,var(--panel-bg),var(--base-fg)_6%)] px-3 transition-opacity duration-200 select-none',
+		'relative flex h-9 touch-none items-center justify-between overflow-hidden rounded-sm border border-border-subtle bg-[color-mix(in_oklch,var(--panel-bg),var(--base-fg)_6%)] px-3 transition-opacity duration-200 select-none',
 		disabled ? 'cursor-not-allowed opacity-40' : 'cursor-ew-resize'
 	]}
 >
@@ -124,7 +124,7 @@
 	></div>
 	{#each ticks() as left}
 		<div
-			class="absolute top-2.5 bottom-2.5 w-px bg-[color-mix(in_oklch,var(--border)_35%,transparent)]"
+			class="absolute top-2.5 bottom-2.5 w-px bg-border-subtle"
 			style="left:{left}%"
 		></div>
 	{/each}
