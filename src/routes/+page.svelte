@@ -7,7 +7,7 @@
 
 <GridLine />
 
-<div class="my-8 p-4 text-center">
+<div class="relative z-99 py-12 px-4 bg-base-bg text-center">
 	<h2 class="mb-6 text-2xl font-light text-surface-fg md:text-3xl">👋 Hi there!</h2>
 	<p class="mx-auto max-w-lg text-lg leading-relaxed text-muted">
 		Nice of you to stop by. There's not much to see here yet. I spent way too much time making this

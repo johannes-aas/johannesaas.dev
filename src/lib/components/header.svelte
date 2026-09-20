@@ -3,7 +3,7 @@
 	import ThemeSwitcher from './theme-switcher.svelte'
 </script>
 
-<header class="relative z-30 flex items-center">
+<header class="relative z-30 flex items-center backdrop-blur-md">
 	<a href="/" class="box-border h-14 w-14 flex-none p-3 sm:h-[4.5rem] sm:w-[4.5rem] sm:p-4">
 		<Logo />
 	</a>

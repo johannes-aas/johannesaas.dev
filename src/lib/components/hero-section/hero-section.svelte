@@ -508,7 +508,7 @@
 			aria-label="GitHub"
 			target="_blank"
 			rel="noopener noreferrer"
-			class="h-14 flex-1 border border-border-subtle text-muted hover:text-base-fg sm:h-[4.5rem] lg:flex-none lg:col-start-2 lg:-ml-px lg:h-[4.5rem] lg:w-[calc(4.5rem+1px)]"
+			class="h-14 flex-1 border border-border-subtle bg-base-bg text-muted hover:text-base-fg sm:h-[4.5rem] lg:flex-none lg:col-start-2 lg:-ml-px lg:h-[4.5rem] lg:w-[calc(4.5rem+1px)]"
 		>
 			<GithubIcon class="h-5 w-5 flex-none stroke-[1.75] sm:h-6 sm:w-6" aria-hidden="true" />
 		</Button>
@@ -517,7 +517,7 @@
 			aria-label="LinkedIn"
 			target="_blank"
 			rel="noopener noreferrer"
-			class="h-14 flex-1 border border-border-subtle text-muted hover:text-base-fg sm:h-[4.5rem] lg:flex-none -ml-px lg:ml-0 lg:-mt-px lg:h-[calc(4.5rem+1px)] lg:w-[4.5rem]"
+			class="h-14 flex-1 border border-border-subtle bg-base-bg text-muted hover:text-base-fg sm:h-[4.5rem] lg:flex-none -ml-px lg:ml-0 lg:-mt-px lg:h-[calc(4.5rem+1px)] lg:w-[4.5rem]"
 		>
 			<LinkedinIcon class="h-5 w-5 flex-none stroke-[1.75] sm:h-6 sm:w-6" aria-hidden="true" />
 		</Button>
@@ -525,7 +525,7 @@
 			variant="copy"
 			value="johannes.hansen.aas@gmail.com"
 			aria-label="Copy email address"
-			class="h-14 flex-1 border border-border-subtle text-muted hover:text-base-fg sm:h-[4.5rem] lg:flex-none -ml-px lg:-mt-px lg:-ml-px lg:h-[calc(4.5rem+1px)] lg:w-[calc(4.5rem+1px)]"
+			class="h-14 flex-1 border border-border-subtle bg-base-bg text-muted hover:text-base-fg sm:h-[4.5rem] lg:flex-none -ml-px lg:-mt-px lg:-ml-px lg:h-[calc(4.5rem+1px)] lg:w-[calc(4.5rem+1px)]"
 		>
 			<Mail class="h-5 w-5 flex-none stroke-[1.75] sm:h-6 sm:w-6" aria-hidden="true" />
 		</Button>

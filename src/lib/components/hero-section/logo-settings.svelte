@@ -208,7 +208,7 @@
 			'absolute z-10 overflow-hidden border transition-[top,left,width,height,background-color] duration-300 ease-in-out',
 			open
 				? 'w-72 max-w-[calc(100vw-1.5rem)] border-border-subtle bg-panel-bg'
-				: 'h-14 w-14 border-border-subtle sm:h-[4.5rem] sm:w-[4.5rem]'
+				: 'h-14 w-14 border-border-subtle bg-base-bg sm:h-[4.5rem] sm:w-[4.5rem]'
 		]}
 		style="top:{open ? panelY + 'px' : '0'};left:{open ? panelX + 'px' : '0'}{open
 			? ';height:' + panelHeight + 'px'
