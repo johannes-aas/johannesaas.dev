@@ -30,7 +30,7 @@
 			description: "Website of NTNU's informatics student association",
 			technologies: ['Nextjs', 'React', 'Tailwind CSS', 'TypeScript'],
 			liveUrl: 'https://online.ntnu.no/',
-			githubUrl: 'https://github.com/johannes-aas/react-calendar'
+			githubUrl: 'https://github.com/dotkom/monoweb'
 		},
 		{
 			title: 'Login.no',
@@ -45,25 +45,24 @@
 				"Bachelor's thesis project built with a student group for Aker Solutions. A web application that visualizes workplace health data — noise, vibration, and dust exposure.",
 			technologies: ['React', 'Tailwind CSS', 'TypeScript'],
 			liveUrl: 'http://129.241.100.43/foreman',
-			githubUrl: 'https://github.com/johannes-aas/react-calendar'
+			githubUrl: 'https://github.com/IT2901-Group-7-2026'
 		}
 	]
 </script>
 
-<div class="mx-auto max-w-6xl px-4 py-16">
-	<h1 class="mb-8 text-4xl font-bold">My Projects</h1>
+<!-- grids use -mx-px so the outer card borders sit exactly on the layout's side lines -->
+<h1 class="border-b border-border-subtle p-8 text-4xl font-bold md:p-10">My Projects</h1>
 
-	<div class="grid gap-8 md:grid-cols-2">
-		{#each projects as project}
-			<ProjectCard {...project} />
-		{/each}
-	</div>
+<div class="-mx-px grid md:grid-cols-2">
+	{#each projects as project}
+		<ProjectCard {...project} />
+	{/each}
+</div>
 
-	<h1 class="mt-10 mb-8 text-4xl font-bold">Things I worked on</h1>
+<h1 class="border-b border-border-subtle p-8 text-4xl font-bold md:p-10">Things I worked on</h1>
 
-	<div class="grid gap-8 md:grid-cols-2">
-		{#each projectContrib as project}
-			<ProjectCard {...project} />
-		{/each}
-	</div>
+<div class="-mx-px grid md:grid-cols-2">
+	{#each projectContrib as project}
+		<ProjectCard {...project} />
+	{/each}
 </div>

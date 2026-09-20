@@ -2,9 +2,12 @@
 	let { title, description, technologies = [], liveUrl = '', githubUrl = '' } = $props()
 </script>
 
-<div class="border border-border bg-surface-bg">
-	<div class="p-6">
-		<h3 class="mb-2 text-xl font-semibold text-surface-fg">{title}</h3>
+<!-- -mt-px / md:even:-ml-px collapse neighbouring borders into one line; hover:z-10 lifts the stronger border above them -->
+<div
+	class="relative -mt-px border border-border-subtle transition-colors hover:z-10 hover:border-border md:even:-ml-px"
+>
+	<div class="p-8 md:p-10">
+		<h3 class="mb-3 text-2xl font-semibold md:text-3xl text-surface-fg">{title}</h3>
 		<p class="mb-4 text-muted">{description}</p>
 
 		<div class="mb-4 flex flex-wrap gap-2">
