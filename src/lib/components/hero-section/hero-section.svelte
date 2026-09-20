@@ -434,17 +434,6 @@
 	bind:this={heroEl}
 	class="relative flex w-full flex-col items-center bg-[radial-gradient(circle_320px_at_50%_360px,color-mix(in_srgb,var(--accent)_14%,var(--base-bg)),var(--base-bg)_100%)] justify-center py-10 lg:py-0 portrait:items-start landscape:min-h-[clamp(400px,calc(100svh-5rem),700px)]"
 >
-	<div
-		class="absolute top-4 left-6 z-20 flex items-center gap-2 text-xs tracking-wider uppercase text-muted tabular-nums"
-		aria-label="Local time in Norway"
-	>
-		<span>Norway</span>
-		<span class="text-base-fg">-</span>
-		<span class="text-base-fg slashed-zero">
-			{clock?.hour ?? '--'}<span class="text-accent-text">:</span>{clock?.minute ?? '--'}
-		</span>
-		<span class="text-accent-text">{clock?.offset ?? 'GMT+?'}</span>
-	</div>
 	<div class="relative mx-auto">
 		<svg
 			bind:this={svgEl}
@@ -540,5 +529,16 @@
 		>
 			<Mail class="h-5 w-5 flex-none stroke-[1.75] sm:h-6 sm:w-6" aria-hidden="true" />
 		</Button>
+	</div>
+	<div
+		class="mx-auto mt-4 flex w-[clamp(300px,100svw,600px)] items-center gap-2 px-6 text-xs tracking-wider uppercase text-muted tabular-nums md:px-10 landscape:w-[clamp(400px,calc(100svh-5rem),620px)] lg:absolute lg:top-4 lg:left-6 lg:z-20 lg:mx-0 lg:mt-0 lg:w-auto lg:px-0 lg:landscape:w-auto"
+		aria-label="Local time in Norway"
+	>
+		<span>Norway</span>
+		<span class="text-base-fg">-</span>
+		<span class="text-base-fg slashed-zero">
+			{clock?.hour ?? '--'}<span class="text-accent-text">:</span>{clock?.minute ?? '--'}
+		</span>
+		<span class="text-accent-text">{clock?.offset ?? 'GMT+?'}</span>
 	</div>
 </section>
