@@ -111,7 +111,7 @@
 	onpointerup={endDrag}
 	onpointercancel={endDrag}
 	class={[
-		'relative flex h-9 touch-none items-center justify-between overflow-hidden rounded-sm border border-border bg-surface-bg px-3 transition-opacity duration-200 select-none',
+		'relative flex h-9 touch-none items-center justify-between overflow-hidden rounded-sm border border-[color-mix(in_oklch,var(--panel-bg),var(--border)_35%)] bg-[color-mix(in_oklch,var(--panel-bg),var(--base-fg)_6%)] px-3 transition-opacity duration-200 select-none',
 		disabled ? 'cursor-not-allowed opacity-40' : 'cursor-ew-resize'
 	]}
 >
@@ -124,12 +124,12 @@
 	></div>
 	{#each ticks() as left}
 		<div
-			class="absolute top-2.5 bottom-2.5 w-px bg-[color-mix(in_srgb,var(--border)_70%,transparent)]"
+			class="absolute top-2.5 bottom-2.5 w-px bg-[color-mix(in_oklch,var(--border)_35%,transparent)]"
 			style="left:{left}%"
 		></div>
 	{/each}
 	{#if bipolar}
-		<div class="absolute inset-y-0 w-px bg-border" style="left:{pct(0)}%"></div>
+		<div class="absolute inset-y-0 w-px bg-[color-mix(in_oklch,var(--border)_60%,transparent)]" style="left:{pct(0)}%"></div>
 	{/if}
 	<SliderPrimitive.Thumb
 		index={0}
