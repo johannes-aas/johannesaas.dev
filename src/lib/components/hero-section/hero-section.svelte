@@ -439,9 +439,9 @@
 		aria-label="Local time in Norway"
 	>
 		<span>Norway</span>
-		<span class="text-border">-</span>
-		<span class="text-base-fg">
-			{clock?.hour ?? '--'}<span class="animate-pulse text-accent">:</span>{clock?.minute ?? '--'}
+		<span class="text-base-fg">-</span>
+		<span class="text-base-fg slashed-zero">
+			{clock?.hour ?? '--'}<span class="text-accent-text">:</span>{clock?.minute ?? '--'}
 		</span>
 		<span class="text-accent-text">{clock?.offset ?? 'GMT+?'}</span>
 	</div>
@@ -492,17 +492,17 @@
 	<div
 		class="mx-auto mt-8 flex w-[clamp(300px,100svw,600px)] landscape:w-[clamp(400px,calc(100svh-5rem),620px)] items-center gap-4 px-6 md:px-10 lg:absolute lg:flex-col lg:items-start lg:gap-3 lg:bottom-6 lg:left-6 lg:z-10 lg:mx-0 lg:mt-0 lg:w-auto lg:landscape:w-auto lg:px-0"
 	>
-		<div class="relative size-24 overflow-hidden border border-border">
+		<div class="relative size-22 overflow-hidden border border-border">
 			<img
 				src="/images/johannes2.jpg"
 				alt="Johannes"
-				class="size-24 -scale-x-100 object-cover grayscale-25"
+				class="size-22 -scale-x-100 object-cover grayscale-25"
 			/>
 			<div class="absolute inset-0 bg-accent mix-blend-color opacity-30"></div>
 		</div>
 		<div class="flex flex-col gap-3">
-			<h3 class="text-4xl leading-8 tracking-tight text-base-fg">Frontend <br class="hidden lg:block"/>developer</h3>
-			<h3 class="text-xl leading-7 text-accent-text">Design enthusiast</h3>
+			<h3 class="text-3xl leading-7 tracking-tight text-base-fg">Frontend <br class="hidden lg:block"/>developer</h3>
+			<h3 class="text-xl leading-6 text-accent-text">Design enthusiast</h3>
 		</div>
 	</div>
 	<div class="absolute top-0 right-0 z-20 -mr-px -mt-px hidden md:block">
