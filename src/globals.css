@@ -36,6 +36,47 @@
 	--animate-overlay-in: overlay-in 180ms ease-out;
 	--animate-overlay-out: overlay-out 140ms ease-in forwards;
 
+	/* mobile menu — always wipes top-down: in reveals it from the header line,
+	   out erases it the same way, matching the page-nav wipe. The menu-line
+	   sweeps alongside as the moving edge */
+	--animate-menu-in: menu-in 700ms cubic-bezier(0.76, 0, 0.24, 1) both;
+	--animate-menu-out: menu-out 700ms cubic-bezier(0.76, 0, 0.24, 1) both;
+	--animate-menu-line: menu-line 700ms cubic-bezier(0.76, 0, 0.24, 1) both;
+	--animate-menu-link: menu-link 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+
+	@keyframes menu-in {
+		from {
+			clip-path: inset(0 0 100% 0);
+		}
+		to {
+			clip-path: inset(0);
+		}
+	}
+	@keyframes menu-out {
+		from {
+			clip-path: inset(0);
+		}
+		to {
+			clip-path: inset(100% 0 0 0);
+			visibility: hidden;
+		}
+	}
+	@keyframes menu-line {
+		from {
+			top: 0;
+		}
+		to {
+			top: 100%;
+		}
+	}
+	@keyframes menu-link {
+		from {
+			transform: translateY(100%);
+		}
+		to {
+			transform: translateY(0);
+		}
+	}
 	@keyframes dialog-in {
 		from {
 			opacity: 0;
@@ -253,14 +294,14 @@
 
 /* THEME 6: Nocturne — near-black forest green, green accent */
 .theme-6 {
-	--base-bg: oklch(15.001% 0.00655 156.781);
+	--base-bg: oklch(22.175% 0.01413 154.14);
 	--base-fg: oklch(97% 0.013 154.13);
 	--surface-bg: oklch(20.75% 0.026 154.22);
 	--surface-fg: oklch(84.36% 0.034 154.36);
-	--panel-bg: oklch(27.929% 0.00798 170.005);
+	--panel-bg: oklch(33.211% 0.01201 171.171);
 	--muted: oklch(83.5% 0.041 154.58);
 	--border: oklch(66.046% 0.09011 155.983);
-	--border-subtle: oklch(21.174% 0.02463 151.732);
+	--border-subtle: oklch(27.187% 0.03602 151.797);
 	--accent: oklch(56.86% 0.1311 154.616);
 	--accent-text: oklch(76% 0.14 154.616);
 	--cursor: oklch(70% 0.15 149.58);
@@ -404,6 +445,8 @@ body {
 	see the object-fit rule below for why that still needs pixels, not %.)
 */
 ::view-transition-group(page-content) {
+	/* above the footer groups, which otherwise paint over a menu-nav wipe */
+	z-index: 2;
 	height: var(--wipe-height, auto);
 }
 

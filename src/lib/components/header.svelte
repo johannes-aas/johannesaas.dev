@@ -1,20 +1,59 @@
 <script>
+	import MobileMenu from './mobile-menu.svelte'
 	import Logo from './logo.svelte'
 	import ThemeSwitcher from './theme-switcher.svelte'
+	import Button from '$lib/components/button.svelte'
+	import { mobileMenuOpen } from '$lib/stores/panelState'
+
+	const links = [
+		{ href: '/about', label: 'About' },
+		{ href: '/projects', label: 'Projects' },
+		{ href: '/blog', label: 'Blog' }
+	]
+
+	function toggleMenu() {
+		if (!$mobileMenuOpen) window.scrollTo({ top: 0, behavior: 'instant' })
+		$mobileMenuOpen = !$mobileMenuOpen
+	}
 </script>
 
 <header class="relative z-30 flex items-center backdrop-blur-md">
-	<a href="/" class="box-border h-14 w-14 flex-none p-3 sm:h-[4.5rem] sm:w-[4.5rem] sm:p-4">
+	<a href="/" class="box-border h-16 w-16 flex-none p-3.5 sm:h-[4.5rem] sm:w-[4.5rem] sm:p-4">
 		<Logo />
 	</a>
-	<nav
-		class="flex flex-1 items-center justify-center gap-3 text-sm sm:gap-8 sm:text-base"
-	>
-		<a href="/about" class="text-muted transition-colors hover:text-base-fg">About</a>
-		<a href="/projects" class="text-muted transition-colors hover:text-base-fg">Projects</a>
-		<a href="/blog" class="text-muted transition-colors hover:text-base-fg">Blog</a>
+	<nav class="hidden flex-1 items-center justify-center gap-8 text-base sm:flex">
+		{#each links as { href, label } (href)}
+			<a {href} class="text-muted transition-colors hover:text-base-fg">{label}</a>
+		{/each}
 	</nav>
-	<div class="flex items-center self-stretch">
+	<div class="ml-auto flex items-center self-stretch">
 		<ThemeSwitcher />
+		<Button
+			class={[
+				'-mt-px -mr-px -mb-px grid w-16 flex-none place-items-center self-stretch border border-border-subtle text-muted hover:text-base-fg sm:hidden',
+				$mobileMenuOpen && 'bg-panel-bg text-base-fg'
+			]}
+			onclick={toggleMenu}
+			aria-label={$mobileMenuOpen ? 'Close menu' : 'Open menu'}
+			aria-expanded={$mobileMenuOpen}
+			aria-controls="mobile-menu"
+		>
+			<span class="relative block h-6 w-6" aria-hidden="true">
+				<span
+					class={[
+						'absolute top-1/2 left-0 h-px w-full bg-current transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]',
+						$mobileMenuOpen ? 'translate-y-0 rotate-45' : '-translate-y-[4px]'
+					]}
+				></span>
+				<span
+					class={[
+						'absolute top-1/2 left-0 h-px w-full bg-current transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]',
+						$mobileMenuOpen ? 'translate-y-0 -rotate-45' : 'translate-y-[4px]'
+					]}
+				></span>
+			</span>
+		</Button>
 	</div>
 </header>
+
+<MobileMenu {links} />

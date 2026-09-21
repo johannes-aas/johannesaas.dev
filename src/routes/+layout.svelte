@@ -3,12 +3,13 @@
 	import favicon from '$lib/assets/favicon.svg'
 	import { dev } from '$app/environment'
 	import { injectAnalytics } from '@vercel/analytics/sveltekit'
-	import { onNavigate } from '$app/navigation'
+	import { onNavigate, afterNavigate } from '$app/navigation'
+	import { flushSync } from 'svelte'
 	import Header from '$lib/components/header.svelte'
 	import Footer from '$lib/components/footer.svelte'
 	import GridLine from '$lib/components/grid-line.svelte'
 	import CustomCursor from '$lib/components/custom-cursor.svelte'
-	import { openPanelCount } from '$lib/stores/panelState'
+	import { openPanelCount, mobileMenuOpen, menuNav } from '$lib/stores/panelState'
 
 	injectAnalytics({ mode: dev ? 'development' : 'production' })
 
@@ -47,14 +48,38 @@
 	// eases the wipe's linear rAF progress into a standard ease-in-out curve
 	const easeInOutCubic = (t) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2)
 
+	afterNavigate(() => {
+		$mobileMenuOpen = false
+	})
+
+	/*
+		Navigating from the open mobile menu: the menu takes over main's
+		`page-content` name (see header.svelte / the `menuNav` store) so the
+		menu itself is what the wipe erases, starting from the header line
+		it's anchored under. The name only ever exists on one of the two at a
+		time — hence the flush before capture and the two-step close inside
+		the transition callback.
+	*/
 	onNavigate((navigation) => {
-		if (!document.startViewTransition) return
-		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+		if (
+			!document.startViewTransition ||
+			window.matchMedia('(prefers-reduced-motion: reduce)').matches
+		) {
+			$mobileMenuOpen = false
+			return
+		}
+
+		const fromMenu = $mobileMenuOpen
+		if (fromMenu) {
+			$menuNav = true
+			flushSync()
+		}
 
 		// measured before the DOM swap: pins the line to the same spot every
 		// nav; only height varies between old and new
 		const mainRect = mainEl?.getBoundingClientRect()
-		const oldHeight = mainRect?.height ?? 0
+		const oldSource = fromMenu ? document.getElementById('mobile-menu') : mainEl
+		const oldHeight = oldSource?.getBoundingClientRect().height ?? 0
 
 		return new Promise((resolve) => {
 			const html = document.documentElement
@@ -70,9 +95,16 @@
 			const transition = document.startViewTransition(async () => {
 				resolve()
 				await navigation.complete
+				if (fromMenu) {
+					$mobileMenuOpen = false
+					flushSync()
+					$menuNav = false
+					flushSync()
+				}
 			})
 			transition.finished.finally(() => {
 				cancelAnimationFrame(rafId)
+				$menuNav = false
 				html.style.removeProperty('--wipe-left')
 				html.style.removeProperty('--wipe-top')
 				html.style.removeProperty('--wipe-width')
@@ -123,7 +155,13 @@
 		<GridLine />
 		<Header />
 		<GridLine />
-		<main bind:this={mainEl} class="relative flex-grow [view-transition-name:page-content]">
+		<main
+			bind:this={mainEl}
+			class={[
+				'relative flex-grow',
+				$menuNav ? '[view-transition-name:none]' : '[view-transition-name:page-content]'
+			]}
+		>
 			<div
 				class="pointer-events-none absolute inset-x-0 -top-px h-px bg-border-subtle [view-transition-name:wipe-line]"
 				aria-hidden="true"
