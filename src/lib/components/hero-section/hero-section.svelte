@@ -6,6 +6,7 @@
 	import { GithubIcon, LinkedinIcon } from '$lib/components/icons'
 	import GridLine from '$lib/components/grid-line.svelte'
 	import Button from '$lib/components/button.svelte'
+	import TintedImage from '$lib/components/tinted-image.svelte'
 	import LogoSettings from './logo-settings.svelte'
 
 	// user-tunable, see LogoSettings.svelte — driven by the shared store so the
@@ -481,14 +482,12 @@
 	<div
 		class="mx-auto mt-8 flex w-[clamp(300px,100svw,600px)] landscape:w-[clamp(400px,calc(100svh-5rem),620px)] items-center gap-4 px-6 md:px-10 lg:absolute lg:flex-col lg:items-start lg:gap-3 lg:bottom-6 lg:left-6 lg:z-10 lg:mx-0 lg:mt-0 lg:w-auto lg:landscape:w-auto lg:px-0"
 	>
-		<div class="relative size-22 overflow-hidden border border-border">
-			<img
-				src="/images/johannes2.jpg"
-				alt="Johannes"
-				class="size-22 -scale-x-100 object-cover grayscale-25"
-			/>
-			<div class="absolute inset-0 bg-accent mix-blend-color opacity-30"></div>
-		</div>
+		<TintedImage
+			src="/images/johannes2.jpg"
+			alt="Johannes"
+			mirrored
+			class="size-22 border border-border"
+		/>
 		<div class="flex flex-col gap-3">
 			<h3 class="text-3xl leading-7 tracking-tight text-base-fg">Frontend <br class="hidden lg:block"/>developer</h3>
 			<h3 class="text-xl leading-6 text-accent-text">Design enthusiast</h3>
