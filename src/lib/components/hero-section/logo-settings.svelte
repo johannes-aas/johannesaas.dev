@@ -25,15 +25,6 @@
 	// a randomized thickness of 0 or a single layer is just a broken-looking logo
 	const formSliders = [
 		{
-			key: 'thickness',
-			label: 'Thickness',
-			min: 0.2,
-			max: 3,
-			step: 0.05,
-			decimals: 1,
-			random: [0.2, 2]
-		},
-		{
 			key: 'spread',
 			label: 'Spread',
 			min: 0,
@@ -50,6 +41,15 @@
 			step: 1,
 			decimals: 0,
 			random: [1, 14]
+		},
+		{
+			key: 'thickness',
+			label: 'Thickness',
+			min: 0.2,
+			max: 3,
+			step: 0.05,
+			decimals: 1,
+			random: [0.2, 2]
 		},
 		{
 			key: 'scaleStep',
