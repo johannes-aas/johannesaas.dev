@@ -165,7 +165,7 @@
 	   as a shade of itself. White fading to a mere hint of the theme's own orange
 	   accent keeps the same left-to-right idea without the murkiness. */
 	--theme-1-swatch-from: white;
-	--theme-1-swatch-to: color-mix(in oklch, white, var(--theme-1-accent) 10%);
+	--theme-1-swatch-to: color-mix(in oklch, white, oklch(70.1% 0.1637 43) 10%);
 	--theme-2-swatch-from: color-mix(in oklch, var(--theme-2-swatch), white 6%);
 	--theme-2-swatch-to: color-mix(in oklch, var(--theme-2-swatch), black 6%);
 	--theme-3-swatch-from: color-mix(in oklch, var(--theme-3-swatch), white 6%);
@@ -181,32 +181,15 @@
 	--theme-6-swatch-to: color-mix(in oklch, var(--theme-6-swatch), black 3%);
 }
 
-/*
-	Flat, always-on copy of each theme's own --accent (mirrors --theme-N-swatch
-	above and exists for the same reason: a swatch button needs to show
-	*every* theme's accent at once, regardless of which theme's class is
-	actually applied to <html> right now, so these can't just read the live
-	--accent). Kept in sync by hand with each .theme-N block's own --accent
-	further down — if one changes, update both.
-*/
+/* Selection/hover marker colour for each swatch — a saturated shade of the
+   swatch's own hue, deep on the light swatches and bright on the dark ones. */
 :root {
-	--theme-1-accent: oklch(70.1% 0.1637 43);
-	--theme-2-accent: oklch(60.27% 0.2127 293.01);
-	--theme-3-accent: oklch(59.97% 0.1866 262.88);
-	--theme-4-accent: oklch(71.78% 0.1193 211.53);
-	--theme-5-accent: oklch(69.26% 0.1338 163.22);
-	--theme-6-accent: oklch(68.55% 0.1243 151.71);
-}
-
-/* Selection/hover marker colour for each swatch — that theme's own accent,
-   so the marker reads as belonging to the swatch it sits on. */
-:root {
-	--theme-1-swatch-mark: var(--theme-1-accent);
-	--theme-2-swatch-mark: var(--theme-2-accent);
-	--theme-3-swatch-mark: var(--theme-3-accent);
-	--theme-4-swatch-mark: var(--theme-4-accent);
-	--theme-5-swatch-mark: var(--theme-5-accent);
-	--theme-6-swatch-mark: var(--theme-6-accent);
+	--theme-1-swatch-mark: oklch(70% 0.16 43);
+	--theme-2-swatch-mark: oklch(60% 0.18 293);
+	--theme-3-swatch-mark: oklch(52% 0.18 260);
+	--theme-4-swatch-mark: oklch(46% 0.09 222);
+	--theme-5-swatch-mark: oklch(72% 0.13 167);
+	--theme-6-swatch-mark: oklch(62% 0.14 152);
 }
 
 /* ---------- LIGHT ---------- */

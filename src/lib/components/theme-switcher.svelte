@@ -446,7 +446,6 @@
 							class={[
 								'theme-swatch group relative h-16 flex-1 border border-border-subtle outline-none motion-reduce:animate-none motion-reduce:transition-none sm:h-6',
 								i === themeIndex && 'selected',
-								i !== themeIndex && 'hover:border-[var(--swatch-mark)]',
 								transitioning && i !== themeIndex && 'opacity-0 delay-0 duration-150',
 								justRevealed && i !== themeIndex && 'jump'
 							]}
@@ -458,8 +457,8 @@
 						>
 							<span
 								class={[
-									'h-3.5 w-3.5 bg-[var(--swatch-mark)] transition-opacity duration-150',
-									i === themeIndex ? 'opacity-100' : 'opacity-0 group-hover:opacity-30'
+									'h-3.5 w-3.5 bg-[var(--swatch-mark)] transition-opacity duration-250',
+									i === themeIndex ? 'opacity-100' : 'opacity-0 group-hover:opacity-70'
 								]}
 								aria-hidden="true"
 							></span>
