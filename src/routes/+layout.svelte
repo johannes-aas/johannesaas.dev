@@ -75,20 +75,15 @@
 			flushSync()
 		}
 
-		// measured before the DOM swap: pins the line to the same spot every
-		// nav; only height varies between old and new
-		const mainRect = mainEl?.getBoundingClientRect()
+		// measured before the DOM swap: old/new share this width regardless of
+		// which is taller
+		const wipeWidth = mainEl?.getBoundingClientRect().width ?? 0
 		const oldSource = fromMenu ? document.getElementById('mobile-menu') : mainEl
 		const oldHeight = oldSource?.getBoundingClientRect().height ?? 0
 
 		return new Promise((resolve) => {
 			const html = document.documentElement
-			// wipe-line has no real old/new geometry of its own, so pin it via
-			// CSS vars read back in globals.css
-			html.style.setProperty('--wipe-left', `${mainRect?.left ?? 0}px`)
-			// -1px matches the real element's own -top-px offset
-			html.style.setProperty('--wipe-top', `${(mainRect?.top ?? 0) - 1}px`)
-			html.style.setProperty('--wipe-width', `${mainRect?.width ?? 0}px`)
+			html.style.setProperty('--wipe-width', `${wipeWidth}px`)
 			html.style.setProperty('--wipe-progress', '0')
 
 			let rafId
@@ -105,8 +100,6 @@
 			transition.finished.finally(() => {
 				cancelAnimationFrame(rafId)
 				$menuNav = false
-				html.style.removeProperty('--wipe-left')
-				html.style.removeProperty('--wipe-top')
 				html.style.removeProperty('--wipe-width')
 				html.style.removeProperty('--wipe-height')
 				html.style.removeProperty('--wipe-progress')

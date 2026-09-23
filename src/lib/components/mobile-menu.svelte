@@ -33,6 +33,33 @@
 		}
 	})
 
+	/*
+		Android Chrome positions `fixed` elements against the layout viewport,
+		whose origin doesn't move when the URL bar shows — unlike normal-flow
+		content (the header), which always renders below it. With the bar
+		visible that leaves this panel, and the line inside it, shifted up
+		relative to what's actually on screen. visualViewport.offsetTop is the
+		live gap between the two viewports; nudging the panel down by that much
+		is the standard fix (not reset on close, so the close animation doesn't
+		snap back to the wrong spot mid-play).
+	*/
+	let vvOffsetTop = $state(0)
+
+	$effect(() => {
+		if (!$mobileMenuOpen || !window.visualViewport) return
+		const vv = window.visualViewport
+		const update = () => {
+			vvOffsetTop = vv.offsetTop
+		}
+		update()
+		vv.addEventListener('resize', update)
+		vv.addEventListener('scroll', update)
+		return () => {
+			vv.removeEventListener('resize', update)
+			vv.removeEventListener('scroll', update)
+		}
+	})
+
 	function onWindowKeyDown(event) {
 		if (event.key === 'Escape') $mobileMenuOpen = false
 	}
@@ -41,8 +68,13 @@
 		if (event.target === event.currentTarget && !$mobileMenuOpen) hasOpened = false
 	}
 
-	function onLinkClick(href) {
-		if (href === page.url.pathname) $mobileMenuOpen = false
+	function onLinkClick(event, href) {
+		// already on this page — nothing to navigate to, so skip the page-nav
+		// transition entirely and just close the menu like any other close
+		if (href === page.url.pathname) {
+			event.preventDefault()
+			$mobileMenuOpen = false
+		}
 	}
 </script>
 
@@ -52,6 +84,7 @@
 	id="mobile-menu"
 	inert={!$mobileMenuOpen}
 	onanimationend={onAnimationEnd}
+	style:transform={vvOffsetTop ? `translateY(${vvOffsetTop}px)` : undefined}
 	class={[
 		'fixed inset-x-px top-[calc(4rem+2px)] bottom-0 z-20 flex flex-col justify-center bg-base-bg px-6 pb-[calc(4rem+2px)] sm:hidden',
 		$mobileMenuOpen
@@ -76,7 +109,7 @@
 			<div class="overflow-hidden">
 				<a
 					{href}
-					onclick={() => onLinkClick(href)}
+					onclick={(event) => onLinkClick(event, href)}
 					class={[
 						'block py-1 pl-2 font-display text-6xl leading-[1.15] font-bold tracking-tight text-base-fg italic',
 						$mobileMenuOpen && ['animate-menu-link', enterDelays[i]]

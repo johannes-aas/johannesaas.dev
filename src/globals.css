@@ -479,22 +479,22 @@ body {
 ::view-transition-group(wipe-line) {
 	/* stays on top of the content it's sweeping across */
 	z-index: 3;
-	/*
-		Since the line never visually changes between old/new capture (it's
-		static), the browser has no real before/after geometry to compute for
-		it and otherwise defaults its box to (0,0)/full-width — set explicitly
-		from `mainEl`'s real on-screen rect (+layout.svelte's onNavigate) so it
-		starts exactly where the line sits at rest instead of the viewport
-		corner.
-	*/
-	left: var(--wipe-left, 0);
-	top: var(--wipe-top, 0);
 	width: var(--wipe-width, 100%);
 	height: 1px;
-	/* same --wipe-progress driving the clip-path above, scaled to the same
-	   pixel distance the clip is now covering (percentage doesn't apply
-	   here — this box is always 1px tall, not --wipe-height tall) */
-	transform: translateY(calc(var(--wipe-progress, 0) * var(--wipe-height, 0)));
+	/*
+		`translate` (the standalone property), not `transform`: the browser
+		already places this group correctly on its own, via `transform`, using
+		the Snapshot Containing Block — a coordinate space that on Chrome
+		Android sits offset from the plain viewport (roughly by the URL bar's
+		height), which `getBoundingClientRect()`-based measurements can't see.
+		Setting our own `transform` here used to replace that correct offset
+		outright, so the line rendered from the SCB's top corner instead of
+		the header — only wrong on Android, since iOS doesn't split the two
+		coordinate spaces the same way. `translate` composes with `transform`
+		instead of replacing it, so this only adds the sweep on top of
+		wherever the browser already put the line.
+	*/
+	translate: 0 calc(var(--wipe-progress, 0) * var(--wipe-height, 0));
 }
 
 /*
