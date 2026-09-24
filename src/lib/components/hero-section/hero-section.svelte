@@ -433,7 +433,7 @@
 
 <section
 	bind:this={heroEl}
-	class="relative flex w-full flex-col items-center bg-[radial-gradient(circle_320px_at_50%_360px,var(--color-primary-subtle),var(--color-body)_100%)] justify-center py-10 lg:py-0 portrait:items-start landscape:min-h-[clamp(400px,calc(100svh-5rem),700px)]"
+	class="relative flex w-full flex-col items-center bg-[radial-gradient(circle_420px_at_50%_360px,var(--color-primary-subtle),var(--color-body)_100%)] justify-center py-10 lg:py-0 portrait:items-start landscape:min-h-[clamp(400px,calc(100svh-5rem),700px)]"
 >
 	<div class="relative mx-auto">
 		<svg
