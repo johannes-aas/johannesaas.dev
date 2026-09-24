@@ -278,15 +278,15 @@
 
 /* THEME 6: Nocturne — near-black forest green, green accent */
 .theme-6 {
-	--color-body: oklch(15% 0.012 154.14);
+	--color-body: oklch(17% 0.012 154.14);
 	--color-panel: oklch(31% 0.012 165);
 	--color-inset: oklch(34.96% 0.0121 164.35);
-	--color-surface: oklch(17.50% 0.0280 154.22);
+	--color-surface: oklch(19.50% 0.0280 154.22);
 	--color-backdrop: oklch(5% 0.03 154.14 / 45%);
 	--color-fg-strong: oklch(97% 0.013 154.13);
 	--color-fg: oklch(84.36% 0.034 154.36);
 	--color-fg-muted: oklch(72% 0.041 154.58);
-	--color-border-subtle: oklch(22.50% 0.0150 155.00);
+	--color-border-subtle: oklch(24.50% 0.0150 155.00);
 	--color-border: oklch(39.80% 0.0500 150.00);
 	--color-border-strong: oklch(48.35% 0.0500 152.00);
 	--color-primary: oklch(56.86% 0.1311 154.616);
@@ -294,7 +294,7 @@
 	--color-primary-text: oklch(76% 0.14 154.616);
 	--color-primary-subtle: oklch(21.67% 0.0347 156.88);
 	--color-cursor: oklch(72% 0.22 145);
-	--color-cursor-fg: oklch(15% 0.012 154.14);
+	--color-cursor-fg: oklch(17% 0.012 154.14);
 }
 
 /*
