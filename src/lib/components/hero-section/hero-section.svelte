@@ -433,7 +433,7 @@
 
 <section
 	bind:this={heroEl}
-	class="relative flex w-full flex-col items-center bg-[radial-gradient(circle_320px_at_50%_360px,color-mix(in_srgb,var(--accent)_14%,var(--base-bg)),var(--base-bg)_100%)] justify-center py-10 lg:py-0 portrait:items-start landscape:min-h-[clamp(400px,calc(100svh-5rem),700px)]"
+	class="relative flex w-full flex-col items-center bg-[radial-gradient(circle_320px_at_50%_360px,var(--color-primary-subtle),var(--color-body)_100%)] justify-center py-10 lg:py-0 portrait:items-start landscape:min-h-[clamp(400px,calc(100svh-5rem),700px)]"
 >
 	<div class="relative mx-auto">
 		<svg
@@ -445,7 +445,7 @@
 		>
 			{#each Array(layers) as _, i (i)}
 				<g
-					class="layer stroke-accent transition-opacity duration-[950ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+					class="layer stroke-primary transition-opacity duration-[950ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
 					stroke-width={thickness}
 					fill="none"
 					style="opacity: {i <= revealedLayers ? 1 - i / layers : 0};"
@@ -489,8 +489,8 @@
 			class="size-22 border border-border"
 		/>
 		<div class="flex flex-col gap-3">
-			<h3 class="text-3xl leading-7 tracking-tight text-base-fg">Frontend <br class="hidden lg:block"/>developer</h3>
-			<h3 class="text-xl leading-6 text-accent-text">Design enthusiast</h3>
+			<h3 class="text-3xl leading-7 tracking-tight text-fg-strong">Frontend <br class="hidden lg:block"/>developer</h3>
+			<h3 class="text-xl leading-6 text-primary-text">Design enthusiast</h3>
 		</div>
 	</div>
 	<div class="absolute top-0 right-0 z-20 -mr-px -mt-px hidden md:block">
@@ -507,7 +507,7 @@
 			aria-label="GitHub"
 			target="_blank"
 			rel="noopener noreferrer"
-			class="h-14 flex-1 border border-border-subtle bg-base-bg text-muted hover:text-base-fg sm:h-[4.5rem] lg:flex-none lg:col-start-2 lg:-ml-px lg:h-[4.5rem] lg:w-[calc(4.5rem+1px)]"
+			class="h-14 flex-1 border border-border-subtle bg-body text-fg-muted hover:text-fg-strong sm:h-[4.5rem] lg:flex-none lg:col-start-2 lg:-ml-px lg:h-[4.5rem] lg:w-[calc(4.5rem+1px)]"
 		>
 			<GithubIcon class="h-5 w-5 flex-none stroke-[1.75] sm:h-6 sm:w-6" aria-hidden="true" />
 		</Button>
@@ -516,7 +516,7 @@
 			aria-label="LinkedIn"
 			target="_blank"
 			rel="noopener noreferrer"
-			class="h-14 flex-1 border border-border-subtle bg-base-bg text-muted hover:text-base-fg sm:h-[4.5rem] lg:flex-none -ml-px lg:ml-0 lg:-mt-px lg:h-[calc(4.5rem+1px)] lg:w-[4.5rem]"
+			class="h-14 flex-1 border border-border-subtle bg-body text-fg-muted hover:text-fg-strong sm:h-[4.5rem] lg:flex-none -ml-px lg:ml-0 lg:-mt-px lg:h-[calc(4.5rem+1px)] lg:w-[4.5rem]"
 		>
 			<LinkedinIcon class="h-5 w-5 flex-none stroke-[1.75] sm:h-6 sm:w-6" aria-hidden="true" />
 		</Button>
@@ -524,20 +524,20 @@
 			variant="copy"
 			value="johannes.hansen.aas@gmail.com"
 			aria-label="Copy email address"
-			class="h-14 flex-1 border border-border-subtle bg-base-bg text-muted hover:text-base-fg sm:h-[4.5rem] lg:flex-none -ml-px lg:-mt-px lg:-ml-px lg:h-[calc(4.5rem+1px)] lg:w-[calc(4.5rem+1px)]"
+			class="h-14 flex-1 border border-border-subtle bg-body text-fg-muted hover:text-fg-strong sm:h-[4.5rem] lg:flex-none -ml-px lg:-mt-px lg:-ml-px lg:h-[calc(4.5rem+1px)] lg:w-[calc(4.5rem+1px)]"
 		>
 			<Mail class="h-5 w-5 flex-none stroke-[1.75] sm:h-6 sm:w-6" aria-hidden="true" />
 		</Button>
 	</div>
 	<div
-		class="mx-auto mt-4 flex w-[clamp(300px,100svw,600px)] items-center gap-2 px-6 text-xs tracking-wider uppercase text-muted tabular-nums md:px-10 landscape:w-[clamp(400px,calc(100svh-5rem),620px)] lg:absolute lg:top-4 lg:left-6 lg:z-20 lg:mx-0 lg:mt-0 lg:w-auto lg:px-0 lg:landscape:w-auto"
+		class="mx-auto mt-4 flex w-[clamp(300px,100svw,600px)] items-center gap-2 px-6 text-xs tracking-wider uppercase text-fg-muted tabular-nums md:px-10 landscape:w-[clamp(400px,calc(100svh-5rem),620px)] lg:absolute lg:top-4 lg:left-6 lg:z-20 lg:mx-0 lg:mt-0 lg:w-auto lg:px-0 lg:landscape:w-auto"
 		aria-label="Local time in Norway"
 	>
 		<span>Norway</span>
-		<span class="text-base-fg">-</span>
-		<span class="font-mono text-base-fg slashed-zero">
-			{clock?.hour ?? '--'}<span class="text-accent-text">:</span>{clock?.minute ?? '--'}
+		<span class="text-fg-strong">-</span>
+		<span class="font-mono text-fg-strong slashed-zero">
+			{clock?.hour ?? '--'}<span class="text-primary-text">:</span>{clock?.minute ?? '--'}
 		</span>
-		<span class="text-accent-text">{clock?.offset ?? 'GMT+?'}</span>
+		<span class="text-primary-text">{clock?.offset ?? 'GMT+?'}</span>
 	</div>
 </section>

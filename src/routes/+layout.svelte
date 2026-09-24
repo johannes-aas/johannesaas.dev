@@ -143,7 +143,7 @@
 
 <CustomCursor />
 
-<div class="flex min-h-screen flex-col overflow-x-hidden bg-base-bg">
+<div class="flex min-h-screen flex-col overflow-x-clip bg-body">
 	<div class="mx-auto flex w-full max-w-6xl flex-1 flex-col border-x border-border-subtle">
 		<GridLine />
 		<Header />

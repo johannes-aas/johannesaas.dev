@@ -219,13 +219,13 @@
 
 	/*
     Mobile browsers tint their own chrome from <meta name="theme-color">, which
-    CSS variables can't reach — read the resolved --base-bg back out and mirror
+    CSS variables can't reach — read the resolved --color-body back out and mirror
     it so the URL bar matches the page instead of staying white.
   */
 	function syncThemeColor(html) {
 		const meta = document.querySelector('meta[name="theme-color"]')
 		if (!meta) return
-		const bg = getComputedStyle(html).getPropertyValue('--base-bg').trim()
+		const bg = getComputedStyle(html).getPropertyValue('--color-body').trim()
 		if (bg) meta.setAttribute('content', bg)
 	}
 
@@ -319,8 +319,8 @@
 			   grid lines — with align-items:center, symmetric vertical margins have
 			   no visual effect at all, since the box re-centers on its margin box
 			   regardless of the margin's sign or size */
-			'-mt-px -mr-px -mb-px grid w-16 flex-none place-items-center self-stretch border border-border-subtle text-muted transition-colors duration-200 hover:text-base-fg sm:w-[4.5rem]',
-			open && 'bg-panel-bg text-base-fg'
+			'-mt-px -mr-px -mb-px grid w-16 flex-none place-items-center self-stretch border border-border-subtle text-fg-muted transition-colors duration-200 hover:text-fg-strong sm:w-[4.5rem]',
+			open && 'bg-panel text-fg-strong'
 		]}
 		bind:ref={toggleEl}
 		onclick={toggle}
@@ -366,13 +366,13 @@
 		<Dialog.Portal>
 			<DialogOverlay />
 			<DialogContent
-				class="fixed top-1/2 left-1/2 flex w-40 -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-none border border-border-subtle bg-panel-bg shadow-lg"
+				class="fixed top-1/2 left-1/2 flex w-40 -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-none border border-border-subtle bg-panel shadow-lg"
 			>
 				<DialogTitle class="sr-only">Colour theme</DialogTitle>
 
 				<Button
 					type="button"
-					class="flex w-full items-center justify-center border-b border-border-subtle py-4 text-base-fg outline-none"
+					class="flex w-full items-center justify-center border-b border-border-subtle py-4 text-fg-strong outline-none"
 					aria-label="Close"
 					onclick={() => setOpen(false)}
 				>
@@ -380,7 +380,7 @@
 				</Button>
 
 				<div class="flex w-full flex-col items-center gap-3 px-3 py-4">
-					<Sun class="h-6 w-6 flex-none stroke-base-fg stroke-[1.5]" aria-hidden="true" />
+					<Sun class="h-6 w-6 flex-none stroke-fg-strong stroke-[1.5]" aria-hidden="true" />
 
 					<div
 						class="flex w-full flex-col items-center gap-1"
@@ -413,7 +413,7 @@
 						{/each}
 					</div>
 
-					<Moon class="h-6 w-6 flex-none stroke-base-fg stroke-[1.5]" aria-hidden="true" />
+					<Moon class="h-6 w-6 flex-none stroke-fg-strong stroke-[1.5]" aria-hidden="true" />
 				</div>
 			</DialogContent>
 		</Dialog.Portal>
@@ -423,11 +423,11 @@
 		<!-- sm and up: animated wipe/reveal panel -->
 		<div class="absolute inset-x-0 top-full z-50 -mx-px hidden sm:block">
 			<div
-				class="flex w-full flex-row items-center gap-2 rounded-none border border-border-subtle bg-panel-bg px-4 py-4 sm:h-[4.5rem] sm:gap-3 sm:px-6 sm:py-0"
+				class="flex w-full flex-row items-center gap-2 rounded-none border border-border-subtle bg-panel px-4 py-4 sm:h-[4.5rem] sm:gap-3 sm:px-6 sm:py-0"
 				transition:fade={{ duration: 160 }}
 			>
 				<Sun
-					class="hidden h-4 w-4 flex-none stroke-base-fg stroke-[1.5] sm:block sm:h-5 sm:w-5"
+					class="hidden h-4 w-4 flex-none stroke-fg-strong stroke-[1.5] sm:block sm:h-5 sm:w-5"
 					aria-hidden="true"
 				/>
 
@@ -467,7 +467,7 @@
 				</div>
 
 				<Moon
-					class="hidden h-4 w-4 flex-none stroke-base-fg stroke-[1.5] sm:block sm:h-5 sm:w-5"
+					class="hidden h-4 w-4 flex-none stroke-fg-strong stroke-[1.5] sm:block sm:h-5 sm:w-5"
 					aria-hidden="true"
 				/>
 			</div>

@@ -111,13 +111,13 @@
 	onpointerup={endDrag}
 	onpointercancel={endDrag}
 	class={[
-		'relative flex h-8 touch-none items-center justify-between overflow-hidden rounded-sm border border-border-subtle bg-[color-mix(in_oklch,var(--panel-bg),var(--base-fg)_6%)] px-3 transition-opacity duration-200 select-none',
+		'relative flex h-8 touch-none items-center justify-between overflow-hidden rounded-sm border border-border-subtle bg-inset px-3 transition-opacity duration-200 select-none',
 		disabled ? 'cursor-not-allowed opacity-40' : 'cursor-ew-resize'
 	]}
 >
 	<div
 		class={[
-			'absolute inset-y-0 bg-[color-mix(in_srgb,var(--accent)_40%,transparent)] transition-[left,width] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
+			'absolute inset-y-0 bg-primary/40 transition-[left,width] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
 			dragging ? 'duration-0' : 'duration-300'
 		]}
 		style="left:{fill.left}%;width:{fill.width}%"
@@ -129,7 +129,7 @@
 		></div>
 	{/each}
 	{#if bipolar}
-		<div class="absolute inset-y-0 w-px bg-[color-mix(in_oklch,var(--border)_60%,transparent)]" style="left:{pct(0)}%"></div>
+		<div class="absolute inset-y-0 w-px bg-border/60" style="left:{pct(0)}%"></div>
 	{/if}
 	<SliderPrimitive.Thumb
 		index={0}
@@ -140,14 +140,14 @@
 	<div
 		aria-hidden="true"
 		class={[
-			'pointer-events-none absolute inset-y-0 w-1 bg-accent transition-[left,opacity,transform] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
+			'pointer-events-none absolute inset-y-0 w-1 bg-primary transition-[left,opacity,transform] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
 			active ? 'opacity-100' : 'opacity-0',
 			dragging ? 'scale-y-[1.3] duration-0' : 'scale-y-100 duration-500'
 		]}
 		style="left:calc({displayPercent}% + {thumbOffset}px)"
 	></div>
-	<span class="relative text-sm text-base-fg">{label}</span>
-	<span class="relative font-mono text-sm text-surface-fg [font-variant-numeric:tabular-nums]"
+	<span class="relative text-sm text-fg-strong">{label}</span>
+	<span class="relative font-mono text-sm text-fg [font-variant-numeric:tabular-nums]"
 		>{bipolar && value > 0 ? '+' : ''}{value.toFixed(decimals)}</span
 	>
 </SliderPrimitive.Root>

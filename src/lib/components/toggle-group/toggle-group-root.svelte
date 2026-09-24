@@ -85,7 +85,7 @@
 	{#if thumbVisible}
 		<div
 			aria-hidden="true"
-			class="pointer-events-none absolute inset-y-0 rounded-sm bg-accent transition-[transform,width] duration-200 ease-in-out"
+			class="pointer-events-none absolute inset-y-0 rounded-sm bg-primary transition-[transform,width] duration-200 ease-in-out"
 			style="width:{thumbWidth}px;transform:translateX({thumbLeft}px)"
 		></div>
 	{/if}
