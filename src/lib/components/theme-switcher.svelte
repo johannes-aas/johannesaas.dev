@@ -423,13 +423,12 @@
 		<!-- sm and up: animated wipe/reveal panel -->
 		<div class="absolute inset-x-0 top-full z-50 -mx-px hidden sm:block">
 			<div
-				class="flex w-full flex-row items-center gap-2 rounded-none border border-border-subtle bg-panel px-4 py-4 sm:h-[4.5rem] sm:gap-3 sm:px-6 sm:py-0"
+				class="flex w-full flex-row items-center gap-2 rounded-none border border-border-subtle bg-panel px-4 py-4 sm:h-[4.5rem] sm:gap-0 sm:px-0 sm:py-0"
 				transition:fade={{ duration: 160 }}
 			>
-				<Sun
-					class="hidden h-4 w-4 flex-none stroke-fg-strong stroke-[1.5] sm:block sm:h-5 sm:w-5"
-					aria-hidden="true"
-				/>
+				<span class="grid w-[calc(4.5rem-1px)] flex-none place-items-center">
+					<Sun class="h-5 w-5 stroke-fg-strong stroke-[1.5]" aria-hidden="true" />
+				</span>
 
 				<div
 					class="flex flex-1 items-center gap-1 sm:gap-2"
@@ -466,10 +465,9 @@
 					{/each}
 				</div>
 
-				<Moon
-					class="hidden h-4 w-4 flex-none stroke-fg-strong stroke-[1.5] sm:block sm:h-5 sm:w-5"
-					aria-hidden="true"
-				/>
+				<span class="grid w-[calc(4.5rem-1px)] flex-none place-items-center">
+					<Moon class="h-5 w-5 stroke-fg-strong stroke-[1.5]" aria-hidden="true" />
+				</span>
 			</div>
 		</div>
 	{/if}
