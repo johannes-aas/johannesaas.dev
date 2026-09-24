@@ -10,5 +10,5 @@
 		{alt}
 		class={cn('h-full w-full object-cover grayscale-80 contrast-110', mirrored && '-scale-x-100')}
 	/>
-	<div class="absolute inset-0 bg-accent mix-blend-color opacity-30"></div>
+	<div class="absolute inset-0 bg-primary mix-blend-color opacity-30"></div>
 </div>

@@ -108,7 +108,7 @@
 	]}
 	<div
 		class={[
-			'pointer-events-none fixed top-0 left-0 z-[9999] flex items-center justify-center overflow-hidden rounded-full text-sm font-semibold tracking-widest text-base-bg transition-[width,height,opacity,background-color] duration-200 ease-out',
+			'pointer-events-none fixed top-0 left-0 z-[9999] flex items-center justify-center overflow-hidden rounded-full text-sm font-semibold tracking-widest text-cursor-fg transition-[width,height,opacity,background-color] duration-200 ease-out',
 			sizeClass,
 			bgClass,
 			!visible && 'opacity-0'

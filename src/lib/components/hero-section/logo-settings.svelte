@@ -207,8 +207,8 @@
 		class={[
 			'absolute z-10 overflow-hidden border transition-[top,left,width,height,background-color] duration-300 ease-in-out',
 			open
-				? 'w-72 max-w-[calc(100vw-1.5rem)] border-border-subtle bg-panel-bg'
-				: 'h-14 w-14 border-border-subtle bg-base-bg sm:h-[4.5rem] sm:w-[4.5rem]'
+				? 'w-72 max-w-[calc(100vw-1.5rem)] border-border-subtle bg-panel'
+				: 'h-14 w-14 border-border-subtle bg-body sm:h-[4.5rem] sm:w-[4.5rem]'
 		]}
 		style="top:{open ? panelY + 'px' : '0'};left:{open ? panelX + 'px' : '0'}{open
 			? ';height:' + panelHeight + 'px'
@@ -225,14 +225,14 @@
 		>
 			<div class="flex h-13 items-stretch justify-between">
 				<Button
-					class="h-full w-1/2 border-r border-border-subtle text-sm text-muted transition-colors duration-200 hover:text-base-fg"
+					class="h-full w-1/2 border-r border-border-subtle text-sm text-fg-muted transition-colors duration-200 hover:text-fg-strong"
 					onclick={randomize}
 				>
 					<Shuffle class="h-3.5 w-3.5 stroke-2" aria-hidden="true" />
 					<span>Randomize</span>
 				</Button>
 				<Button
-					class="w-[calc(3.5rem+1px)] border-l border-border-subtle text-muted transition-colors duration-200 hover:text-base-fg sm:w-[calc(4.5rem+1px)]"
+					class="w-[calc(3.5rem+1px)] border-l border-border-subtle text-fg-muted transition-colors duration-200 hover:text-fg-strong sm:w-[calc(4.5rem+1px)]"
 					onclick={() => setOpen(false)}
 					aria-label="Close logo settings"
 				>
@@ -243,7 +243,7 @@
 			<div class="h-px bg-border-subtle"></div>
 
 			<div class="flex flex-col gap-2.5 px-4 pt-3.5 pb-4">
-				<span class="font-mono text-xs tracking-[0.16em] text-muted uppercase">Form</span>
+				<span class="font-mono text-xs tracking-[0.16em] text-fg-muted uppercase">Form</span>
 				{#each formSliders as spec (spec.key)}
 					{@render sliderRow(spec)}
 				{/each}
@@ -253,13 +253,13 @@
 				<div class="h-px bg-border-subtle"></div>
 
 				<div class="flex flex-col gap-2.5 px-4 pt-3.5 pb-4">
-					<span class="font-mono text-xs tracking-[0.16em] text-muted uppercase"> Motion </span>
+					<span class="font-mono text-xs tracking-[0.16em] text-fg-muted uppercase"> Motion </span>
 					{#each motionSliders as spec (spec.key)}
 						{@render sliderRow(spec)}
 					{/each}
 
 					<div class="flex items-center gap-6">
-						<span class="text-sm text-muted">Spread</span>
+						<span class="text-sm text-fg-muted">Spread</span>
 						<ToggleGroupRoot
 							label="Spread"
 							value={$logoControls.spreadTowards ? 'follow' : 'avoid'}
@@ -274,7 +274,7 @@
 
 			<div class="flex border-t border-border-subtle">
 				<Button
-					class="h-13 flex-1 text-sm text-muted transition-colors duration-200 hover:text-base-fg"
+					class="h-13 flex-1 text-sm text-fg-muted transition-colors duration-200 hover:text-fg-strong"
 					onclick={reset}
 					aria-label="Reset to defaults"
 					title="Reset to defaults"
@@ -283,7 +283,7 @@
 					<span>Reset</span>
 				</Button>
 				<Button
-					class="h-13 flex-1 border-l border-border-subtle text-sm text-muted transition-colors duration-200 hover:text-base-fg"
+					class="h-13 flex-1 border-l border-border-subtle text-sm text-fg-muted transition-colors duration-200 hover:text-fg-strong"
 					onclick={replay}
 				>
 					<Play class="h-3.5 w-3.5 fill-current stroke-current" aria-hidden="true" />
@@ -296,7 +296,7 @@
 	<Button
 		bind:ref={trigger}
 		class={[
-			'absolute inset-0 z-20 text-muted transition-[opacity,color,background-color] duration-200 ease-in-out hover:text-base-fg',
+			'absolute inset-0 z-20 text-fg-muted transition-[opacity,color,background-color] duration-200 ease-in-out hover:text-fg-strong',
 			open && 'pointer-events-none opacity-0'
 		]}
 		onclick={() => setOpen(true)}

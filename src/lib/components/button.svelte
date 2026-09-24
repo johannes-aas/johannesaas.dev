@@ -8,7 +8,7 @@
 	let { ref = $bindable(null), class: className, variant, value, children, ...restProps } = $props()
 
 	const baseClass =
-		'inline-flex cursor-pointer items-center justify-center gap-1.5 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50'
+		'inline-flex cursor-pointer items-center justify-center gap-1.5 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50'
 </script>
 
 {#if variant === 'copy'}

@@ -86,7 +86,7 @@
 	onanimationend={onAnimationEnd}
 	style:transform={vvOffsetTop ? `translateY(${vvOffsetTop}px)` : undefined}
 	class={[
-		'fixed inset-x-px top-[calc(4rem+2px)] bottom-0 z-20 flex flex-col justify-center bg-base-bg px-6 pb-[calc(4rem+2px)] sm:hidden',
+		'fixed inset-x-px top-[calc(4rem+2px)] bottom-0 z-20 flex flex-col justify-center bg-body px-6 pb-[calc(4rem+2px)] sm:hidden',
 		$mobileMenuOpen
 			? 'animate-menu-in'
 			: hasOpened && !leftViaNav
@@ -111,7 +111,7 @@
 					{href}
 					onclick={(event) => onLinkClick(event, href)}
 					class={[
-						'block py-1 pl-2 font-display text-6xl leading-[1.15] font-bold tracking-tight text-base-fg italic',
+						'block py-1 pl-2 font-display text-6xl leading-[1.15] font-bold tracking-tight text-fg-strong italic',
 						$mobileMenuOpen && ['animate-menu-link', enterDelays[i]]
 					]}
 				>

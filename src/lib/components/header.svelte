@@ -23,15 +23,15 @@
 	</a>
 	<nav class="hidden flex-1 items-center justify-center gap-8 text-base sm:flex">
 		{#each links as { href, label } (href)}
-			<a {href} class="text-muted transition-colors hover:text-base-fg">{label}</a>
+			<a {href} class="text-fg-muted transition-colors hover:text-fg-strong">{label}</a>
 		{/each}
 	</nav>
 	<div class="ml-auto flex items-center self-stretch">
 		<ThemeSwitcher />
 		<Button
 			class={[
-				'-mt-px -mr-px -mb-px grid w-16 flex-none place-items-center self-stretch border border-border-subtle text-muted hover:text-base-fg sm:hidden',
-				$mobileMenuOpen && 'bg-panel-bg text-base-fg'
+				'-mt-px -mr-px -mb-px grid w-16 flex-none place-items-center self-stretch border border-border-subtle text-fg-muted hover:text-fg-strong sm:hidden',
+				$mobileMenuOpen && 'bg-panel text-fg-strong'
 			]}
 			onclick={toggleMenu}
 			aria-label={$mobileMenuOpen ? 'Close menu' : 'Open menu'}

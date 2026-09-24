@@ -3,27 +3,32 @@
 @plugin '@tailwindcss/typography';
 
 /*
-	Exposes the theme's own CSS custom properties (below) as first-class
-	Tailwind color utilities — `bg-accent`, `text-muted`, `border-border`, etc.
-	— instead of every callsite spelling out `bg-[var(--accent)]`. The indirection
-	through `var()` is what keeps these live across the runtime theme switch
-	(theme-switcher.svelte swaps a `.theme-N` class on <html>, which is what
-	actually changes the color); Tailwind just resolves the variable at paint
-	time like any other CSS consumer would.
+	The theme's colour tokens. `static` so every token is always emitted on :root
+	(otherwise Tailwind drops any that no utility references), and the values here
+	are theme 1's, the lightest step, so it needs no class of its own. Each .theme-N
+	block below overrides the same names; the switcher swaps that class on <html>.
 */
-@theme {
-	--color-base-bg: var(--base-bg);
-	--color-base-fg: var(--base-fg);
-	--color-surface-bg: var(--surface-bg);
-	--color-surface-fg: var(--surface-fg);
-	--color-muted: var(--muted);
-	--color-panel-bg: var(--panel-bg);
-	--color-border: var(--border);
-	--color-border-subtle: var(--border-subtle);
-	--color-accent: var(--accent);
-	--color-accent-text: var(--accent-text);
-	--color-cursor: var(--cursor);
+@theme static {
+	--color-body: oklch(99% 0.003 90);
+	--color-panel: oklch(96% 0.003 90);
+	--color-inset: oklch(91.53% 0.0037 90.3);
+	--color-surface: oklch(94.8% 0.011 82);
+	--color-backdrop: oklch(15% 0.03 90 / 45%);
+	--color-fg-strong: oklch(21.5% 0.015 95);
+	--color-fg: oklch(36% 0.017 95);
+	--color-fg-muted: oklch(54% 0.017 95);
+	--color-border-subtle: oklch(89% 0.01 88);
+	--color-border: oklch(77.15% 0.017 88);
+	--color-border-strong: oklch(62.25% 0.017 88);
+	--color-primary: oklch(64.9% 0.1637 43);
+	--color-primary-fg: oklch(98.5% 0.008 43);
+	--color-primary-text: oklch(56% 0.17 43);
+	--color-primary-subtle: oklch(93.86% 0.023 50.92);
+	--color-cursor: lab(66.073% 72.4864 134.737);
+	--color-cursor-fg: oklch(99% 0.003 90);
+}
 
+@theme {
 	--font-sans: 'Funnel Sans', sans-serif;
 	--font-display: 'Playfair Display', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
 
@@ -103,7 +108,7 @@
 
 /*
 	Six themes forming one continuous light-to-dark spectrum: themes 1–3 are
-	light, 4–6 are dark, and each --base-bg is strictly darker than the one before
+	light, 4–6 are dark, and each --color-body is strictly darker than the one before
 	it, so dragging the theme slider downward reads as a single dimming gradient.
 	Each step keeps its own hue so they stay distinguishable, not just steps of grey.
 	The hues themselves walk round the wheel in the same order as the swatches below
@@ -111,21 +116,6 @@
 	biggest jump in the set since it's also where light-on-dark-text flips to
 	dark-on-light-text.
 */
-
-:root {
-	/* defaults mirror theme-1, the lightest step */
-	--base-bg: oklch(99% 0.003 90);
-	--base-fg: oklch(21.5% 0.015 95);
-	--surface-bg: oklch(94.8% 0.011 82);
-	--surface-fg: oklch(36% 0.017 95);
-	--panel-bg: oklch(93.5% 0.003 90);
-	--muted: oklch(54% 0.017 95);
-	--border: oklch(84% 0.017 88);
-	--border-subtle: oklch(91% 0.01 88);
-	--accent: oklch(70.1% 0.1637 43);
-	--accent-text: oklch(56% 0.17 43);
-	--cursor: lab(66.073% 72.4864 134.737);
-}
 
 /*
 	Theme switcher swatch preview colours — one flat, always-on set at :root
@@ -135,7 +125,7 @@
 	would repaint the button's own border/background along with everything
 	else). Hues loosely follow the Tailwind stops orange-100, violet-200, blue-400,
 	cyan-600, emerald-800, green-950 — a hand-picked light-to-dark run across
-	the palette — rather than deriving from --base-bg/--accent, so the six
+	the palette — rather than deriving from --color-body/--color-primary, so the six
 	swatches read as one deliberate spectrum instead of each theme's own,
 	unrelated lightness curve. Chroma is pushed to ~98% of the sRGB gamut's
 	max at each swatch's own lightness so the bar reads as vivid rather than
@@ -165,7 +155,7 @@
 	   as a shade of itself. White fading to a mere hint of the theme's own orange
 	   accent keeps the same left-to-right idea without the murkiness. */
 	--theme-1-swatch-from: white;
-	--theme-1-swatch-to: color-mix(in oklch, white, oklch(70.1% 0.1637 43) 10%);
+	--theme-1-swatch-to: color-mix(in oklch, white, oklch(64.9% 0.1637 43) 10%);
 	--theme-2-swatch-from: color-mix(in oklch, var(--theme-2-swatch), white 6%);
 	--theme-2-swatch-to: color-mix(in oklch, var(--theme-2-swatch), black 6%);
 	--theme-3-swatch-from: color-mix(in oklch, var(--theme-3-swatch), white 6%);
@@ -184,59 +174,58 @@
 /* Selection/hover marker colour for each swatch — a saturated shade of the
    swatch's own hue, deep on the light swatches and bright on the dark ones. */
 :root {
-	--theme-1-swatch-mark: oklch(70% 0.16 43);
+	--theme-1-swatch-mark: oklch(65% 0.165 43);
 	--theme-2-swatch-mark: oklch(60% 0.18 293);
 	--theme-3-swatch-mark: oklch(52% 0.18 260);
-	--theme-4-swatch-mark: oklch(72% 0.13 222);
+	--theme-4-swatch-mark: oklch(84% 0.107 222);
 	--theme-5-swatch-mark: oklch(72% 0.13 167);
 	--theme-6-swatch-mark: oklch(62% 0.14 152);
 }
 
 /* ---------- LIGHT ---------- */
 
-/* THEME 1: Citrus — warm paper-white, orange accent */
-.theme-1 {
-	--base-bg: oklch(99% 0.003 90);
-	--base-fg: oklch(21.5% 0.015 95);
-	--surface-bg: oklch(94.8% 0.011 82);
-	--surface-fg: oklch(36% 0.017 95);
-	--panel-bg: oklch(96% 0.003 90);
-	--muted: oklch(54% 0.017 95);
-	--border: oklch(84% 0.017 88);
-	--border-subtle: oklch(89% 0.01 88);
-	--accent: oklch(70.1% 0.1637 43);
-	--accent-text: oklch(56% 0.17 43);
-	--cursor: lab(66.073% 72.4864 134.737);
-}
+/* THEME 1: Citrus — warm paper-white, orange accent (defined in @theme static above) */
 
 /* THEME 2: Wisteria — light violet-white, violet accent */
 .theme-2 {
-	--base-bg: oklch(95.06% 0.0204 298.19);
-	--base-fg: oklch(26.84% 0.0552 294.67);
-	--surface-bg: oklch(91.09% 0.0358 297.99);
-	--surface-fg: oklch(36.12% 0.0652 295.04);
-	--panel-bg: oklch(97.4% 0.003 298);
-	--muted: oklch(46% 0.0654 297.35);
-	--border: oklch(41.475% 0.07019 297.489);
-	--border-subtle: oklch(87% 0.03 297);
-	--accent: oklch(60.27% 0.1306 293.01);
-	--accent-text: oklch(46% 0.17 293.01);
-	--cursor: oklch(60.221% 0.33667 291.536);
+	--color-body: oklch(95.06% 0.0204 298.19);
+	--color-panel: oklch(97.4% 0.003 298);
+	--color-inset: oklch(93.17% 0.0061 297.8);
+	--color-surface: oklch(91.09% 0.0358 297.99);
+	--color-backdrop: oklch(15% 0.03 298.19 / 45%);
+	--color-fg-strong: oklch(26.84% 0.0552 294.67);
+	--color-fg: oklch(36.12% 0.0652 295.04);
+	--color-fg-muted: oklch(46% 0.0654 297.35);
+	--color-border-subtle: oklch(85.96% 0.03 297);
+	--color-border: oklch(74.21% 0.05 297.49);
+	--color-border-strong: oklch(59.66% 0.05 297.49);
+	--color-primary: oklch(60.27% 0.1306 293.01);
+	--color-primary-fg: oklch(98.5% 0.008 293.01);
+	--color-primary-text: oklch(46% 0.17 293.01);
+	--color-primary-subtle: oklch(90.3% 0.0346 297.26);
+	--color-cursor: oklch(60.221% 0.33667 291.536);
+	--color-cursor-fg: oklch(95.06% 0.0204 298.19);
 }
 
 /* THEME 3: Skyline — dusty light blue, strong blue accent */
 .theme-3 {
-	--base-bg: oklch(90.32% 0.0249 257.65);
-	--base-fg: oklch(25.27% 0.0497 260.63);
-	--surface-bg: oklch(86.32% 0.0312 258.94);
-	--surface-fg: oklch(37.15% 0.0601 261.43);
-	--panel-bg: oklch(96.2% 0.004 258);
-	--muted: oklch(42% 0.0518 262.78);
-	--border: oklch(60% 0.09 258.37);
-	--border-subtle: oklch(80% 0.035 258);
-	--accent: oklch(66.51% 0.1635 259.81);
-	--accent-text: oklch(46% 0.19 259.81);
-	--cursor: oklch(54.61% 0.2152 262.88);
+	--color-body: oklch(90.32% 0.0249 257.65);
+	--color-panel: oklch(96.2% 0.004 258);
+	--color-inset: oklch(91.94% 0.0067 258.16);
+	--color-surface: oklch(94.5% 0.018 258.9);
+	--color-backdrop: oklch(15% 0.03 257.65 / 45%);
+	--color-fg-strong: oklch(25.27% 0.0497 260.63);
+	--color-fg: oklch(37.15% 0.0601 261.43);
+	--color-fg-muted: oklch(48% 0.0518 262.78);
+	--color-border-subtle: oklch(80% 0.035 258);
+	--color-border: oklch(70.02% 0.05 258.37);
+	--color-border-strong: oklch(55.92% 0.05 258.37);
+	--color-primary: oklch(63.7% 0.1635 259.81);
+	--color-primary-fg: oklch(98.5% 0.008 259.81);
+	--color-primary-text: oklch(46% 0.19 259.81);
+	--color-primary-subtle: oklch(86.45% 0.0433 259.02);
+	--color-cursor: oklch(54.61% 0.2152 262.88);
+	--color-cursor-fg: oklch(90.32% 0.0249 257.65);
 }
 
 /* ---------- DARK ---------- */
@@ -247,47 +236,65 @@
 
 /* THEME 4: Tidepool — dark cyan-slate, bright cyan accent */
 .theme-4 {
-	--base-bg: oklch(26.85% 0.0366 222.63);
-	--base-fg: oklch(97.5% 0.012 210.04);
-	--surface-bg: oklch(32.03% 0.0445 221.5);
-	--surface-fg: oklch(88.2% 0.0412 211.86);
-	--panel-bg: oklch(31.5% 0.024 222);
-	--muted: oklch(85% 0.042 216.45);
-	--border: oklch(56% 0.1 221.78);
-	--border-subtle: oklch(37.188% 0.0388 222.047);
-	--accent: oklch(71.78% 0.1193 211.53);
-	--accent-text: oklch(80% 0.13 211.53);
-	--cursor: oklch(71.48% 0.1257 215.22);
+	--color-body: oklch(26.85% 0.0366 222.63);
+	--color-panel: oklch(28.5% 0.024 222);
+	--color-inset: oklch(32.64% 0.0233 221.28);
+	--color-surface: oklch(29.5% 0.0445 221.5);
+	--color-backdrop: oklch(8% 0.03 222.63 / 45%);
+	--color-fg-strong: oklch(97.5% 0.012 210.04);
+	--color-fg: oklch(88.2% 0.0412 211.86);
+	--color-fg-muted: oklch(72% 0.042 216.45);
+	--color-border-subtle: oklch(36.5% 0.035 222);
+	--color-border: oklch(44.45% 0.05 221.78);
+	--color-border-strong: oklch(57.6% 0.05 221.78);
+	--color-primary: oklch(62.4% 0.1088 211.53);
+	--color-primary-fg: oklch(10% 0.01 211.53);
+	--color-primary-text: oklch(80% 0.13 211.53);
+	--color-primary-subtle: oklch(32.19% 0.0501 217.29);
+	--color-cursor: oklch(78% 0.133 196);
+	--color-cursor-fg: oklch(26.85% 0.0366 222.63);
 }
 
 /* THEME 5: Thicket — dark emerald, spring-green accent */
 .theme-5 {
-	--base-bg: oklch(23.721% 0.02168 170.185);
-	--base-fg: oklch(97% 0.013 164.97);
-	--surface-bg: oklch(26.8% 0.0382 172.71);
-	--surface-fg: oklch(85.17% 0.044 166.6);
-	--panel-bg: oklch(22.39% 0.00358 165.108);
-	--muted: oklch(83.5% 0.044 166.37);
-	--border: oklch(50% 0.09 172.57);
-	--border-subtle: oklch(31.116% 0.02589 171.939);
-	--accent: oklch(59.61% 0.123 162.631);
-	--accent-text: oklch(78% 0.14 162.631);
-	--cursor: oklch(66.513% 0.18883 147.385);
+	--color-body: oklch(23.721% 0.02168 170.185);
+	--color-panel: oklch(22.39% 0.00358 165.108);
+	--color-inset: oklch(26.87% 0.0041 165.1);
+	--color-surface: oklch(27.8% 0.038 172.71);
+	--color-backdrop: oklch(8% 0.03 170.185 / 45%);
+	--color-fg-strong: oklch(97% 0.013 164.97);
+	--color-fg: oklch(85.17% 0.044 166.6);
+	--color-fg-muted: oklch(72% 0.044 166.37);
+	--color-border-subtle: oklch(32.37% 0.0259 171.94);
+	--color-border: oklch(42.07% 0.05 172.57);
+	--color-border-strong: oklch(55.17% 0.05 172.57);
+	--color-primary: oklch(59.61% 0.123 162.631);
+	--color-primary-fg: oklch(10% 0.01 162.631);
+	--color-primary-text: oklch(78% 0.14 162.631);
+	--color-primary-subtle: oklch(29.12% 0.0407 167.9);
+	--color-cursor: oklch(66.513% 0.18883 147.385);
+	--color-cursor-fg: oklch(23.721% 0.02168 170.185);
 }
 
 /* THEME 6: Nocturne — near-black forest green, green accent */
 .theme-6 {
-	--base-bg: oklch(22.175% 0.01413 154.14);
-	--base-fg: oklch(97% 0.013 154.13);
-	--surface-bg: oklch(20.75% 0.026 154.22);
-	--surface-fg: oklch(84.36% 0.034 154.36);
-	--panel-bg: oklch(33.211% 0.01201 171.171);
-	--muted: oklch(83.5% 0.041 154.58);
-	--border: oklch(66.046% 0.09011 155.983);
-	--border-subtle: oklch(27.187% 0.03602 151.797);
-	--accent: oklch(56.86% 0.1311 154.616);
-	--accent-text: oklch(76% 0.14 154.616);
-	--cursor: oklch(70% 0.15 149.58);
+	--color-body: oklch(17% 0.012 154.14);
+	--color-panel: oklch(31% 0.012 165);
+	--color-inset: oklch(34.96% 0.0121 164.35);
+	--color-surface: oklch(19.50% 0.0280 154.22);
+	--color-backdrop: oklch(5% 0.03 154.14 / 45%);
+	--color-fg-strong: oklch(97% 0.013 154.13);
+	--color-fg: oklch(84.36% 0.034 154.36);
+	--color-fg-muted: oklch(72% 0.041 154.58);
+	--color-border-subtle: oklch(24.50% 0.0150 155.00);
+	--color-border: oklch(39.80% 0.0500 150.00);
+	--color-border-strong: oklch(48.35% 0.0500 152.00);
+	--color-primary: oklch(56.86% 0.1311 154.616);
+	--color-primary-fg: oklch(10% 0.01 154.616);
+	--color-primary-text: oklch(76% 0.14 154.616);
+	--color-primary-subtle: oklch(21.67% 0.0347 156.88);
+	--color-cursor: oklch(72% 0.22 145);
+	--color-cursor-fg: oklch(17% 0.012 154.14);
 }
 
 /*
@@ -296,13 +303,13 @@
 	canvas, so a body-only background leaves a white band at the top.
 */
 html {
-	background-color: var(--base-bg);
+	background-color: var(--color-body);
 	min-height: 100%;
 }
 
 body {
-	color: var(--base-fg);
-	background-color: var(--base-bg);
+	color: var(--color-fg-strong);
+	background-color: var(--color-body);
 	font-family: 'Funnel Sans', sans-serif;
 	min-height: 100vh;
 	min-height: 100dvh;
@@ -518,16 +525,3 @@ body {
 		font-style: italic;
 	}
 }
-
-/*
-	base-bg
-	base-fg
-	surface-bg
-	surface-fg
-	surface-raised-bg
-	surface-raised-fg
-	surface-sunken-bg
-	surface-sunken-fg
-	border
-	accent
-*/
