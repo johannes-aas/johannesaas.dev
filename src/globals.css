@@ -177,7 +177,7 @@
 	--theme-1-swatch-mark: oklch(65% 0.165 43);
 	--theme-2-swatch-mark: oklch(60% 0.18 293);
 	--theme-3-swatch-mark: oklch(52% 0.18 260);
-	--theme-4-swatch-mark: oklch(72% 0.13 222);
+	--theme-4-swatch-mark: oklch(84% 0.107 222);
 	--theme-5-swatch-mark: oklch(72% 0.13 167);
 	--theme-6-swatch-mark: oklch(62% 0.14 152);
 }
@@ -237,14 +237,14 @@
 /* THEME 4: Tidepool — dark cyan-slate, bright cyan accent */
 .theme-4 {
 	--color-body: oklch(26.85% 0.0366 222.63);
-	--color-panel: oklch(31.5% 0.024 222);
-	--color-inset: oklch(35.46% 0.0233 221.28);
-	--color-surface: oklch(32.03% 0.0445 221.5);
+	--color-panel: oklch(28.5% 0.024 222);
+	--color-inset: oklch(32.64% 0.0233 221.28);
+	--color-surface: oklch(29.5% 0.0445 221.5);
 	--color-backdrop: oklch(8% 0.03 222.63 / 45%);
 	--color-fg-strong: oklch(97.5% 0.012 210.04);
 	--color-fg: oklch(88.2% 0.0412 211.86);
 	--color-fg-muted: oklch(72% 0.042 216.45);
-	--color-border-subtle: oklch(36.05% 0.0388 222.05);
+	--color-border-subtle: oklch(36.5% 0.035 222);
 	--color-border: oklch(44.45% 0.05 221.78);
 	--color-border-strong: oklch(57.6% 0.05 221.78);
 	--color-primary: oklch(62.4% 0.1088 211.53);
