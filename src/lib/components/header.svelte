@@ -2,13 +2,16 @@
 	import MobileMenu from './mobile-menu.svelte'
 	import Logo from './logo.svelte'
 	import ThemeSwitcher from './theme-switcher.svelte'
+	import LanguageSwitcher from './language-switcher.svelte'
+	import { m } from '$lib/paraglide/messages'
+	import { localizeHref } from '$lib/paraglide/runtime'
 	import Button from '$lib/components/button.svelte'
 	import { mobileMenuOpen } from '$lib/stores/panelState'
 
 	const links = [
-		{ href: '/about', label: 'About' },
-		{ href: '/projects', label: 'Projects' },
-		{ href: '/blog', label: 'Blog' }
+		{ href: localizeHref('/about'), label: m.nav_about() },
+		{ href: localizeHref('/projects'), label: m.nav_projects() },
+		{ href: localizeHref('/blog'), label: m.nav_blog() }
 	]
 
 	function toggleMenu() {
@@ -18,7 +21,7 @@
 </script>
 
 <header class="relative z-30 flex items-center backdrop-blur-md">
-	<a href="/" class="box-border h-16 w-16 flex-none p-3.5 sm:h-[4.5rem] sm:w-[4.5rem] sm:p-4">
+	<a href={localizeHref('/')} class="box-border h-16 w-16 flex-none p-3.5 sm:h-[4.5rem] sm:w-[4.5rem] sm:p-4">
 		<Logo />
 	</a>
 	<nav class="hidden flex-1 items-center justify-center gap-8 text-base sm:flex">
@@ -27,6 +30,7 @@
 		{/each}
 	</nav>
 	<div class="ml-auto flex items-center self-stretch">
+		<LanguageSwitcher />
 		<ThemeSwitcher />
 		<Button
 			class={[
@@ -34,7 +38,7 @@
 				$mobileMenuOpen && 'bg-panel text-fg-strong'
 			]}
 			onclick={toggleMenu}
-			aria-label={$mobileMenuOpen ? 'Close menu' : 'Open menu'}
+			aria-label={$mobileMenuOpen ? m.nav_close_menu() : m.nav_open_menu()}
 			aria-expanded={$mobileMenuOpen}
 			aria-controls="mobile-menu"
 		>

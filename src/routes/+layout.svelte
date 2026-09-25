@@ -1,4 +1,7 @@
 <script>
+	import { resolve } from '$app/paths'
+	import { page } from '$app/state'
+	import { locales, localizeHref } from '$lib/paraglide/runtime'
 	import '../globals.css'
 	import favicon from '$lib/assets/favicon.svg'
 	import { dev } from '$app/environment'
@@ -165,4 +168,10 @@
 		<Footer />
 		<GridLine />
 	</div>
+</div>
+
+<div style="display:none">
+	{#each locales as locale (locale)}
+		<a href={resolve(localizeHref(page.url.pathname, { locale }))}>{locale}</a>
+	{/each}
 </div>

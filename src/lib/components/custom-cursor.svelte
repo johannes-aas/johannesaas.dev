@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte'
 	import ArrowUpRight from '@lucide/svelte/icons/arrow-up-right'
 	import Copy from '@lucide/svelte/icons/copy'
+	import { m } from '$lib/paraglide/messages'
 	import { COPIED_EVENT } from '$lib/copy-to-clipboard.js'
 
 	let x = $state(0)
@@ -117,7 +118,7 @@
 	>
 		<span class={layer('link')}><ArrowUpRight class="size-5" strokeWidth={2.5} /></span>
 		<span class={layer('copy')}><Copy class="size-5" strokeWidth={2.5} /></span>
-		<span class={layer('read')}>READ</span>
-		<span class={layer('copied')}>COPIED</span>
+		<span class={layer('read')}>{m.cursor_read()}</span>
+		<span class={layer('copied')}>{m.cursor_copied()}</span>
 	</div>
 {/if}
