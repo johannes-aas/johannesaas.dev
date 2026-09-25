@@ -5,6 +5,7 @@
 		logoScrollDriven,
 		logoReplayRequested
 	} from '$lib/stores/logoControls'
+	import { m } from '$lib/paraglide/messages'
 	import Slider from '$lib/components/slider.svelte'
 	import { ToggleGroupRoot, ToggleGroupItem } from '$lib/components/toggle-group'
 	import Button from '$lib/components/button.svelte'
@@ -26,7 +27,7 @@
 	const formSliders = [
 		{
 			key: 'spread',
-			label: 'Spread',
+			label: m.logo_spread(),
 			min: 0,
 			max: 10,
 			step: 0.1,
@@ -35,7 +36,7 @@
 		},
 		{
 			key: 'layers',
-			label: 'Layers',
+			label: m.logo_layers(),
 			min: 1,
 			max: 14,
 			step: 1,
@@ -44,7 +45,7 @@
 		},
 		{
 			key: 'thickness',
-			label: 'Thickness',
+			label: m.logo_thickness(),
 			min: 0.2,
 			max: 3,
 			step: 0.05,
@@ -53,7 +54,7 @@
 		},
 		{
 			key: 'scaleStep',
-			label: 'Layer size step',
+			label: m.logo_layer_step(),
 			min: -0.06,
 			max: 0.06,
 			step: 0.005,
@@ -66,7 +67,7 @@
 	const motionSliders = [
 		{
 			key: 'speed',
-			label: 'Speed',
+			label: m.logo_speed(),
 			min: 0.5,
 			max: 10,
 			step: 0.1,
@@ -229,12 +230,12 @@
 					onclick={randomize}
 				>
 					<Shuffle class="h-3.5 w-3.5 stroke-2" aria-hidden="true" />
-					<span>Randomize</span>
+					<span>{m.logo_randomize()}</span>
 				</Button>
 				<Button
 					class="w-[calc(3.5rem+1px)] border-l border-border-subtle text-fg-muted transition-colors duration-200 hover:text-fg-strong sm:w-[calc(4.5rem+1px)]"
 					onclick={() => setOpen(false)}
-					aria-label="Close logo settings"
+					aria-label={m.logo_settings_close()}
 				>
 					<X class="h-5 w-5 stroke-[1.75]" aria-hidden="true" />
 				</Button>
@@ -243,7 +244,7 @@
 			<div class="h-px bg-border-subtle"></div>
 
 			<div class="flex flex-col gap-2.5 px-4 pt-3.5 pb-4">
-				<span class="font-mono text-xs tracking-[0.16em] text-fg-muted uppercase">Form</span>
+				<span class="font-mono text-xs tracking-[0.16em] text-fg-muted uppercase">{m.logo_group_form()}</span>
 				{#each formSliders as spec (spec.key)}
 					{@render sliderRow(spec)}
 				{/each}
@@ -253,20 +254,20 @@
 				<div class="h-px bg-border-subtle"></div>
 
 				<div class="flex flex-col gap-2.5 px-4 pt-3.5 pb-4">
-					<span class="font-mono text-xs tracking-[0.16em] text-fg-muted uppercase"> Motion </span>
+					<span class="font-mono text-xs tracking-[0.16em] text-fg-muted uppercase">{m.logo_group_motion()}</span>
 					{#each motionSliders as spec (spec.key)}
 						{@render sliderRow(spec)}
 					{/each}
 
 					<div class="flex items-center gap-6">
-						<span class="text-sm text-fg-muted">Spread</span>
+						<span class="text-sm text-fg-muted">{m.logo_spread()}</span>
 						<ToggleGroupRoot
-							label="Spread"
+							label={m.logo_spread()}
 							value={$logoControls.spreadTowards ? 'follow' : 'avoid'}
 							onValueChange={(v) => setValue('spreadTowards', v === 'follow')}
 						>
-							<ToggleGroupItem value="follow">Follow</ToggleGroupItem>
-							<ToggleGroupItem value="avoid">Avoid</ToggleGroupItem>
+							<ToggleGroupItem value="follow">{m.logo_follow()}</ToggleGroupItem>
+							<ToggleGroupItem value="avoid">{m.logo_avoid()}</ToggleGroupItem>
 						</ToggleGroupRoot>
 					</div>
 				</div>
@@ -276,18 +277,18 @@
 				<Button
 					class="h-13 flex-1 text-sm text-fg-muted transition-colors duration-200 hover:text-fg-strong"
 					onclick={reset}
-					aria-label="Reset to defaults"
-					title="Reset to defaults"
+					aria-label={m.logo_reset_defaults()}
+					title={m.logo_reset_defaults()}
 				>
 					<RotateCcw class="h-3.5 w-3.5 stroke-2" aria-hidden="true" />
-					<span>Reset</span>
+					<span>{m.logo_reset()}</span>
 				</Button>
 				<Button
 					class="h-13 flex-1 border-l border-border-subtle text-sm text-fg-muted transition-colors duration-200 hover:text-fg-strong"
 					onclick={replay}
 				>
 					<Play class="h-3.5 w-3.5 fill-current stroke-current" aria-hidden="true" />
-					<span>Replay intro</span>
+					<span>{m.logo_replay()}</span>
 				</Button>
 			</div>
 		</div>
@@ -300,7 +301,7 @@
 			open && 'pointer-events-none opacity-0'
 		]}
 		onclick={() => setOpen(true)}
-		aria-label="Open logo settings"
+		aria-label={m.logo_settings_open()}
 		aria-expanded={open}
 		inert={open}
 	>

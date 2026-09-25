@@ -1,12 +1,18 @@
 <script>
 	import { onMount } from 'svelte'
 	import { browser } from '$app/environment'
-	import { logoControls, logoScrollDriven, logoReplayRequested } from '$lib/stores/logoControls'
+	import {
+		logoControls,
+		logoScrollDriven,
+		logoReplayRequested,
+		persistLogoControls
+	} from '$lib/stores/logoControls'
 	import Mail from '@lucide/svelte/icons/mail'
 	import { GithubIcon, LinkedinIcon } from '$lib/components/icons'
 	import GridLine from '$lib/components/grid-line.svelte'
 	import Button from '$lib/components/button.svelte'
 	import TintedImage from '$lib/components/tinted-image.svelte'
+	import { m } from '$lib/paraglide/messages'
 	import LogoSettings from './logo-settings.svelte'
 
 	// user-tunable, see LogoSettings.svelte — driven by the shared store so the
@@ -366,6 +372,8 @@
 		innerHeight = window.innerHeight
 		updateLogoCenter()
 
+		const stopPersisting = persistLogoControls()
+
 		updateClock()
 		const clockInterval = setInterval(updateClock, 1000)
 
@@ -377,8 +385,27 @@
 		mouseX = innerWidth / 2
 		mouseY = innerHeight / 2
 
-		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+		// the language switcher leaves this flag so its reload doesn't replay the intro
+		const skipFlag = sessionStorage.getItem('skip-intro')
+		const skipOnce = skipFlag !== null
+		sessionStorage.removeItem('skip-intro')
+
+		// and where the pointer was, since the browser reports no position until it moves
+		const [x, y] = (skipFlag ?? '').split(',').map(Number)
+		if (Number.isFinite(x) && Number.isFinite(y) && skipFlag.includes(',')) {
+			mouseX = x
+			mouseY = y
+			pointerActive = true
+		}
+
+		if (skipOnce || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 			skipIntro()
+			if (skipOnce) {
+				// transitions stay off (class set in app.html) until the revealed state has painted
+				requestAnimationFrame(() =>
+					requestAnimationFrame(() => document.documentElement.classList.remove('skip-intro'))
+				)
+			}
 		} else {
 			runIntro()
 		}
@@ -395,6 +422,7 @@
 
 		return () => {
 			clearInterval(clockInterval)
+			stopPersisting()
 			if (frame !== null) cancelAnimationFrame(frame)
 			clearTimers()
 			cursorTimers.forEach(clearTimeout)
@@ -445,7 +473,7 @@
 		>
 			{#each Array(layers) as _, i (i)}
 				<g
-					class="layer stroke-primary transition-opacity duration-[950ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+					class="layer stroke-primary transition-opacity duration-[950ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none [.skip-intro_&]:transition-none"
 					stroke-width={thickness}
 					fill="none"
 					style="opacity: {i <= revealedLayers ? 1 - i / layers : 0};"
@@ -455,7 +483,7 @@
 					{#each PATHS as d, j (j)}
 						<path
 							{d}
-							class="glyph transition-opacity duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+							class="glyph transition-opacity duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none [.skip-intro_&]:transition-none"
 							style="opacity: {j < revealedPaths ? 1 : 0};"
 						/>
 					{/each}
@@ -468,7 +496,7 @@
 		>
 			{#each NAMES as { text, position }, j (text)}
 				<span
-					class="name pointer-events-auto absolute transition-[opacity,transform] duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none {position}"
+					class="name pointer-events-auto absolute transition-[opacity,transform] duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none [.skip-intro_&]:transition-none {position}"
 					style="opacity: {j < revealedPaths ? 1 : 0}; transform: translateY({j < revealedPaths
 						? 0
 						: '0.4em'});"
@@ -484,13 +512,13 @@
 	>
 		<TintedImage
 			src="/images/johannes2.jpg"
-			alt="Johannes"
+			alt={m.about_photo_alt()}
 			mirrored
 			class="size-22 border border-border"
 		/>
 		<div class="flex flex-col gap-3">
-			<h3 class="text-3xl leading-7 tracking-tight text-fg-strong">Frontend <br class="hidden lg:block"/>developer</h3>
-			<h3 class="text-xl leading-6 text-primary-text">Design enthusiast</h3>
+			<h3 class="text-3xl leading-7 tracking-tight text-fg-strong">{m.hero_role_top()}<br class="hidden lg:block" />{m.hero_role_bottom()}</h3>
+			<h3 class="text-xl leading-6 text-primary-text">{m.hero_tagline()}</h3>
 		</div>
 	</div>
 	<div class="absolute top-0 right-0 z-20 -mr-px -mt-px hidden md:block">
@@ -523,7 +551,7 @@
 		<Button
 			variant="copy"
 			value="johannes.hansen.aas@gmail.com"
-			aria-label="Copy email address"
+			aria-label={m.hero_copy_email()}
 			class="h-14 flex-1 border border-border-subtle bg-body text-fg-muted hover:text-fg-strong sm:h-[4.5rem] lg:flex-none -ml-px lg:-mt-px lg:-ml-px lg:h-[calc(4.5rem+1px)] lg:w-[calc(4.5rem+1px)]"
 		>
 			<Mail class="h-5 w-5 flex-none stroke-[1.75] sm:h-6 sm:w-6" aria-hidden="true" />
@@ -531,9 +559,9 @@
 	</div>
 	<div
 		class="mx-auto mt-4 flex w-[clamp(300px,100svw,600px)] items-center gap-2 px-6 text-xs tracking-wider uppercase text-fg-muted tabular-nums md:px-10 landscape:w-[clamp(400px,calc(100svh-5rem),620px)] lg:absolute lg:top-4 lg:left-6 lg:z-20 lg:mx-0 lg:mt-0 lg:w-auto lg:px-0 lg:landscape:w-auto"
-		aria-label="Local time in Norway"
+		aria-label={m.hero_local_time()}
 	>
-		<span>Norway</span>
+		<span>{m.hero_country()}</span>
 		<span class="text-fg-strong">-</span>
 		<span class="font-mono text-fg-strong slashed-zero">
 			{clock?.hour ?? '--'}<span class="text-primary-text">:</span>{clock?.minute ?? '--'}

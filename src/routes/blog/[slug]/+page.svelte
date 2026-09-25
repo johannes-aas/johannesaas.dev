@@ -1,10 +1,9 @@
 <script>
-	import { posts } from '$lib/posts/index.js'
+	import { getPosts } from '$lib/posts/index.js'
 	import { page } from '$app/state'
 
-	const slug = page.params.slug
-	const post = posts.find((p) => p.slug === slug)
-	const Component = post.component
+	const post = $derived(getPosts().find((p) => p.slug === page.params.slug))
+	const Component = $derived(post.component)
 </script>
 
 <section class="mx-auto max-w-3xl px-4 py-16">

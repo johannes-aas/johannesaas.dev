@@ -1,4 +1,6 @@
 <script>
+	import { getLocale } from '$lib/paraglide/runtime'
+
 	let { title, date, description, children } = $props()
 </script>
 
@@ -10,7 +12,7 @@
 		{/if}
 		{#if date}
 			<time datetime={date} class="text-sm font-medium tracking-wide text-fg-muted uppercase">
-				{new Date(date).toLocaleDateString('en-US', {
+				{new Date(date).toLocaleDateString(getLocale(), {
 					year: 'numeric',
 					month: 'long',
 					day: 'numeric'

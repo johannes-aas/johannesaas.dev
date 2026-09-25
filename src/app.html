@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="%paraglide.lang%" dir="%paraglide.dir%">
 	<head>
 		<title>Johannes Aas</title>
 		<meta charset="utf-8" />
@@ -16,6 +16,24 @@
 			rel="stylesheet"
 		/>
 		%sveltekit.head%
+		<script>
+			;(() => {
+				try {
+					const ids = ['theme-1', 'theme-2', 'theme-3', 'theme-4', 'theme-5', 'theme-6']
+					const saved = localStorage.getItem('theme')
+					const id = ids.includes(saved)
+						? saved
+						: matchMedia('(prefers-color-scheme: dark)').matches
+							? ids[ids.length - 1]
+							: ids[0]
+					const html = document.documentElement
+					html.classList.add(id)
+					if (sessionStorage.getItem('skip-intro')) html.classList.add('skip-intro')
+					const bg = getComputedStyle(html).getPropertyValue('--color-body').trim()
+					if (bg) document.querySelector('meta[name="theme-color"]')?.setAttribute('content', bg)
+				} catch {}
+			})()
+		</script>
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">%sveltekit.body%</div>

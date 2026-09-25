@@ -3,6 +3,7 @@
 	import { Dialog } from 'bits-ui'
 	import { fade } from 'svelte/transition'
 	import { openPanelCount } from '$lib/stores/panelState'
+	import { m } from '$lib/paraglide/messages'
 	import Button from '$lib/components/button.svelte'
 	import { DialogRoot, DialogOverlay, DialogContent, DialogTitle } from '$lib/components/dialog'
 	import Sun from '@lucide/svelte/icons/sun'
@@ -324,7 +325,7 @@
 		]}
 		bind:ref={toggleEl}
 		onclick={toggle}
-		aria-label="Colour theme"
+		aria-label={m.theme_label()}
 		aria-expanded={open}
 	>
 		<span class="relative grid h-5 w-5 place-items-center sm:h-6 sm:w-6">
@@ -368,12 +369,12 @@
 			<DialogContent
 				class="fixed top-1/2 left-1/2 flex w-40 -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-none border border-border-subtle bg-panel shadow-lg"
 			>
-				<DialogTitle class="sr-only">Colour theme</DialogTitle>
+				<DialogTitle class="sr-only">{m.theme_label()}</DialogTitle>
 
 				<Button
 					type="button"
 					class="flex w-full items-center justify-center border-b border-border-subtle py-4 text-fg-strong outline-none"
-					aria-label="Close"
+					aria-label={m.theme_close()}
 					onclick={() => setOpen(false)}
 				>
 					<X class="h-6 w-6 stroke-[1.5]" aria-hidden="true" />
@@ -385,7 +386,7 @@
 					<div
 						class="flex w-full flex-col items-center gap-1"
 						role="radiogroup"
-						aria-label="Colour theme"
+						aria-label={m.theme_label()}
 					>
 						{#each ids as id, i (id)}
 							<Button
@@ -433,7 +434,7 @@
 				<div
 					class="flex flex-1 items-center gap-1 sm:gap-2"
 					role="radiogroup"
-					aria-label="Colour theme"
+					aria-label={m.theme_label()}
 				>
 					{#each ids as id, i (id)}
 						<Button

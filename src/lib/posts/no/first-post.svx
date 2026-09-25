@@ -1,0 +1,9 @@
+---
+title: Første innlegg
+date: 2025-09-28
+cover: '/images/blog/first-post.png'
+---
+
+# New blog, who this??
+
+Dette er det aller første blogginnlegget på johannesaas.dev. Hvis du leser dette betyr det at oppsettet fungerer. yay!

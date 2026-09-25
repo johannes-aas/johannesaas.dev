@@ -1,4 +1,6 @@
 <script>
+	import { m } from '$lib/paraglide/messages'
+
 	let { title, description, technologies = [], liveUrl = '', githubUrl = '' } = $props()
 </script>
 
@@ -21,12 +23,12 @@
 		<div class="flex space-x-4">
 			{#if liveUrl}
 				<a href={liveUrl} target="_blank" class="font-medium text-fg hover:text-fg-strong">
-					Visit →
+					{m.project_visit()}
 				</a>
 			{/if}
 			{#if githubUrl}
 				<a href={githubUrl} target="_blank" class="font-medium text-fg-muted hover:text-fg-strong">
-					GitHub →
+					{m.project_github()}
 				</a>
 			{/if}
 		</div>
