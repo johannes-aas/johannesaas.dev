@@ -320,7 +320,7 @@
 			   grid lines — with align-items:center, symmetric vertical margins have
 			   no visual effect at all, since the box re-centers on its margin box
 			   regardless of the margin's sign or size */
-			'-mt-px -mr-px -mb-px grid w-16 flex-none place-items-center self-stretch border border-border-subtle text-fg-muted transition-colors duration-200 hover:text-fg-strong sm:w-[4.5rem]',
+			'-mt-px -mr-px -mb-px grid w-16 flex-none place-items-center self-stretch border border-border-subtle text-fg transition-colors duration-200 hover:text-fg-strong sm:w-[4.5rem]',
 			open && 'bg-panel text-fg-strong'
 		]}
 		bind:ref={toggleEl}

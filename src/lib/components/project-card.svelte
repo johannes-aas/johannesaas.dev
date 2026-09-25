@@ -10,7 +10,7 @@
 >
 	<div class="p-8 md:p-10">
 		<h3 class="mb-3 text-2xl font-semibold md:text-3xl text-fg">{title}</h3>
-		<p class="mb-4 text-fg-muted">{description}</p>
+		<p class="mb-4 text-fg">{description}</p>
 
 		<div class="mb-4 flex flex-wrap gap-2">
 			{#each technologies as tech}
@@ -27,7 +27,7 @@
 				</a>
 			{/if}
 			{#if githubUrl}
-				<a href={githubUrl} target="_blank" class="font-medium text-fg-muted hover:text-fg-strong">
+				<a href={githubUrl} target="_blank" class="font-medium text-fg hover:text-fg-strong">
 					{m.project_github()}
 				</a>
 			{/if}

@@ -15,7 +15,7 @@
 	onclick={(e) =>
 		sessionStorage.setItem('skip-intro', e.detail ? `${e.clientX},${e.clientY}` : '1')}
 	aria-label={m.language_label()}
-	class="-mt-px -mr-px -mb-px w-16 flex-none self-stretch border border-border-subtle font-mono text-sm tracking-[0.16em] text-fg-muted uppercase hover:text-fg-strong sm:w-[4.5rem]"
+	class="-mt-px -mr-px -mb-px w-16 flex-none self-stretch border border-border-subtle font-mono text-sm tracking-[0.16em] text-fg uppercase hover:text-fg-strong sm:w-[4.5rem]"
 >
 	{other}
 </Button>

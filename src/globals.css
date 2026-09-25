@@ -279,13 +279,13 @@
 /* THEME 6: Nocturne — near-black forest green, green accent */
 .theme-6 {
 	--color-body: oklch(17% 0.012 154.14);
-	--color-panel: oklch(31% 0.012 165);
+	--color-panel: oklch(31% 0.001 165);
 	--color-inset: oklch(34.96% 0.0121 164.35);
 	--color-surface: oklch(19.50% 0.0280 154.22);
 	--color-backdrop: oklch(5% 0.03 154.14 / 45%);
 	--color-fg-strong: oklch(97% 0.013 154.13);
-	--color-fg: oklch(84.36% 0.034 154.36);
-	--color-fg-muted: oklch(72% 0.041 154.58);
+	--color-fg: oklch(84.36% 0.018 154.36);
+	--color-fg-muted: oklch(72% 0.012 154.58);
 	--color-border-subtle: oklch(24.50% 0.0150 155.00);
 	--color-border: oklch(39.80% 0.0500 150.00);
 	--color-border-strong: oklch(48.35% 0.0500 152.00);

@@ -22,7 +22,7 @@
 	</header>
 
 	<div
-		class="prose prose-lg max-w-none prose-invert prose-headings:text-fg prose-blockquote:text-fg-muted prose-strong:text-fg prose-code:text-fg"
+		class="prose prose-lg max-w-none [--tw-prose-body:var(--color-fg)] [--tw-prose-bold:var(--color-fg-strong)] [--tw-prose-bullets:var(--color-fg-muted)] [--tw-prose-captions:var(--color-fg-muted)] [--tw-prose-code:var(--color-fg)] [--tw-prose-counters:var(--color-fg-muted)] [--tw-prose-headings:var(--color-fg-strong)] [--tw-prose-hr:var(--color-border)] [--tw-prose-lead:var(--color-fg)] [--tw-prose-links:var(--color-fg-strong)] [--tw-prose-pre-bg:var(--color-inset)] [--tw-prose-pre-code:var(--color-fg)] [--tw-prose-quote-borders:var(--color-border)] [--tw-prose-quotes:var(--color-fg)] [--tw-prose-td-borders:var(--color-border-subtle)] [--tw-prose-th-borders:var(--color-border)]"
 	>
 		{@render children?.()}
 	</div>

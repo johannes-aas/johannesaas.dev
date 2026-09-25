@@ -149,14 +149,14 @@
 				<div class="flex flex-wrap gap-2">
 					<Button class="bg-primary px-4 py-2 text-sm font-medium text-primary-fg">Primary</Button>
 					<Button
-						class="border border-border px-4 py-2 text-sm text-fg-muted hover:border-border-strong hover:text-fg-strong"
+						class="border border-border px-4 py-2 text-sm text-fg hover:border-border-strong hover:text-fg-strong"
 					>
 						Outlined
 					</Button>
 					<Button
 						variant="copy"
 						value="johannes@example.com"
-						class="border border-border px-4 py-2 text-sm text-fg-muted hover:border-border-strong hover:text-fg-strong"
+						class="border border-border px-4 py-2 text-sm text-fg hover:border-border-strong hover:text-fg-strong"
 					>
 						Copy
 					</Button>
@@ -215,7 +215,7 @@
 							<p class="text-fg">A panel on the backdrop, with the page blurred behind.</p>
 							<p class="text-sm text-fg-muted">Click outside or press Escape to close.</p>
 							<Button
-								class="mt-2 self-start border border-border px-4 py-2 text-sm text-fg-muted hover:border-border-strong hover:text-fg-strong"
+								class="mt-2 self-start border border-border px-4 py-2 text-sm text-fg hover:border-border-strong hover:text-fg-strong"
 								onclick={() => (dialogOpen = false)}
 							>
 								Close
@@ -230,7 +230,7 @@
 				<h3 class="text-xl font-semibold text-fg-strong">Card</h3>
 				<p class="text-fg">A card with a border and hover state, as used for blog posts.</p>
 				<Button
-					class="border border-border px-4 py-2 text-sm text-fg-muted hover:border-border-strong hover:text-fg-strong"
+					class="border border-border px-4 py-2 text-sm text-fg hover:border-border-strong hover:text-fg-strong"
 				>
 					Read more
 				</Button>

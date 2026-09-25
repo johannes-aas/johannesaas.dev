@@ -21,6 +21,7 @@
 
 	let hovered = $state(false)
 	let dragging = $state(false)
+	let moved = $state(false)
 	let active = $derived(hovered || dragging)
 
 	// While dragging we track the raw pointer position (not step-snapped) so
@@ -45,13 +46,6 @@
 
 	let displayPercent = $derived(dragging && dragPercent !== null ? dragPercent : pct(value))
 	let fill = $derived(fillFor(displayPercent))
-
-	// the thumb sits flush against the fill's moving edge rather than
-	// straddling it — for a bipolar slider that edge is on the left once the
-	// value drops below zero (fill grows leftward from the zero mark), so the
-	// 4px-wide thumb (w-1) shifts to hug whichever side that is
-	const THUMB_WIDTH = 4
-	let thumbOffset = $derived(displayPercent < (bipolar ? pct(0) : 0) ? 0 : -THUMB_WIDTH)
 
 	function ticks() {
 		const steps = Math.round((max - min) / step)
@@ -80,16 +74,19 @@
 		trackRect = e.currentTarget.getBoundingClientRect()
 		e.currentTarget.setPointerCapture(e.pointerId)
 		updateDragPercent(e.clientX)
+		moved = false
 		dragging = true
 	}
 
 	function onRootPointerMove(e) {
 		if (!dragging) return
+		moved = true
 		updateDragPercent(e.clientX)
 	}
 
 	function endDrag() {
 		dragging = false
+		moved = false
 		dragPercent = null
 	}
 </script>
@@ -118,13 +115,13 @@
 	<div
 		class={[
 			'absolute inset-y-0 bg-primary/40 transition-[left,width] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
-			dragging ? 'duration-0' : 'duration-300'
+			dragging && moved ? 'duration-0' : 'duration-300'
 		]}
 		style="left:{fill.left}%;width:{fill.width}%"
 	></div>
 	{#each ticks() as left}
 		<div
-			class="absolute top-2 bottom-2 w-px bg-border-subtle"
+			class="absolute top-2 bottom-2 w-px bg-primary/40"
 			style="left:{left}%"
 		></div>
 	{/each}
@@ -140,11 +137,11 @@
 	<div
 		aria-hidden="true"
 		class={[
-			'pointer-events-none absolute inset-y-0 w-1 bg-primary transition-[left,opacity,transform] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
+			'pointer-events-none absolute top-1 bottom-1 w-1.5 rounded-full bg-primary transition-[left,opacity] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
 			active ? 'opacity-100' : 'opacity-0',
-			dragging ? 'scale-y-[1.3] duration-0' : 'scale-y-100 duration-500'
+			dragging && moved ? 'duration-0' : 'duration-300'
 		]}
-		style="left:calc({displayPercent}% + {thumbOffset}px)"
+		style="left:calc({displayPercent}% - 3px)"
 	></div>
 	<span class="relative text-sm text-fg-strong">{label}</span>
 	<span class="relative font-mono text-sm text-fg [font-variant-numeric:tabular-nums]"

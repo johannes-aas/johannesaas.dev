@@ -26,7 +26,7 @@
 	bind:ref
 	class={cn(
 		'relative z-10 w-full py-1 text-center text-sm transition-colors duration-200',
-		ctx.value === value ? 'text-primary-fg' : 'text-fg-muted',
+		ctx.value === value ? 'text-primary-fg' : 'text-fg',
 		className
 	)}
 	{...restProps}

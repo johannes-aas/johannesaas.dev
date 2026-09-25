@@ -9,7 +9,7 @@
 		<div class="">
 			<h1 class="mb-6 text-6xl font-bold">{m.about_title()}</h1>
 			<div class="max-w-md">
-				<p>{m.about_bio()}</p>
+				<p class="text-fg">{m.about_bio()}</p>
 			</div>
 			<h2 class="mt-6 mb-4 text-2xl font-semibold">{m.about_get_in_touch()}</h2>
 			<SocialLinks />

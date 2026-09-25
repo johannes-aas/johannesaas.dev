@@ -26,7 +26,7 @@
 	</a>
 	<nav class="hidden flex-1 items-center justify-center gap-8 text-base sm:flex">
 		{#each links as { href, label } (href)}
-			<a {href} class="text-fg-muted transition-colors hover:text-fg-strong">{label}</a>
+			<a {href} class="text-fg transition-colors hover:text-fg-strong">{label}</a>
 		{/each}
 	</nav>
 	<div class="ml-auto flex items-center self-stretch">
@@ -34,7 +34,7 @@
 		<ThemeSwitcher />
 		<Button
 			class={[
-				'-mt-px -mr-px -mb-px grid w-16 flex-none place-items-center self-stretch border border-border-subtle text-fg-muted hover:text-fg-strong sm:hidden',
+				'-mt-px -mr-px -mb-px grid w-16 flex-none place-items-center self-stretch border border-border-subtle text-fg hover:text-fg-strong sm:hidden',
 				$mobileMenuOpen && 'bg-panel text-fg-strong'
 			]}
 			onclick={toggleMenu}

@@ -226,14 +226,14 @@
 		>
 			<div class="flex h-13 items-stretch justify-between">
 				<Button
-					class="h-full w-1/2 border-r border-border-subtle text-sm text-fg-muted transition-colors duration-200 hover:text-fg-strong"
+					class="h-full w-1/2 border-r border-border-subtle text-sm text-fg transition-colors duration-200 hover:text-fg-strong"
 					onclick={randomize}
 				>
 					<Shuffle class="h-3.5 w-3.5 stroke-2" aria-hidden="true" />
 					<span>{m.logo_randomize()}</span>
 				</Button>
 				<Button
-					class="w-[calc(3.5rem+1px)] border-l border-border-subtle text-fg-muted transition-colors duration-200 hover:text-fg-strong sm:w-[calc(4.5rem+1px)]"
+					class="w-[calc(3.5rem+1px)] border-l border-border-subtle text-fg transition-colors duration-200 hover:text-fg-strong sm:w-[calc(4.5rem+1px)]"
 					onclick={() => setOpen(false)}
 					aria-label={m.logo_settings_close()}
 				>
@@ -275,7 +275,7 @@
 
 			<div class="flex border-t border-border-subtle">
 				<Button
-					class="h-13 flex-1 text-sm text-fg-muted transition-colors duration-200 hover:text-fg-strong"
+					class="h-13 flex-1 text-sm text-fg transition-colors duration-200 hover:text-fg-strong"
 					onclick={reset}
 					aria-label={m.logo_reset_defaults()}
 					title={m.logo_reset_defaults()}
@@ -284,7 +284,7 @@
 					<span>{m.logo_reset()}</span>
 				</Button>
 				<Button
-					class="h-13 flex-1 border-l border-border-subtle text-sm text-fg-muted transition-colors duration-200 hover:text-fg-strong"
+					class="h-13 flex-1 border-l border-border-subtle text-sm text-fg transition-colors duration-200 hover:text-fg-strong"
 					onclick={replay}
 				>
 					<Play class="h-3.5 w-3.5 fill-current stroke-current" aria-hidden="true" />
@@ -297,7 +297,7 @@
 	<Button
 		bind:ref={trigger}
 		class={[
-			'absolute inset-0 z-20 text-fg-muted transition-[opacity,color,background-color] duration-200 ease-in-out hover:text-fg-strong',
+			'absolute inset-0 z-20 text-fg transition-[opacity,color,background-color] duration-200 ease-in-out hover:text-fg-strong',
 			open && 'pointer-events-none opacity-0'
 		]}
 		onclick={() => setOpen(true)}
