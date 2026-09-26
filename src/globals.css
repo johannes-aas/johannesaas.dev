@@ -278,7 +278,7 @@
 
 /* THEME 6: Nocturne — near-black forest green, green accent */
 .theme-6 {
-	--color-body: oklch(17% 0.012 154.14);
+	--color-body: oklch(19% 0.008 154.14);
 	--color-panel: oklch(31% 0.001 165);
 	--color-inset: oklch(34.96% 0.0121 164.35);
 	--color-surface: oklch(23.5% 0.016 154.22);
