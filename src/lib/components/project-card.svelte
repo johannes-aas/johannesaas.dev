@@ -1,4 +1,5 @@
 <script>
+	import ArrowUpRight from '@lucide/svelte/icons/arrow-up-right'
 	import { m } from '$lib/paraglide/messages'
 
 	let { title, description, technologies = [], liveUrl = '', githubUrl = '' } = $props()
@@ -6,7 +7,7 @@
 
 <!-- -mt-px / md:even:-ml-px collapse neighbouring borders into one line; hover:z-10 lifts the stronger border above them -->
 <div
-	class="relative -mt-px border border-border-subtle transition-colors hover:z-10 hover:border-border md:even:-ml-px"
+	class="relative -mt-px border border-border-subtle transition-colors hover:z-10 hover:border-border-strong md:even:-ml-px"
 >
 	<div class="p-8 md:p-10">
 		<h3 class="mb-3 text-2xl font-semibold md:text-3xl text-fg">{title}</h3>
@@ -20,15 +21,25 @@
 			{/each}
 		</div>
 
-		<div class="flex space-x-4">
+		<div class="flex gap-4">
 			{#if liveUrl}
-				<a href={liveUrl} target="_blank" class="font-medium text-fg hover:text-fg-strong">
+				<a
+					href={liveUrl}
+					target="_blank"
+					class="inline-flex items-center gap-1 font-medium text-fg hover:text-fg-strong"
+				>
 					{m.project_visit()}
+					<ArrowUpRight class="size-4" />
 				</a>
 			{/if}
 			{#if githubUrl}
-				<a href={githubUrl} target="_blank" class="font-medium text-fg hover:text-fg-strong">
+				<a
+					href={githubUrl}
+					target="_blank"
+					class="inline-flex items-center gap-1 font-medium text-fg hover:text-fg-strong"
+				>
 					{m.project_github()}
+					<ArrowUpRight class="size-4" />
 				</a>
 			{/if}
 		</div>

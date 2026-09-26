@@ -51,7 +51,9 @@
 </script>
 
 <!-- grids use -mx-px so the outer card borders sit exactly on the layout's side lines -->
-<h1 class="border-b border-border-subtle p-8 text-4xl font-bold md:p-10">{m.projects_title()}</h1>
+<h1 class="border-b border-border-subtle px-8 py-12 text-5xl font-bold md:px-10 md:py-16 md:text-6xl">
+	{m.projects_title()}
+</h1>
 
 <div class="-mx-px grid md:grid-cols-2">
 	{#each projects as project}
@@ -59,7 +61,9 @@
 	{/each}
 </div>
 
-<h1 class="border-b border-border-subtle p-8 text-4xl font-bold md:p-10">{m.projects_contrib_title()}</h1>
+<h2 class="border-b border-border-subtle px-8 py-12 text-4xl font-medium md:px-10 md:py-16 md:text-5xl">
+	{m.projects_contrib_title()}
+</h2>
 
 <div class="-mx-px grid md:grid-cols-2">
 	{#each projectContrib as project}
