@@ -565,7 +565,14 @@
 			variant="copy"
 			value="johannes.hansen.aas@gmail.com"
 			aria-label={m.hero_copy_email()}
-			class="h-14 flex-1 border border-border-subtle bg-body text-fg hover:text-fg-strong sm:h-[4.5rem] lg:flex-none -ml-px lg:-mt-px lg:-ml-px lg:h-[calc(4.5rem+1px)] lg:w-[calc(4.5rem+1px)]"
+			class="max-sm:hidden h-14 flex-1 border border-border-subtle bg-body text-fg hover:text-fg-strong sm:h-[4.5rem] lg:flex-none -ml-px lg:-mt-px lg:-ml-px lg:h-[calc(4.5rem+1px)] lg:w-[calc(4.5rem+1px)]"
+		>
+			<Mail class="h-4 w-4 flex-none stroke-[1.75] sm:h-5 sm:w-5" aria-hidden="true" />
+		</Button>
+		<Button
+			href="mailto:johannes.hansen.aas@gmail.com"
+			aria-label={m.hero_copy_email()}
+			class="sm:hidden h-14 flex-1 border border-border-subtle bg-body text-fg hover:text-fg-strong sm:h-[4.5rem] lg:flex-none -ml-px lg:-mt-px lg:-ml-px lg:h-[calc(4.5rem+1px)] lg:w-[calc(4.5rem+1px)]"
 		>
 			<Mail class="h-4 w-4 flex-none stroke-[1.75] sm:h-5 sm:w-5" aria-hidden="true" />
 		</Button>

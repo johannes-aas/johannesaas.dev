@@ -29,7 +29,15 @@
 	<Button
 		variant="copy"
 		value="johannes.hansen.aas@gmail.com"
-		class="group flex items-center space-x-3 border border-border bg-surface/50 px-6 py-3 backdrop-blur-sm transition-colors duration-200 hover:border-border-strong hover:bg-surface/60"
+		class="max-sm:hidden group flex items-center space-x-3 border border-border bg-surface/50 px-6 py-3 backdrop-blur-sm transition-colors duration-200 hover:border-border-strong hover:bg-surface/60"
+	>
+		<Mail class="h-5 w-5 text-fg transition-colors group-hover:text-fg-strong" />
+		<span class="text-fg transition-colors group-hover:text-fg-strong">{m.social_email()}</span>
+	</Button>
+
+	<Button
+		href="mailto:johannes.hansen.aas@gmail.com"
+		class="sm:hidden group flex items-center space-x-3 border border-border bg-surface/50 px-6 py-3 backdrop-blur-sm transition-colors duration-200 hover:border-border-strong hover:bg-surface/60"
 	>
 		<Mail class="h-5 w-5 text-fg transition-colors group-hover:text-fg-strong" />
 		<span class="text-fg transition-colors group-hover:text-fg-strong">{m.social_email()}</span>
