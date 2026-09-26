@@ -237,7 +237,7 @@
 					onclick={() => setOpen(false)}
 					aria-label={m.logo_settings_close()}
 				>
-					<X class="h-5 w-5 stroke-[1.75]" aria-hidden="true" />
+					<X class="h-4 w-4 stroke-[1.75]" aria-hidden="true" />
 				</Button>
 			</div>
 
@@ -305,6 +305,6 @@
 		aria-expanded={open}
 		inert={open}
 	>
-		<Settings class="h-5 w-5 flex-none stroke-[1.75] sm:h-6 sm:w-6" aria-hidden="true" />
+		<Settings class="h-4 w-4 flex-none stroke-[1.75] sm:h-5 sm:w-5" aria-hidden="true" />
 	</Button>
 </div>

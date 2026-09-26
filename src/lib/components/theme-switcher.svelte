@@ -328,7 +328,7 @@
 		aria-label={m.theme_label()}
 		aria-expanded={open}
 	>
-		<span class="relative grid h-5 w-5 place-items-center sm:h-6 sm:w-6">
+		<span class="relative grid h-4 w-4 place-items-center sm:h-5 sm:w-5">
 			<!-- palette -> X only crossfades at sm+ — the base scale-100/opacity-100
 			     here always wins below that breakpoint since the sm: overrides
 			     below don't apply yet, so the trigger icon never changes on the
@@ -339,7 +339,7 @@
 					open && 'sm:scale-75 sm:opacity-0'
 				]}
 			>
-				<Palette class="h-5 w-5 stroke-[1.75] sm:h-6 sm:w-6" aria-hidden="true" />
+				<Palette class="h-4 w-4 stroke-[1.75] sm:h-5 sm:w-5" aria-hidden="true" />
 			</span>
 			<span
 				class={[
@@ -347,7 +347,7 @@
 					open && 'sm:scale-100 sm:opacity-100'
 				]}
 			>
-				<X class="h-5 w-5 stroke-[1.75] sm:h-6 sm:w-6" aria-hidden="true" />
+				<X class="h-4 w-4 stroke-[1.75] sm:h-5 sm:w-5" aria-hidden="true" />
 			</span>
 		</span>
 	</Button>

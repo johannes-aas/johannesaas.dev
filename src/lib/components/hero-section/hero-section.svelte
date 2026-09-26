@@ -3,11 +3,13 @@
 	import { browser } from '$app/environment'
 	import {
 		logoControls,
+		logoDefaults,
 		logoScrollDriven,
 		logoReplayRequested,
 		persistLogoControls
 	} from '$lib/stores/logoControls'
 	import Mail from '@lucide/svelte/icons/mail'
+	import RotateCcw from '@lucide/svelte/icons/rotate-ccw'
 	import { GithubIcon, LinkedinIcon } from '$lib/components/icons'
 	import GridLine from '$lib/components/grid-line.svelte'
 	import Button from '$lib/components/button.svelte'
@@ -84,6 +86,7 @@
 	let timers = []
 
 	let settingsOpen = $state(false)
+	let settingsModified = $derived(Object.keys(logoDefaults).some((k) => $logoControls[k] !== logoDefaults[k]))
 
 	// local time in Norway, ticked once a second. Stays null until mounted so the
 	// server-rendered markup never disagrees with the visitor's clock.
@@ -521,8 +524,18 @@
 			<h3 class="text-xl leading-6 text-primary-text">{m.hero_tagline()}</h3>
 		</div>
 	</div>
-	<div class="absolute top-0 right-0 z-20 -mr-px -mt-px hidden md:block">
+	<div class="absolute top-0 right-0 z-20 -mr-px -mt-px hidden md:flex md:flex-col">
 		<LogoSettings bind:open={settingsOpen} />
+		{#if settingsModified && !settingsOpen}
+			<Button
+				class="-mt-px size-14 border border-border-subtle bg-body text-fg hover:text-fg-strong sm:size-[4.5rem]"
+				onclick={() => logoControls.set({ ...logoDefaults })}
+				aria-label={m.logo_reset_defaults()}
+				title={m.logo_reset_defaults()}
+			>
+				<RotateCcw class="h-4 w-4 flex-none stroke-[1.75] sm:h-5 sm:w-5" aria-hidden="true" />
+			</Button>
+		{/if}
 	</div>
 	<div
 		class="mx-auto mt-6 flex w-[clamp(300px,100svw,600px)] px-6 md:px-10 landscape:w-[clamp(400px,calc(100svh-5rem),620px)] lg:absolute lg:right-0 lg:bottom-0 lg:z-20 lg:mx-0 lg:mt-0 lg:-mr-px lg:-mb-px lg:grid lg:w-auto lg:grid-cols-[4.5rem_4.5rem] lg:px-0 lg:landscape:w-auto"
@@ -537,7 +550,7 @@
 			rel="noopener noreferrer"
 			class="h-14 flex-1 border border-border-subtle bg-body text-fg hover:text-fg-strong sm:h-[4.5rem] lg:flex-none lg:col-start-2 lg:-ml-px lg:h-[4.5rem] lg:w-[calc(4.5rem+1px)]"
 		>
-			<GithubIcon class="h-5 w-5 flex-none stroke-[1.75] sm:h-6 sm:w-6" aria-hidden="true" />
+			<GithubIcon class="h-4 w-4 flex-none stroke-[1.75] sm:h-5 sm:w-5" aria-hidden="true" />
 		</Button>
 		<Button
 			href="https://www.linkedin.com/in/johannes-hansen-aas/"
@@ -546,7 +559,7 @@
 			rel="noopener noreferrer"
 			class="h-14 flex-1 border border-border-subtle bg-body text-fg hover:text-fg-strong sm:h-[4.5rem] lg:flex-none -ml-px lg:ml-0 lg:-mt-px lg:h-[calc(4.5rem+1px)] lg:w-[4.5rem]"
 		>
-			<LinkedinIcon class="h-5 w-5 flex-none stroke-[1.75] sm:h-6 sm:w-6" aria-hidden="true" />
+			<LinkedinIcon class="h-4 w-4 flex-none stroke-[1.75] sm:h-5 sm:w-5" aria-hidden="true" />
 		</Button>
 		<Button
 			variant="copy"
@@ -554,7 +567,7 @@
 			aria-label={m.hero_copy_email()}
 			class="h-14 flex-1 border border-border-subtle bg-body text-fg hover:text-fg-strong sm:h-[4.5rem] lg:flex-none -ml-px lg:-mt-px lg:-ml-px lg:h-[calc(4.5rem+1px)] lg:w-[calc(4.5rem+1px)]"
 		>
-			<Mail class="h-5 w-5 flex-none stroke-[1.75] sm:h-6 sm:w-6" aria-hidden="true" />
+			<Mail class="h-4 w-4 flex-none stroke-[1.75] sm:h-5 sm:w-5" aria-hidden="true" />
 		</Button>
 	</div>
 	<div
