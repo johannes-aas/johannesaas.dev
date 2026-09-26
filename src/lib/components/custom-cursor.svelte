@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte'
+	import ArrowRight from '@lucide/svelte/icons/arrow-right'
 	import ArrowUpRight from '@lucide/svelte/icons/arrow-up-right'
 	import Copy from '@lucide/svelte/icons/copy'
 	import { m } from '$lib/paraglide/messages'
@@ -101,7 +102,7 @@
 
 {#if enabled}
 	{@const content = copied ? 'copied' : variant}
-	{@const sizeClass = content === 'copied' ? 'h-9 w-24' : content === 'hover' ? 'h-8 w-8' : content === 'link' || content === 'copy' ? 'h-10 w-10' : content === 'read' ? 'h-9 w-18' : 'h-4 w-4'}
+	{@const sizeClass = content === 'copied' ? 'h-9 w-24' : content === 'hover' ? 'h-8 w-8' : content === 'link' || content === 'copy' ? 'h-10 w-10' : content === 'read' ? 'h-9 w-22' : 'h-4 w-4'}
 	{@const bgClass = content === 'hover' ? 'bg-cursor/60' : 'bg-cursor'}
 	{@const layer = (name) => [
 		'absolute flex items-center justify-center whitespace-nowrap transition-[opacity,transform] duration-200 ease-out',
@@ -118,7 +119,7 @@
 	>
 		<span class={layer('link')}><ArrowUpRight class="size-5" strokeWidth={2.5} /></span>
 		<span class={layer('copy')}><Copy class="size-5" strokeWidth={2.5} /></span>
-		<span class={layer('read')}>{m.cursor_read()}</span>
+		<span class={[layer('read'), 'gap-1']}>{m.cursor_read()}<ArrowRight class="size-4" strokeWidth={2.5} /></span>
 		<span class={layer('copied')}>{m.cursor_copied()}</span>
 	</div>
 {/if}
