@@ -76,7 +76,7 @@
 				href={current ? undefined : href}
 				aria-current={current ? 'page' : undefined}
 				aria-disabled={current || undefined}
-				class={['transition-colors', current ? 'text-fg-strong' : 'text-fg hover:text-fg-strong']}
+				class={current ? 'text-fg-strong' : 'text-fg hover:text-fg-strong hover:transition-colors'}
 			>
 				{label}
 			</a>
@@ -89,7 +89,7 @@
 				indicatorVisible ? 'opacity-100' : 'opacity-0',
 				ready &&
 					(slide ? 'transition-[transform,opacity]' : 'transition-opacity') +
-						' duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]'
+						' duration-300 ease-in-out'
 			]}
 		></span>
 	</nav>
