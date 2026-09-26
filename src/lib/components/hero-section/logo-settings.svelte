@@ -226,7 +226,7 @@
 		>
 			<div class="flex h-13 items-stretch justify-between">
 				<Button
-					class="h-full w-1/2 border-r border-border-subtle text-sm text-fg transition-colors duration-200 hover:text-fg-strong"
+					class="h-full w-[calc(50%+1px)] border-r border-border-subtle text-sm text-fg transition-colors duration-200 hover:text-fg-strong"
 					onclick={randomize}
 				>
 					<Shuffle class="h-3.5 w-3.5 stroke-2" aria-hidden="true" />
