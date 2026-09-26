@@ -1,29 +1,33 @@
 <script>
-	import { getLocale } from '$lib/paraglide/runtime'
+	import { getLocale, localizeHref } from '$lib/paraglide/runtime'
+	import { m } from '$lib/paraglide/messages'
+	import Button from '$lib/components/button.svelte'
+	import ArrowLeft from '@lucide/svelte/icons/arrow-left'
 
-	let { title, date, description, children } = $props()
+	let { date, children } = $props()
 </script>
 
-<article class="mx-auto max-w-4xl px-4 py-24 sm:px-6 lg:px-8">
-	<header class="mb-10">
-		<h1 class="mb-4 text-4xl font-bold text-fg">{title}</h1>
-		{#if description}
-			<p class="mb-3 text-xl text-fg">{description}</p>
-		{/if}
+<section class="mx-auto max-w-3xl px-4 py-16">
+	<article
+		class="relative mx-auto flex max-w-[65ch] flex-col text-base leading-[1.6] [&_h1]:mb-3 [&_h1]:text-4xl [&_h1]:leading-none [&_h1]:font-bold [&>:not(a):not(time):not(h1)]:order-3 [&>h1]:order-1"
+	>
+		<Button
+			href={localizeHref('/blog')}
+			class="group mb-10 self-start text-sm text-fg-muted hover:text-fg-strong lg:absolute lg:top-2 lg:right-full lg:mr-16 lg:mb-0"
+		>
+			<ArrowLeft class="size-4 transition-transform group-hover:-translate-x-0.5" />
+			{m.nav_blog()}
+		</Button>
 		{#if date}
-			<time datetime={date} class="text-sm font-medium tracking-wide text-fg-muted uppercase">
+			<time datetime={date} class="order-2 mt-2 mb-6 text-sm tracking-wide text-fg-muted">
+				{m.blog_published()}
 				{new Date(date).toLocaleDateString(getLocale(), {
 					year: 'numeric',
-					month: 'long',
+					month: 'short',
 					day: 'numeric'
 				})}
 			</time>
 		{/if}
-	</header>
-
-	<div
-		class="prose prose-lg max-w-none [--tw-prose-body:var(--color-fg)] [--tw-prose-bold:var(--color-fg-strong)] [--tw-prose-bullets:var(--color-fg-muted)] [--tw-prose-captions:var(--color-fg-muted)] [--tw-prose-code:var(--color-fg)] [--tw-prose-counters:var(--color-fg-muted)] [--tw-prose-headings:var(--color-fg-strong)] [--tw-prose-hr:var(--color-border)] [--tw-prose-lead:var(--color-fg)] [--tw-prose-links:var(--color-fg-strong)] [--tw-prose-pre-bg:var(--color-inset)] [--tw-prose-pre-code:var(--color-fg)] [--tw-prose-quote-borders:var(--color-border)] [--tw-prose-quotes:var(--color-fg)] [--tw-prose-td-borders:var(--color-border-subtle)] [--tw-prose-th-borders:var(--color-border)]"
-	>
 		{@render children?.()}
-	</div>
-</article>
+	</article>
+</section>

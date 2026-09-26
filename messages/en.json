@@ -29,6 +29,7 @@
 	"project_loginno_description": "Website of student association for IT at NTNU in Gjøvik",
 	"project_healthtech_description": "Bachelor's thesis project built with a student group for Aker Solutions. A web application that visualizes workplace health data — noise, vibration, and dust exposure.",
 	"blog_title": "Blog",
+	"blog_published": "Published",
 	"cursor_read": "READ",
 	"cursor_copied": "COPIED",
 	"theme_label": "Colour theme",

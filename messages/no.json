@@ -29,6 +29,7 @@
 	"project_loginno_description": "Nettsiden til linjeforeningen for IT ved NTNU i Gjøvik",
 	"project_healthtech_description": "Bacheloroppgave laget sammen med en studentgruppe for Aker Solutions. En webapplikasjon som visualiserer helsedata fra arbeidsplassen — støy, vibrasjoner og støveksponering.",
 	"blog_title": "Blogg",
+	"blog_published": "Publisert",
 	"cursor_read": "LES",
 	"cursor_copied": "KOPIERT",
 	"theme_label": "Fargetema",
