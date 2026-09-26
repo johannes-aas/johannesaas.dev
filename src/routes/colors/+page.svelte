@@ -98,9 +98,36 @@
 	]
 </script>
 
-<div class="flex items-stretch">
-	<section class="min-w-0 flex-1 px-4 py-20 sm:px-10 lg:px-[max(2.5rem,calc((100%-56rem)/2))]">
+{#snippet swatches()}
+	{#each themeIds as id, i}
+		<button
+			type="button"
+			role="radio"
+			aria-checked={id === activeTheme}
+			aria-label="Theme {i + 1}"
+			class="group grid h-10 flex-1 cursor-pointer place-items-center border outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:h-14 sm:w-24 sm:flex-none {id ===
+			activeTheme
+				? 'border-border-strong'
+				: 'border-border-subtle hover:border-border'}"
+			style="background: linear-gradient(90deg, var(--{id}-swatch-from), var(--{id}-swatch-to))"
+			onclick={() => pickTheme(id)}
+		>
+			<span
+				class="h-4 w-4 transition-opacity {id === activeTheme
+					? 'opacity-100'
+					: 'opacity-0 group-hover:opacity-70'}"
+				style="background: var(--{id}-swatch-mark)"
+			></span>
+		</button>
+	{/each}
+{/snippet}
+
+<div class="flex flex-col items-stretch sm:flex-row">
+	<section class="min-w-0 flex-1 px-4 py-10 sm:px-10 sm:py-20 lg:px-[max(2.5rem,calc((100%-56rem)/2))]">
 		<h1 class="mb-10 text-6xl font-bold">Colors</h1>
+		<div class="mb-10 flex gap-2 sm:hidden" role="radiogroup" aria-label="Theme">
+			{@render swatches()}
+		</div>
 		<div class="flex flex-col gap-10">
 			{#each groups as { title, tokens }}
 				<div>
@@ -262,29 +289,16 @@
 			</div>
 		</div>
 	</section>
-	<aside class="w-24 flex-none border-l border-border-subtle pt-20 sm:w-40">
-		<div class="sticky top-6 flex flex-col items-center gap-3" role="radiogroup" aria-label="Theme">
-			{#each themeIds as id, i}
-				<button
-					type="button"
-					role="radio"
-					aria-checked={id === activeTheme}
-					aria-label="Theme {i + 1}"
-					class="group grid h-12 w-16 cursor-pointer place-items-center border outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:h-14 sm:w-28 {id ===
-					activeTheme
-						? 'border-border-strong'
-						: 'border-border-subtle hover:border-border'}"
-					style="background: linear-gradient(90deg, var(--{id}-swatch-from), var(--{id}-swatch-to))"
-					onclick={() => pickTheme(id)}
-				>
-					<span
-						class="h-4 w-4 transition-opacity {id === activeTheme
-							? 'opacity-100'
-							: 'opacity-0 group-hover:opacity-70'}"
-						style="background: var(--{id}-swatch-mark)"
-					></span>
-				</button>
-			{/each}
+	<aside class="hidden w-[calc(9rem-2px)] flex-none border-l border-border-subtle pt-[11.25rem] sm:block">
+		<div class="sticky top-6 flex flex-col items-center">
+			<h2 id="themes-heading" class="mb-4 text-2xl font-semibold">Themes</h2>
+			<div
+				class="flex flex-col items-center gap-3"
+				role="radiogroup"
+				aria-labelledby="themes-heading"
+			>
+				{@render swatches()}
+			</div>
 		</div>
 	</aside>
 </div>
