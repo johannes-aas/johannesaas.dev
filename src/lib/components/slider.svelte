@@ -37,15 +37,9 @@
 		return ((v - min) / (max - min)) * 100
 	}
 
-	function fillFor(atPercent) {
-		const zero = bipolar ? pct(0) : 0
-		const lo = Math.min(atPercent, zero)
-		const hi = Math.max(atPercent, zero)
-		return { left: lo, width: hi - lo }
-	}
+	let zero = $derived(bipolar ? pct(0) : 0)
 
 	let displayPercent = $derived(dragging && dragPercent !== null ? dragPercent : pct(value))
-	let fill = $derived(fillFor(displayPercent))
 
 	function ticks() {
 		const steps = Math.round((max - min) / step)
@@ -114,10 +108,10 @@
 >
 	<div
 		class={[
-			'absolute inset-y-0 bg-primary/40 transition-[left,width] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
+			'absolute inset-y-0 bg-primary/50 transition-[--fill-p] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
 			dragging && moved ? 'duration-0' : 'duration-300'
 		]}
-		style="left:{fill.left}%;width:{fill.width}%"
+		style="--fill-p:{displayPercent};left:calc(min(var(--fill-p), {zero}) * 1%);width:calc((max(var(--fill-p), {zero}) - min(var(--fill-p), {zero})) * 1%)"
 	></div>
 	{#each ticks() as left}
 		<div
@@ -126,7 +120,7 @@
 		></div>
 	{/each}
 	{#if bipolar}
-		<div class="absolute inset-y-0 w-px bg-border/60" style="left:{pct(0)}%"></div>
+		<div class="absolute inset-y-0 w-px bg-border-strong" style="left:{zero}%"></div>
 	{/if}
 	<SliderPrimitive.Thumb
 		index={0}
@@ -137,11 +131,11 @@
 	<div
 		aria-hidden="true"
 		class={[
-			'pointer-events-none absolute top-1 bottom-1 w-1.5 rounded-full bg-primary transition-[left,opacity] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
+			'pointer-events-none absolute top-1 bottom-1 w-1.5 rounded-full border border-inset bg-primary transition-[--fill-p,opacity] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
 			active ? 'opacity-100' : 'opacity-0',
 			dragging && moved ? 'duration-0' : 'duration-300'
 		]}
-		style="left:calc({displayPercent}% - 3px)"
+		style="--fill-p:{displayPercent};left:calc(var(--fill-p) * 1% - 3px)"
 	></div>
 	<span class="relative text-sm text-fg-strong">{label}</span>
 	<span class="relative font-mono text-sm text-fg [font-variant-numeric:tabular-nums]"
