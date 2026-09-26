@@ -14,7 +14,7 @@
 	let copied = $state(false)
 	let variant = $state('default') // 'default' | 'hover' | 'link' | 'copy' | 'read'
 
-	const INTERACTIVE_SELECTOR = 'a, button, input, select, textarea, [role="button"], .cursor-hover'
+	const INTERACTIVE_SELECTOR = 'a[href], button, input, select, textarea, [role="button"], .cursor-hover'
 	const LINK_SELECTOR = 'a[href]'
 
 	const isExternalLink = (target) => {
