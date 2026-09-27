@@ -4,7 +4,7 @@
 	let { src, alt, mirrored = false, class: className, ...restProps } = $props()
 </script>
 
-<div class={cn('relative overflow-hidden', className)} {...restProps}>
+<div class={cn('relative overflow-hidden rounded-sm', className)} {...restProps}>
 	<img
 		{src}
 		{alt}
