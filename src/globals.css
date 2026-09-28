@@ -479,8 +479,9 @@ body {
 	whatever frame actually paints always shows them in agreement, even if
 	that frame is late.
 */
+/* negative side insets keep the grids' -mx-px card borders, which overhang main by 1px, from being clipped */
 ::view-transition-old(page-content) {
-	clip-path: inset(calc(var(--wipe-progress, 0) * var(--wipe-height, 0px)) 0 0 0);
+	clip-path: inset(calc(var(--wipe-progress, 0) * var(--wipe-height, 0px)) -1px 0);
 }
 
 ::view-transition-group(wipe-line) {
