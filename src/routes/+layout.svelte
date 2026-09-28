@@ -2,7 +2,7 @@
 	import { resolve } from '$app/paths'
 	import { page } from '$app/state'
 	import { locales, localizeHref } from '$lib/paraglide/runtime'
-	import '../globals.css'
+	import '../app.css'
 	import favicon from '$lib/assets/favicon.svg'
 	import { dev } from '$app/environment'
 	import { injectAnalytics } from '@vercel/analytics/sveltekit'
@@ -19,50 +19,29 @@
 	let { children } = $props()
 	let mainEl
 
-	// lock page scroll while any header panel (theme switcher, logo settings) is open
+	// lock page scroll while any header panel is open
 	$effect(() => {
 		document.body.style.overflow = $openPanelCount > 0 ? 'hidden' : ''
 	})
 
 	/*
-		Page nav reveal: a line sweeps down erasing the old page, then the new
-		page fades in — confined to `main` via its own `page-content`
-		view-transition-name so header/footer/borders stay put.
-		Both the clip-path (old page) and the line's position are driven off
-		ONE custom property, --wipe-progress, updated per rAF here and read
-		back via calc() in globals.css — kept as one value in one style
-		recalc so clip-path's heavier repaint and the line's cheap transform
-		can't drift apart under load, as two separately-scheduled animations
-		would. --wipe-height (old/new's max) gives both a shared "100%" for
-		the percentage-based clip-path, via object-fit: none in globals.css so
-		neither snapshot gets rescaled against it.
-		Reuses the View Transition approach from theme-switcher.svelte's
-		revealTheme(); globals.css sets `animation: none` on both
-		view-transition groups so the browser's default morph doesn't fight
-		these explicit anims.
+		Page-nav wipe: a line sweeps down erasing the old `main`, then the new page fades in.
+		Clip and line both read --wipe-progress (set per rAF) so they can't drift apart under load.
+		See src/styles/view-transitions.css.
 	*/
 	const WIPE_DURATION = 900
 	const FADE_DURATION = 500
-	// fade starts slightly before the wipe finishes so they read as one motion
 	const FADE_DELAY = WIPE_DURATION - 300
-	// new content rises into place from just above rest, alongside the fade
 	const FADE_RISE = '-16px'
 
-	// eases the wipe's linear rAF progress into a standard ease-in-out curve
 	const easeInOutCubic = (t) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2)
 
 	afterNavigate(() => {
 		$mobileMenuOpen = false
 	})
 
-	/*
-		Navigating from the open mobile menu: the menu takes over main's
-		`page-content` name (see header.svelte / the `menuNav` store) so the
-		menu itself is what the wipe erases, starting from the header line
-		it's anchored under. The name only ever exists on one of the two at a
-		time — hence the flush before capture and the two-step close inside
-		the transition callback.
-	*/
+	// From the open mobile menu, the menu takes over `page-content` so the wipe erases it.
+	// The name must live on only one element at a time, hence the flushes.
 	onNavigate((navigation) => {
 		if (
 			!document.startViewTransition ||
@@ -78,8 +57,6 @@
 			flushSync()
 		}
 
-		// measured before the DOM swap: old/new share this width regardless of
-		// which is taller
 		const wipeWidth = mainEl?.getBoundingClientRect().width ?? 0
 		const oldSource = fromMenu ? document.getElementById('mobile-menu') : mainEl
 		const oldHeight = oldSource?.getBoundingClientRect().height ?? 0
@@ -109,8 +86,7 @@
 			})
 			transition.ready
 				.then(() => {
-					// DOM has swapped by now, so mainEl reflects the new page —
-					// sweep to whichever of old/new is taller
+					// DOM has swapped, so mainEl is the new page; sweep the taller of the two
 					const newHeight = mainEl?.getBoundingClientRect().height ?? 0
 					const wipeHeight = Math.max(oldHeight, newHeight)
 					html.style.setProperty('--wipe-height', `${wipeHeight}px`)
@@ -154,7 +130,7 @@
 		<main
 			bind:this={mainEl}
 			class={[
-				'relative flex-grow',
+				'relative grow',
 				$menuNav ? '[view-transition-name:none]' : '[view-transition-name:page-content]'
 			]}
 		>
@@ -170,7 +146,7 @@
 	</div>
 </div>
 
-<div style="display:none">
+<div class="hidden">
 	{#each locales as locale (locale)}
 		<a href={resolve(localizeHref(page.url.pathname, { locale }))}>{locale}</a>
 	{/each}

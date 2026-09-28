@@ -8,7 +8,7 @@
 	<img
 		{src}
 		{alt}
-		class={cn('h-full w-full object-cover grayscale-80 contrast-110', mirrored && '-scale-x-100')}
+		class={cn('size-full object-cover contrast-110 grayscale-80', mirrored && '-scale-x-100')}
 	/>
-	<div class="absolute inset-0 bg-primary mix-blend-color opacity-20"></div>
+	<div class="absolute inset-0 bg-primary opacity-20 mix-blend-color"></div>
 </div>

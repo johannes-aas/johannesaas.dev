@@ -1,0 +1,71 @@
+/*
+	Theme reveal (theme-switcher.svelte): the new snapshot is clipped from JS via the
+	Web Animations API; this pins it collapsed until that animation takes over.
+	Unscoped because class selectors don't reliably reach the ::view-transition tree.
+*/
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation: none;
+	mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+	z-index: 1;
+}
+
+::view-transition-new(root) {
+	z-index: 2;
+	clip-path: var(--theme-reveal-clip-from, none);
+}
+
+/* named groups escape the root snapshot, so merge them back in for the reveal clip */
+.theme-reveal * {
+	view-transition-name: none !important;
+}
+
+/*
+	Page-nav wipe (+layout.svelte): --wipe-progress (0–1) and --wipe-height are written
+	per frame from JS so the clip and the line always move together.
+*/
+::view-transition-group(page-content),
+::view-transition-group(wipe-line) {
+	animation: none;
+}
+
+::view-transition-group(page-content) {
+	z-index: 2;
+	height: var(--wipe-height, auto);
+}
+
+::view-transition-old(page-content),
+::view-transition-new(page-content),
+::view-transition-old(wipe-line),
+::view-transition-new(wipe-line) {
+	animation: none;
+	mix-blend-mode: normal;
+}
+
+/* natural size, top-left: the default `contain` re-centres a snapshot shorter than the group */
+::view-transition-old(page-content),
+::view-transition-new(page-content) {
+	object-fit: none;
+	object-position: 0 0;
+}
+
+/* px, not %: the old snapshot isn't reliably --wipe-height tall. -1px sides keep card borders */
+::view-transition-old(page-content) {
+	clip-path: inset(calc(var(--wipe-progress, 0) * var(--wipe-height, 0px)) -1px 0);
+}
+
+::view-transition-group(wipe-line) {
+	z-index: 3;
+	width: var(--wipe-width, 100%);
+	height: 1px;
+	/* `translate`, not `transform`: the browser's own transform carries Android's URL-bar offset */
+	translate: 0 calc(var(--wipe-progress, 0) * var(--wipe-height, 0));
+}
+
+::view-transition-group(site-footer),
+::view-transition-group(footer-divider) {
+	animation-duration: 900ms;
+}

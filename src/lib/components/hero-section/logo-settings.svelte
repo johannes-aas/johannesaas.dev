@@ -1,10 +1,6 @@
 <script>
-	import {
-		logoControls,
-		logoDefaults,
-		logoScrollDriven,
-		logoReplayRequested
-	} from '$lib/stores/logoControls'
+	import { logoControls, logoDefaults, logoReplayRequested } from '$lib/stores/logoControls'
+	import { finePointer } from '$lib/pointer.js'
 	import { m } from '$lib/paraglide/messages'
 	import Slider from '$lib/components/slider.svelte'
 	import { ToggleGroupRoot, ToggleGroupItem } from '$lib/components/toggle-group'
@@ -17,13 +13,10 @@
 	import { Shuffle } from '@lucide/svelte'
 	import { tick } from 'svelte'
 
-	// natural height of the (always-mounted, fixed-width) content column, fed
-	// into the panel's own height transition — measured off content that never
-	// reflows, so the grow animation never shifts text mid-flight
+	// measured off the fixed-width content so the grow animation never reflows text
 	let panelHeight = $state(0)
 
-	// `random` narrows the slider's full range to the part worth landing on —
-	// a randomized thickness of 0 or a single layer is just a broken-looking logo
+	// `random` narrows the range the randomizer picks from
 	const formSliders = [
 		{
 			key: 'spread',
@@ -76,30 +69,15 @@
 		}
 	]
 
-	// randomize()/resetOne() below iterate over every slider generically, regardless of group
 	const sliders = [...formSliders, ...motionSliders]
 
 	let { open = $bindable(false) } = $props()
 	let container
 	let trigger = $state(null)
 
-	// Grows the panel leftward from the trigger's own right edge (horizontally),
-	// clamped back on screen if that would overflow — the same "place it, then
-	// shift back if it would overflow" idea Floating UI's shift() middleware
-	// uses, computed directly against values we already have (panelHeight;
-	// PANEL_WIDTH matches the open panel's own w-72 below) rather than asking
-	// Floating UI to measure the real panel element. That doesn't work here: a
-	// CSS `transition` makes `getBoundingClientRect()` report the panel's
-	// *currently interpolating* size, not its target — so at the instant the
-	// panel starts opening, Floating UI would always measure it still at its
-	// closed size, never the open size it's animating toward.
-	//
-	// Vertically it always grows downward from the trigger's own top edge, even
-	// if that runs it past the bottom of the screen (the user can just scroll
-	// down to see it) — the only thing it's clamped against is the actual top
-	// of the page (scroll position 0), since there's nothing above that to
-	// scroll to.
-	const PANEL_WIDTH = 288 // 18rem, in px — keep in sync with the open panel's w-72
+	// Positioned by hand, not Floating UI: mid-transition the panel measures at its
+	// interpolating size. Grows left and down from the trigger, clamped to the page edges.
+	const PANEL_WIDTH = 288 // keep in sync with w-72
 	const EDGE_PADDING = 8
 
 	let panelX = $state(0)
@@ -112,20 +90,12 @@
 		const targetWidth = Math.min(PANEL_WIDTH, window.innerWidth - EDGE_PADDING * 2)
 		panelWidth = targetWidth
 
-		// ideal, pre-clamp position: right edge pinned to the trigger (grows
-		// leftward), top edge pinned to the trigger (grows downward)
 		const idealLeft = rect.right - targetWidth
 		const idealTop = rect.top
 
-		// clamp against the left edge only — the trigger sits flush with the
-		// right edge of the screen, so the panel stays flush with it too — then
-		// convert back to container-relative coordinates — what `left`/`top: Npx`
-		// mean for an absolutely positioned child of `container`
 		panelX = Math.max(idealLeft, EDGE_PADDING) - rect.left
 
-		// clamp vertically against the page's own top edge, not the viewport's —
-		// idealTop is viewport-relative, so shift it into document space (adding
-		// the scroll offset) before comparing it against the page's actual top
+		// clamp against the page's top, not the viewport's
 		const idealTopInDocument = idealTop + window.scrollY
 		const clampedTopInDocument = Math.max(idealTopInDocument, EDGE_PADDING)
 		panelY = clampedTopInDocument - window.scrollY - rect.top
@@ -164,9 +134,6 @@
 	function setOpen(value) {
 		if (value === open) return
 		open = value
-		// panelHeight and container are already known/measured independent of
-		// `open`, so this can run synchronously, before Svelte even renders
-		// the open state — no risk of a jump to a stale position
 		if (value) updatePosition()
 	}
 
@@ -203,21 +170,21 @@
 	/>
 {/snippet}
 
-<div class="relative h-14 w-14 sm:h-[4.5rem] sm:w-[4.5rem]" bind:this={container}>
+<div class="relative size-14 sm:size-18" bind:this={container}>
 	<div
 		class={[
 			'absolute z-10 overflow-hidden border transition-[top,left,width,height,background-color] duration-300 ease-in-out',
 			open
 				? 'w-72 max-w-[calc(100vw-1.5rem)] border-border-subtle bg-panel'
-				: 'h-14 w-14 border-border-subtle bg-body sm:h-[4.5rem] sm:w-[4.5rem]'
+				: 'size-14 border-border-subtle bg-body sm:size-18'
 		]}
-		style="top:{open ? panelY + 'px' : '0'};left:{open ? panelX + 'px' : '0'}{open
-			? ';height:' + panelHeight + 'px'
-			: ''}"
+		style:top={open ? `${panelY}px` : '0'}
+		style:left={open ? `${panelX}px` : '0'}
+		style:height={open ? `${panelHeight}px` : undefined}
 	>
 		<div
 			class={[
-				'content flex w-72 flex-col transition-opacity duration-200 ease-in-out',
+				'flex w-72 flex-col transition-opacity duration-200 ease-in-out',
 				open ? 'opacity-100 delay-100' : 'opacity-0'
 			]}
 			bind:clientHeight={panelHeight}
@@ -226,35 +193,39 @@
 		>
 			<div class="flex h-13 items-stretch justify-between">
 				<Button
-					class="h-full w-[calc(50%+1px)] border-r border-border-subtle text-sm text-fg transition-colors duration-200 hover:text-fg-strong"
+					class="h-full w-[calc(50%+1px)] border-r border-border-subtle text-sm text-fg hover:text-fg-strong"
 					onclick={randomize}
 				>
-					<Shuffle class="h-3.5 w-3.5 stroke-2" aria-hidden="true" />
+					<Shuffle class="size-3.5 stroke-2" aria-hidden="true" />
 					<span>{m.logo_randomize()}</span>
 				</Button>
 				<Button
-					class="w-[calc(3.5rem+1px)] border-l border-border-subtle text-fg transition-colors duration-200 hover:text-fg-strong sm:w-[calc(4.5rem+1px)]"
+					class="w-[calc(--spacing(14)+1px)] border-l border-border-subtle text-fg hover:text-fg-strong sm:w-[calc(--spacing(18)+1px)]"
 					onclick={() => setOpen(false)}
 					aria-label={m.logo_settings_close()}
 				>
-					<X class="h-4 w-4 stroke-[1.75]" aria-hidden="true" />
+					<X class="size-4 stroke-[1.75]" aria-hidden="true" />
 				</Button>
 			</div>
 
 			<div class="h-px bg-border-subtle"></div>
 
 			<div class="flex flex-col gap-2.5 px-4 pt-3.5 pb-4">
-				<span class="font-mono text-xs tracking-[0.16em] text-fg-muted uppercase">{m.logo_group_form()}</span>
+				<span class="font-mono text-xs tracking-[0.16em] text-fg-muted uppercase"
+					>{m.logo_group_form()}</span
+				>
 				{#each formSliders as spec (spec.key)}
 					{@render sliderRow(spec)}
 				{/each}
 			</div>
 
-			{#if !$logoScrollDriven}
+			{#if finePointer.current}
 				<div class="h-px bg-border-subtle"></div>
 
 				<div class="flex flex-col gap-2.5 px-4 pt-3.5 pb-4">
-					<span class="font-mono text-xs tracking-[0.16em] text-fg-muted uppercase">{m.logo_group_motion()}</span>
+					<span class="font-mono text-xs tracking-[0.16em] text-fg-muted uppercase"
+						>{m.logo_group_motion()}</span
+					>
 					{#each motionSliders as spec (spec.key)}
 						{@render sliderRow(spec)}
 					{/each}
@@ -275,19 +246,19 @@
 
 			<div class="flex border-t border-border-subtle">
 				<Button
-					class="h-13 flex-1 text-sm text-fg transition-colors duration-200 hover:text-fg-strong"
+					class="h-13 flex-1 text-sm text-fg hover:text-fg-strong"
 					onclick={reset}
 					aria-label={m.logo_reset_defaults()}
 					title={m.logo_reset_defaults()}
 				>
-					<RotateCcw class="h-3.5 w-3.5 stroke-2" aria-hidden="true" />
+					<RotateCcw class="size-3.5 stroke-2" aria-hidden="true" />
 					<span>{m.logo_reset()}</span>
 				</Button>
 				<Button
-					class="h-13 flex-1 border-l border-border-subtle text-sm text-fg transition-colors duration-200 hover:text-fg-strong"
+					class="h-13 flex-1 border-l border-border-subtle text-sm text-fg hover:text-fg-strong"
 					onclick={replay}
 				>
-					<Play class="h-3.5 w-3.5 fill-current stroke-current" aria-hidden="true" />
+					<Play class="size-3.5 fill-current stroke-current" aria-hidden="true" />
 					<span>{m.logo_replay()}</span>
 				</Button>
 			</div>
@@ -305,6 +276,6 @@
 		aria-expanded={open}
 		inert={open}
 	>
-		<Settings class="h-4 w-4 flex-none stroke-[1.75] sm:h-5 sm:w-5" aria-hidden="true" />
+		<Settings class="size-4 flex-none stroke-[1.75] sm:size-5" aria-hidden="true" />
 	</Button>
 </div>

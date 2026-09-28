@@ -1,41 +1,42 @@
 <script>
-	import { onMount } from 'svelte'
 	import ArrowRight from '@lucide/svelte/icons/arrow-right'
 	import ArrowUpRight from '@lucide/svelte/icons/arrow-up-right'
 	import Copy from '@lucide/svelte/icons/copy'
 	import { m } from '$lib/paraglide/messages'
 	import { COPIED_EVENT } from '$lib/copy-to-clipboard.js'
+	import { finePointer } from '$lib/pointer.js'
 
 	let x = $state(0)
 	let y = $state(0)
 	let renderX = $state(0)
 	let renderY = $state(0)
 	let visible = $state(false)
-	let enabled = $state(false)
 	let copied = $state(false)
 	let variant = $state('default') // 'default' | 'hover' | 'link' | 'copy' | 'read'
 
-	const INTERACTIVE_SELECTOR = 'a[href], button, input, select, textarea, [role="button"], .cursor-hover'
+	const INTERACTIVE_SELECTOR =
+		'a[href], button, input, select, textarea, [role="button"], .cursor-hover'
 	const LINK_SELECTOR = 'a[href]'
 
 	const isExternalLink = (target) => {
 		const link = target.closest(LINK_SELECTOR)
-		return link instanceof HTMLAnchorElement && /^https?:$/.test(link.protocol) && link.origin !== window.location.origin
+		return (
+			link instanceof HTMLAnchorElement &&
+			/^https?:$/.test(link.protocol) &&
+			link.origin !== window.location.origin
+		)
 	}
 	const READ_SELECTOR = '[data-cursor="read"]'
 	const COPY_SELECTOR = '[data-cursor="copy"]'
 	const COPIED_DURATION = 1500
 
-	onMount(() => {
-		const pointerFine = window.matchMedia('(hover: hover) and (pointer: fine)').matches
-		if (!pointerFine) return
-		enabled = true
+	$effect(() => {
+		if (!finePointer.current) return
 
 		let frame
 		let copiedTimeout
 
 		const tick = () => {
-			// light easing so the box has a touch of glide without feeling laggy
 			renderX += (x - renderX) * 0.35
 			renderY += (y - renderY) * 0.35
 			frame = requestAnimationFrame(tick)
@@ -80,12 +81,7 @@
 			visible = false
 		}
 
-		// pointermove (not mousemove) in the capture phase: a dragged element (e.g.
-		// the logo playground's bits-ui slider) handles pointermove on `document`
-		// and calls both preventDefault() (which suppresses the browser's
-		// synthesized mousemove compat event) and stopPropagation() (which stops
-		// the event before it would reach a bubble-phase listener on `window`).
-		// Capturing on `window` runs before either of those can fire.
+		// capture-phase pointermove: bits-ui's slider stops propagation of drag moves on document
 		window.addEventListener('pointermove', handleMove, true)
 		document.addEventListener('pointerleave', handleLeave)
 		window.addEventListener(COPIED_EVENT, handleCopied)
@@ -96,13 +92,23 @@
 			window.removeEventListener(COPIED_EVENT, handleCopied)
 			window.removeEventListener('pointermove', handleMove, true)
 			document.removeEventListener('pointerleave', handleLeave)
+			visible = false
 		}
 	})
 </script>
 
-{#if enabled}
+{#if finePointer.current}
 	{@const content = copied ? 'copied' : variant}
-	{@const sizeClass = content === 'copied' ? 'h-9 w-24' : content === 'hover' ? 'h-8 w-8' : content === 'link' || content === 'copy' ? 'h-10 w-10' : content === 'read' ? 'h-9 w-22' : 'h-4 w-4'}
+	{@const sizeClass =
+		content === 'copied'
+			? 'h-9 w-24'
+			: content === 'hover'
+				? 'size-8'
+				: content === 'link' || content === 'copy'
+					? 'size-10'
+					: content === 'read'
+						? 'h-9 w-22'
+						: 'size-4'}
 	{@const bgClass = content === 'hover' ? 'bg-cursor/60' : 'bg-cursor'}
 	{@const layer = (name) => [
 		'absolute flex items-center justify-center whitespace-nowrap transition-[opacity,transform] duration-200 ease-out',
@@ -110,7 +116,7 @@
 	]}
 	<div
 		class={[
-			'pointer-events-none fixed top-0 left-0 z-[9999] flex items-center justify-center overflow-hidden rounded-full text-sm font-semibold tracking-widest text-cursor-fg transition-[width,height,opacity,background-color] duration-200 ease-out',
+			'pointer-events-none fixed top-0 left-0 z-9999 flex items-center justify-center overflow-hidden rounded-full text-sm font-semibold tracking-widest text-cursor-fg transition-[width,height,opacity,background-color] duration-200 ease-out',
 			sizeClass,
 			bgClass,
 			!visible && 'opacity-0'
@@ -119,7 +125,9 @@
 	>
 		<span class={layer('link')}><ArrowUpRight class="size-5" strokeWidth={2.5} /></span>
 		<span class={layer('copy')}><Copy class="size-5" strokeWidth={2.5} /></span>
-		<span class={[layer('read'), 'gap-1']}>{m.cursor_read()}<ArrowRight class="size-4" strokeWidth={2.5} /></span>
+		<span class={[layer('read'), 'gap-1']}
+			>{m.cursor_read()}<ArrowRight class="size-4" strokeWidth={2.5} /></span
+		>
 		<span class={layer('copied')}>{m.cursor_copied()}</span>
 	</div>
 {/if}

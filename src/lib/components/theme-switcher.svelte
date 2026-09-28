@@ -5,29 +5,20 @@
 	import { openPanelCount } from '$lib/stores/panelState'
 	import { m } from '$lib/paraglide/messages'
 	import Button from '$lib/components/button.svelte'
+	import ThemeSwatch from '$lib/components/theme-swatch.svelte'
 	import { DialogRoot, DialogOverlay, DialogContent, DialogTitle } from '$lib/components/dialog'
 	import Sun from '@lucide/svelte/icons/sun'
 	import Moon from '@lucide/svelte/icons/moon'
 	import X from '@lucide/svelte/icons/x'
 	import Palette from '@lucide/svelte/icons/palette'
 
-	/* ordered lightest to darkest — colours themselves live in globals.css as
-     --theme-N-swatch (read directly per-button below via var(--{id}-swatch)),
-     so a button can show any theme's preview colour without applying that
-     theme's full class (which would also repaint its own border/etc the rest
-     of the time). The selected swatch shows a filled square at full opacity;
-     the same square fades faintly in on hover for unselected swatches. */
+	// ordered lightest to darkest
 	const ids = ['theme-1', 'theme-2', 'theme-3', 'theme-4', 'theme-5', 'theme-6']
 	const last = ids.length - 1
 
 	let themeIndex = $state(0)
 	let open = $state(false)
-	/* which panel implementation is mounted — kept as JS state (not just a
-	   `sm:` CSS breakpoint on both) so the mobile dialog's bits-ui layers
-	   (focus trap, dismiss-on-outside-click) never mount at desktop widths;
-	   those layers act on document-level listeners regardless of CSS
-	   visibility, so a merely-hidden-by-CSS dialog was still swallowing
-	   pointer events meant for the sm+ panel's swatch buttons */
+	// JS state, not a CSS breakpoint: bits-ui's dialog layers swallow pointer events even when hidden
 	let isMobile = $state(false)
 	let container
 	let toggleEl = $state(null)
@@ -35,24 +26,12 @@
 	let mobileButtonEls = $state(Array(ids.length).fill(null))
 	let transitionTimer
 	let jumpTimer
-	/* true for the duration of the reveal/cross-fade animation — swatches are
-     inert while it plays so a second pick can't stack a new wipe on top of
-     one still running */
 	let transitioning = $state(false)
-	/* plain (non-reactive) re-entry guard — set synchronously the instant a
-	   swatch is clicked, before any $state write. themeIndex/transitioning
-	   themselves are only assigned once inside the view transition's update
-	   callback (see revealTheme/crossFadeTheme) so the DOM never shows the new
-	   selection until it's part of the transition's own snapshot; this guard
-	   exists to block a second click during the window before that happens. */
+	// set synchronously on click; themeIndex only changes inside the view transition callback
 	let locked = false
-	/* true only for the brief window right after a real wipe/reveal cycle ends,
-     so the per-swatch jump plays on a theme switch but not when the panel is
-     merely opened (which also freshly inserts these buttons into the DOM) */
+	// only after a real switch, so the jump doesn't play when the panel just opens
 	let justRevealed = $state(false)
 
-	/* the swatch stagger/jump both key off this, longest at the last swatch —
-     kept in one place so the reveal timer below can't drift out of sync with it */
 	const revealDuration = (i) => 400 + i * 40
 
 	function triggerJump() {
@@ -86,7 +65,6 @@
 		syncThemeColor(html)
 	}
 
-	/* the property-by-property cross-fade — the fallback path */
 	function crossFadeTheme(i) {
 		const html = document.documentElement
 		html.classList.add('theme-transition')
@@ -102,26 +80,13 @@
 		swapTheme()
 	}
 
-	/*
-    Collapsed/expanded clip-path polygons for a rectangular wipe that starts at
-    the toggle button's own bounds and grows into a shrunk copy of the viewport
-    itself — width:height kept equal to vw:vh throughout, rather than an
-    independent width and height — so it reads as the screen's own rectangle
-    growing outward from the button, not an arbitrary box. Coordinates are
-    percentages of the viewport rather than px — Chrome renders absolute px
-    clip-path coordinates on ::view-transition-new(root) unscaled on fractional
-    display scaling for the first transition after load, so px values can land in
-    the wrong place; percentages resolve correctly either way.
-  */
+	// percentages, not px: Chrome misplaces px clip-paths on fractional display scaling
 	function buttonClipPaths(buttonRect, vw, vh) {
 		const toX = (px) => `${(px / vw) * 100}%`
 		const toY = (py) => `${(py / vh) * 100}%`
 		const point = (px, py) => `${toX(px)} ${toY(py)}`
 		const x = buttonRect.left + buttonRect.width / 2
 		const y = buttonRect.top + buttonRect.height / 2
-		/* smallest scale of a vw×vh rectangle, centred on (x, y), whose edges clear
-       the farthest viewport edge in both axes — slightly overscanned so the
-       corners clear the viewport before the animation ends */
 		const scale = Math.max((2 * Math.max(x, vw - x)) / vw, (2 * Math.max(y, vh - y)) / vh) * 1.05
 		const halfW = (scale * vw) / 2
 		const halfH = (scale * vh) / 2
@@ -140,27 +105,14 @@
 		return [collapsed, expanded]
 	}
 
-	/*
-    The new theme is revealed as a rectangle, shaped like the screen itself,
-    growing out from the swatch that was picked — starting at that button's
-    own size rather than a single point. The View Transition API snapshots the
-    page, so this needs the plain cross-fade wherever startViewTransition is missing.
-  */
 	function revealTheme(i, originRect) {
 		const html = document.documentElement
 		const [from, to] = buttonClipPaths(originRect, window.innerWidth, window.innerHeight)
 
-		/* pinned via CSS so the new snapshot stays clipped to a point between the
-       snapshot and the ready.then() below, instead of flashing in unclipped */
 		html.style.setProperty('--theme-reveal-clip-from', from)
 		html.classList.add('theme-reveal')
 
 		let anim
-		/* themeIndex/transitioning are assigned in here, not before this call —
-       the browser flushes the resulting DOM update (checkmark move, swatch
-       wipe) as part of this same callback before it captures the "new" state
-       snapshot, so that update can never paint on the live page a frame
-       ahead of the transition covering it */
 		const transition = document.startViewTransition(() => {
 			flushSync(() => {
 				transitioning = true
@@ -182,14 +134,7 @@
 					)).finished
 			)
 			.catch(() => {})
-			/* cleanup waits on our own clip-path animation finishing, not on
-		   transition.finished — Safari resolves the native promise as soon as
-		   `ready` settles since ::view-transition-new(root)'s own animation is
-		   disabled (see globals.css), well before this 600ms wipe is actually
-		   done. Hanging cleanup off that native promise there un-hides the
-		   swatches while they're still covered by the in-progress wipe, so
-		   they're already fully visible the instant it uncovers them — the
-		   flash this replaces. */
+			// waits on our own animation: Safari resolves transition.finished as soon as `ready` settles
 			.finally(() => {
 				anim?.cancel()
 				html.classList.remove('theme-reveal')
@@ -214,15 +159,7 @@
 		revealTheme(i, originRect ?? toggleEl.getBoundingClientRect())
 	}
 
-	function startTransition(i, originRect) {
-		applyTheme(i, true, originRect)
-	}
-
-	/*
-    Mobile browsers tint their own chrome from <meta name="theme-color">, which
-    CSS variables can't reach — read the resolved --color-body back out and mirror
-    it so the URL bar matches the page instead of staying white.
-  */
+	// mobile browsers tint their chrome from <meta name="theme-color">, which CSS can't reach
 	function syncThemeColor(html) {
 		const meta = document.querySelector('meta[name="theme-color"]')
 		if (!meta) return
@@ -234,11 +171,9 @@
 		if (locked || i === themeIndex) return
 		locked = true
 		localStorage.setItem('theme', ids[i])
-		startTransition(i, buttonEls[i]?.getBoundingClientRect())
+		applyTheme(i, true, buttonEls[i]?.getBoundingClientRect())
 	}
 
-	/* small-screen panel skips the view-transition wipe / cross-fade entirely —
-	   just applies the theme immediately, no wipe/reveal/jump animation */
 	function setThemeImmediate(i) {
 		if (i === themeIndex) return
 		localStorage.setItem('theme', ids[i])
@@ -260,8 +195,7 @@
 		}
 	}
 
-	/* roving tabindex within the radiogroup — arrow keys both move focus and
-     pick the theme, matching the ARIA APG radiogroup pattern */
+	// roving tabindex: arrow keys move focus and pick the theme (ARIA radiogroup pattern)
 	function onButtonKeyDown(event, i, setFn, els) {
 		let next = i
 		switch (event.key) {
@@ -289,10 +223,7 @@
 	}
 
 	function onWindowPointerDown(event) {
-		/* during the view transition the browser's own overlay sits above the
-	     real DOM, so a click inside the panel can hit-test to <html> instead of
-	     a swatch button — ignore outside-clicks while that's playing so it
-	     doesn't look like a click outside the panel and close it */
+		// the view transition overlay hit-tests to <html>, so clicks would look like outside clicks
 		if (transitioning || isMobile) return
 		if (open && container && !container.contains(event.target)) setOpen(false)
 	}
@@ -309,37 +240,22 @@
 
 <div class="flex items-center justify-center self-stretch" bind:this={container}>
 	<Button
-		class={[
-			/* height comes from self-stretch cascading up through header.svelte
-			   and this component's own wrapper div to the header row's own height —
-			   width stays independently fixed (not aspect-ratio-derived), so this
-			   doesn't hit the old aspect-ratio+stretch bug where the pre-stretch
-			   (unstretched, content-sized) height picked the wrong width during the
-			   row's initial layout pass. Stretch is what lets the negative -mt-px/
-			   -mb-px margins below actually overlap the header's own top/bottom
-			   grid lines — with align-items:center, symmetric vertical margins have
-			   no visual effect at all, since the box re-centers on its margin box
-			   regardless of the margin's sign or size */
-			'-mt-px -mr-px -mb-px grid w-16 flex-none place-items-center self-stretch border border-border-subtle text-fg transition-colors duration-200 hover:text-fg-strong sm:w-[4.5rem]',
-			open && 'bg-panel text-fg-strong'
-		]}
+		variant="header"
+		class={open && 'bg-panel text-fg-strong'}
 		bind:ref={toggleEl}
 		onclick={toggle}
 		aria-label={m.theme_label()}
 		aria-expanded={open}
 	>
-		<span class="relative grid h-4 w-4 place-items-center sm:h-5 sm:w-5">
-			<!-- palette -> X only crossfades at sm+ — the base scale-100/opacity-100
-			     here always wins below that breakpoint since the sm: overrides
-			     below don't apply yet, so the trigger icon never changes on the
-			     small-screen panel (which has its own explicit close button) -->
+		<span class="relative grid size-4 place-items-center sm:size-5">
+			<!-- the icon only swaps at sm+; the mobile dialog has its own close button -->
 			<span
 				class={[
 					'absolute inset-0 grid scale-100 place-items-center opacity-100 transition-all duration-200 ease-out',
 					open && 'sm:scale-75 sm:opacity-0'
 				]}
 			>
-				<Palette class="h-4 w-4 stroke-[1.75] sm:h-5 sm:w-5" aria-hidden="true" />
+				<Palette aria-hidden="true" />
 			</span>
 			<span
 				class={[
@@ -347,41 +263,30 @@
 					open && 'sm:scale-100 sm:opacity-100'
 				]}
 			>
-				<X class="h-4 w-4 stroke-[1.75] sm:h-5 sm:w-5" aria-hidden="true" />
+				<X aria-hidden="true" />
 			</span>
 		</span>
 	</Button>
 
-	<!-- small screens: floating vertical dialog, centered on screen, instant
-	     theme switch with no wipe/reveal animation. Passing `open && isMobile`
-	     (rather than just `open`) into DialogRoot keeps bits-ui's focus trap and
-	     dismiss-on-outside-click layers inert at desktop widths, where they'd
-	     otherwise swallow pointer events meant for the sm+ panel's swatches.
-	     Deliberately not inside `{#if open}` — bits-ui owns mount/unmount here so
-	     it can play the exit animation. Content is portalled to <body> because the
-	     header's backdrop-blur is the containing block for `fixed` descendants,
-	     which centred the dialog on the header instead of the viewport. bits-ui
-	     handles its own outside-click dismissal, so onWindowPointerDown skips
-	     mobile. -->
+	<!-- portalled: the header's backdrop-blur would otherwise be the containing block for `fixed` -->
 	<DialogRoot open={open && isMobile} onOpenChange={setOpen}>
 		<Dialog.Portal>
 			<DialogOverlay />
 			<DialogContent
-				class="fixed top-1/2 left-1/2 flex w-40 -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-none border border-border-subtle bg-panel shadow-lg"
+				class="fixed top-1/2 left-1/2 flex w-40 -translate-x-1/2 -translate-y-1/2 flex-col items-center border border-border-subtle bg-panel shadow-lg"
 			>
 				<DialogTitle class="sr-only">{m.theme_label()}</DialogTitle>
 
 				<Button
-					type="button"
-					class="flex w-full items-center justify-center border-b border-border-subtle py-4 text-fg-strong outline-none"
+					class="w-full border-b border-border-subtle py-4 text-fg-strong outline-none"
 					aria-label={m.theme_close()}
 					onclick={() => setOpen(false)}
 				>
-					<X class="h-6 w-6 stroke-[1.5]" aria-hidden="true" />
+					<X class="size-6 stroke-[1.5]" aria-hidden="true" />
 				</Button>
 
 				<div class="flex w-full flex-col items-center gap-3 px-3 py-4">
-					<Sun class="h-6 w-6 flex-none stroke-fg-strong stroke-[1.5]" aria-hidden="true" />
+					<Sun class="size-6 flex-none stroke-fg-strong stroke-[1.5]" aria-hidden="true" />
 
 					<div
 						class="flex w-full flex-col items-center gap-1"
@@ -389,136 +294,61 @@
 						aria-label={m.theme_label()}
 					>
 						{#each ids as id, i (id)}
-							<Button
-								type="button"
-								role="radio"
-								aria-checked={i === themeIndex}
-								tabindex={i === themeIndex ? 0 : -1}
-								class={[
-									'relative h-9 w-full flex-none border border-border-subtle outline-none',
-									i === themeIndex && 'selected'
-								]}
-								style="background-image: linear-gradient(to right, var(--{id}-swatch-from), var(--{id}-swatch-to)); --swatch-mark: var(--{id}-swatch-mark);"
+							<ThemeSwatch
+								{id}
+								selected={i === themeIndex}
+								class="h-9 w-full flex-none"
 								bind:ref={mobileButtonEls[i]}
 								onclick={() => setThemeImmediate(i)}
 								onkeydown={(event) => onButtonKeyDown(event, i, setThemeImmediate, mobileButtonEls)}
-							>
-								<span
-									class={[
-										'h-3.5 w-3.5 bg-[var(--swatch-mark)]',
-										i === themeIndex ? 'opacity-100' : 'opacity-0'
-									]}
-									aria-hidden="true"
-								></span>
-							</Button>
+							/>
 						{/each}
 					</div>
 
-					<Moon class="h-6 w-6 flex-none stroke-fg-strong stroke-[1.5]" aria-hidden="true" />
+					<Moon class="size-6 flex-none stroke-fg-strong stroke-[1.5]" aria-hidden="true" />
 				</div>
 			</DialogContent>
 		</Dialog.Portal>
 	</DialogRoot>
 
 	{#if open}
-		<!-- sm and up: animated wipe/reveal panel -->
 		<div class="absolute inset-x-0 top-full z-50 -mx-px hidden sm:block">
 			<div
-				class="flex w-full flex-row items-center gap-2 rounded-none border border-border-subtle bg-panel px-4 py-4 sm:h-[4.5rem] sm:gap-0 sm:px-0 sm:py-0"
+				class="flex h-18 w-full items-center border border-border-subtle bg-panel"
 				transition:fade={{ duration: 160 }}
 			>
-				<span class="grid w-[calc(4.5rem-1px)] flex-none place-items-center">
-					<Sun class="h-5 w-5 stroke-fg-strong stroke-[1.5]" aria-hidden="true" />
+				<span class="grid w-[calc(--spacing(18)-1px)] flex-none place-items-center">
+					<Sun class="size-5 stroke-fg-strong stroke-[1.5]" aria-hidden="true" />
 				</span>
 
-				<div
-					class="flex flex-1 items-center gap-1 sm:gap-2"
-					role="radiogroup"
-					aria-label={m.theme_label()}
-				>
+				<div class="flex flex-1 items-center gap-2" role="radiogroup" aria-label={m.theme_label()}>
 					{#each ids as id, i (id)}
-						<Button
-							type="button"
-							role="radio"
-							aria-checked={i === themeIndex}
-							tabindex={i === themeIndex ? 0 : -1}
+						{@const selected = i === themeIndex}
+						<ThemeSwatch
+							{id}
+							{selected}
 							aria-disabled={transitioning}
 							class={[
-								'theme-swatch group relative h-16 flex-1 border border-border-subtle outline-none motion-reduce:animate-none motion-reduce:transition-none sm:h-6',
-								i === themeIndex && 'selected',
-								transitioning && i !== themeIndex && 'opacity-0 delay-0 duration-150',
-								justRevealed && i !== themeIndex && 'jump'
+								'h-6 flex-1 transition-opacity motion-reduce:animate-none motion-reduce:transition-none',
+								transitioning && !selected
+									? 'opacity-0 duration-150'
+									: 'delay-(--stagger-delay) duration-450',
+								justRevealed &&
+									!selected &&
+									'animate-swatch-jump [animation-delay:var(--stagger-delay)]'
 							]}
-							style="--swatch-from: var(--{id}-swatch-from); --swatch-to: var(--{id}-swatch-to); --swatch-mark: var(--{id}-swatch-mark); --stagger-delay: {i *
-								40}ms;"
+							style="--stagger-delay: {i * 40}ms"
 							bind:ref={buttonEls[i]}
 							onclick={() => setTheme(i)}
 							onkeydown={(event) => onButtonKeyDown(event, i, setTheme, buttonEls)}
-						>
-							<span
-								class={[
-									'h-3.5 w-3.5 bg-[var(--swatch-mark)] transition-opacity duration-250',
-									i === themeIndex ? 'opacity-100' : 'opacity-0 group-hover:opacity-70'
-								]}
-								aria-hidden="true"
-							></span>
-						</Button>
+						/>
 					{/each}
 				</div>
 
-				<span class="grid w-[calc(4.5rem-1px)] flex-none place-items-center">
-					<Moon class="h-5 w-5 stroke-fg-strong stroke-[1.5]" aria-hidden="true" />
+				<span class="grid w-[calc(--spacing(18)-1px)] flex-none place-items-center">
+					<Moon class="size-5 stroke-fg-strong stroke-[1.5]" aria-hidden="true" />
 				</span>
 			</div>
 		</div>
 	{/if}
 </div>
-
-<style>
-	/* :global — the swatch is now the Button component's own root element
-	   rather than one Svelte scopes CSS onto directly here */
-	:global(.theme-swatch) {
-		/* --swatch-from/-to (set inline, per-button) mirror that theme's
-		   --theme-N-swatch-from/-to values from globals.css, so every button
-		   shows its own place on the light-to-dark spectrum at all times, not
-		   just on hover — as a subtle left-to-right gradient rather than a flat
-		   fill, so a row of swatches reads a little smoother end to end */
-		background-image: linear-gradient(to right, var(--swatch-from), var(--swatch-to));
-		/* fade-in duration for when opacity-0/duration-150/delay-0 (applied via the
-		   class array while transitioning) are removed — deliberately slower than
-		   the wipe-out, so the other swatches settle back in gently once the
-		   reveal has finished rather than snapping back with it.
-		   --stagger-delay (set inline, per-button, proportional to its left-to-right
-		   index) staggers that fade-in so the buttons reappear in order left to
-		   right regardless of which one was picked; the class array zeroes it via
-		   delay-0 while wiping so the wipe-out itself still happens for every
-		   button at once */
-		transition:
-			opacity 450ms ease var(--stagger-delay, 0ms),
-			filter 150ms ease;
-	}
-
-	/* .jump is only applied by JS for the brief window right after a real
-	   wipe/reveal cycle — same --stagger-delay as the opacity fade above gives
-	   every swatch a tiny hop as it reappears, left to right. Driven by a class
-	   rather than a :not(.wiping) selector match so it doesn't also fire when
-	   the panel is simply opened (which freshly inserts these buttons too) */
-	:global(.theme-swatch.jump) {
-		animation: swatch-jump 400ms var(--stagger-delay, 0ms) ease-out both;
-	}
-
-	@keyframes swatch-jump {
-		0% {
-			transform: translateY(0);
-		}
-		35% {
-			transform: translateY(-6px);
-		}
-		65% {
-			transform: translateY(2px);
-		}
-		100% {
-			transform: translateY(0);
-		}
-	}
-</style>
