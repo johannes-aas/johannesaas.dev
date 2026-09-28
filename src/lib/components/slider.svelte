@@ -14,9 +14,7 @@
 		onreset
 	} = $props()
 
-	// Slider.Root drives `value` itself (drag/keyboard) via a bindable prop, so
-	// it needs its own mirror — kept in sync with the controlled `value` prop,
-	// which only actually moves once the parent applies the dispatched change
+	// bits-ui binds `value`, so it gets a mirror of the controlled prop
 	let internalValue = $derived(value)
 
 	let hovered = $state(false)
@@ -24,12 +22,7 @@
 	let moved = $state(false)
 	let active = $derived(hovered || dragging)
 
-	// While dragging we track the raw pointer position (not step-snapped) so
-	// the fill/thumb glide continuously under the cursor no matter how coarse
-	// `step` is. bits-ui still snaps `value` itself in real time underneath;
-	// on release we drop the raw position and let the visual position fall
-	// back to the snapped value, animating there with a slight overshoot so
-	// it visibly "snaps" to the nearest step.
+	// raw pointer position while dragging, so the fill glides regardless of `step`
 	let trackRect = null
 	let dragPercent = $state(null)
 
@@ -61,14 +54,7 @@
 		dragPercent = Math.min(100, Math.max(0, raw))
 	}
 
-	// bits-ui's own slider logic listens for pointermove on `document` and
-	// calls stopPropagation() there, which would silence a window-level
-	// listener (document is reached before window in the bubble phase). We
-	// sidestep that by capturing the pointer on the root element itself —
-	// captured pointer events keep targeting (and bubbling from) that
-	// element no matter where the cursor travels, so our own pointermove
-	// handler on the root fires before bits-ui's document handler ever gets
-	// a chance to stop propagation.
+	// pointer capture on the root: bits-ui stops propagation of pointermove on document
 	function onRootPointerDown(e) {
 		if (disabled) return
 		trackRect = e.currentTarget.getBoundingClientRect()
@@ -109,7 +95,7 @@
 	onpointercancel={endDrag}
 	class={[
 		'relative flex h-8 touch-none items-center justify-between overflow-hidden rounded-sm border border-border-subtle bg-inset px-3 transition-opacity duration-200 select-none',
-		disabled ? 'cursor-not-allowed opacity-40' : 'cursor-ew-resize'
+		disabled && 'opacity-40'
 	]}
 >
 	<div
@@ -117,16 +103,14 @@
 			'absolute inset-y-0 bg-primary/50 transition-[left,width] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
 			dragging && moved ? 'duration-0' : 'duration-300'
 		]}
-		style="left:{fill.left}%;width:{fill.width}%"
+		style:left="{fill.left}%"
+		style:width="{fill.width}%"
 	></div>
-	{#each ticks() as left}
-		<div
-			class="absolute top-2 bottom-2 w-px bg-primary/40"
-			style="left:{left}%"
-		></div>
+	{#each ticks() as left (left)}
+		<div class="absolute inset-y-2 w-px bg-primary/40" style:left="{left}%"></div>
 	{/each}
 	{#if bipolar}
-		<div class="absolute inset-y-0 w-px bg-border-strong" style="left:{pct(0)}%"></div>
+		<div class="absolute inset-y-0 w-px bg-border-strong" style:left="{pct(0)}%"></div>
 	{/if}
 	<SliderPrimitive.Thumb
 		index={0}
@@ -137,14 +121,14 @@
 	<div
 		aria-hidden="true"
 		class={[
-			'pointer-events-none absolute top-1 bottom-1 w-1.5 rounded-full border border-inset bg-primary transition-[left,opacity] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
+			'pointer-events-none absolute inset-y-1 w-1.5 rounded-full border border-inset bg-primary transition-[left,opacity] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
 			active ? 'opacity-100' : 'opacity-0',
 			dragging && moved ? 'duration-0' : 'duration-300'
 		]}
-		style="left:calc({displayPercent}% - 3px)"
+		style:left="calc({displayPercent}% - 3px)"
 	></div>
 	<span class="relative text-sm text-fg-strong">{label}</span>
-	<span class="relative font-mono text-sm text-fg [font-variant-numeric:tabular-nums]"
+	<span class="relative font-mono text-sm text-fg tabular-nums"
 		>{bipolar && value > 0 ? '+' : ''}{value.toFixed(decimals)}</span
 	>
 </SliderPrimitive.Root>

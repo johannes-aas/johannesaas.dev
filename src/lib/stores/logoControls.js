@@ -20,9 +20,6 @@ export const logoControls = writable({
 	spreadTowards: true
 })
 
-// riding the scroll pins the trail speed, so the panel hides that slider
-export const logoScrollDriven = writable(false)
-
 // bumped by the panel's "Replay intro" button; the hero watches for changes
 export const logoReplayRequested = writable(0)
 

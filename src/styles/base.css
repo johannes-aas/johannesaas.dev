@@ -1,0 +1,24 @@
+/* keep in sync with FINE_POINTER_QUERY in $lib/pointer.js */
+@custom-variant fine-pointer (@media (hover: hover) and (pointer: fine));
+
+@layer base {
+	/* on <html> too: mobile browsers paint overscroll and the URL-bar strip from the root canvas */
+	html {
+		@apply min-h-full bg-body;
+	}
+
+	body {
+		@apply min-h-dvh bg-body text-fg-strong;
+	}
+
+	h1 {
+		@apply font-display italic;
+	}
+}
+
+/* the custom cursor replaces the native one wherever there is a real pointer */
+* {
+	@variant fine-pointer {
+		cursor: none !important;
+	}
+}

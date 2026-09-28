@@ -3,6 +3,7 @@
 	import { Dialog } from 'bits-ui'
 	import Button from '$lib/components/button.svelte'
 	import Slider from '$lib/components/slider.svelte'
+	import ThemeSwatch from '$lib/components/theme-swatch.svelte'
 	import { ToggleGroupRoot, ToggleGroupItem } from '$lib/components/toggle-group'
 	import { DialogRoot, DialogOverlay, DialogContent, DialogTitle } from '$lib/components/dialog'
 
@@ -99,31 +100,25 @@
 </script>
 
 {#snippet swatches()}
-	{#each themeIds as id, i}
-		<button
-			type="button"
-			role="radio"
-			aria-checked={id === activeTheme}
+	{#each themeIds as id, i (id)}
+		<ThemeSwatch
+			{id}
+			selected={id === activeTheme}
+			tabindex={0}
 			aria-label="Theme {i + 1}"
-			class="group grid h-10 flex-1 cursor-pointer place-items-center border outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:h-14 sm:w-24 sm:flex-none {id ===
-			activeTheme
-				? 'border-border-strong'
-				: 'border-border-subtle hover:border-border'}"
-			style="background: linear-gradient(90deg, var(--{id}-swatch-from), var(--{id}-swatch-to))"
+			class={[
+				'h-10 flex-1 sm:h-14 sm:w-24 sm:flex-none',
+				id === activeTheme ? 'border-border-strong' : 'hover:border-border'
+			]}
 			onclick={() => pickTheme(id)}
-		>
-			<span
-				class="h-4 w-4 transition-opacity {id === activeTheme
-					? 'opacity-100'
-					: 'opacity-0 group-hover:opacity-70'}"
-				style="background: var(--{id}-swatch-mark)"
-			></span>
-		</button>
+		/>
 	{/each}
 {/snippet}
 
 <div class="flex flex-col items-stretch sm:flex-row">
-	<section class="min-w-0 flex-1 px-4 py-10 sm:px-10 sm:py-20 lg:px-[max(2.5rem,calc((100%-56rem)/2))]">
+	<section
+		class="min-w-0 flex-1 px-4 py-10 sm:px-10 sm:py-20 lg:px-[max(2.5rem,calc((100%-56rem)/2))]"
+	>
 		<h1 class="mb-10 text-6xl font-bold">Colors</h1>
 		<div class="mb-10 flex gap-2 sm:hidden" role="radiogroup" aria-label="Theme">
 			{@render swatches()}
@@ -136,11 +131,13 @@
 						{#each tokens as { name, bg }}
 							<div class="border border-border-subtle bg-panel">
 								<div
-									class="h-24 border-b border-border-subtle {name === 'backdrop'
-										? 'bg-[repeating-linear-gradient(45deg,var(--color-fg-muted)_0_6px,transparent_6px_12px)]'
-										: ''}"
+									class={[
+										'h-24 border-b border-border-subtle',
+										name === 'backdrop' &&
+											'bg-[repeating-linear-gradient(45deg,var(--color-fg-muted)_0_6px,transparent_6px_12px)]'
+									]}
 								>
-									<div class="h-full {bg}"></div>
+									<div class={['h-full', bg]}></div>
 								</div>
 								<p class="px-3 py-2 font-mono text-sm text-fg-strong">{name}</p>
 							</div>
@@ -155,8 +152,8 @@
 				<div class="flex flex-col gap-4">
 					<p class="font-mono text-xs text-fg-muted">{label} · {bg}</p>
 					{#each borderTokens as { name, border }}
-						<div class="flex h-28 border p-3 {bg} {border}">
-							<div class="flex flex-1 items-end border p-2 {border}">
+						<div class={['flex h-28 border p-3', bg, border]}>
+							<div class={['flex flex-1 items-end border p-2', border]}>
 								<p class="font-mono text-sm text-fg-strong">{name}</p>
 							</div>
 						</div>
@@ -174,19 +171,9 @@
 				<p class="text-sm text-fg-muted">Muted text in fg-muted for captions and details.</p>
 				<div class="h-px bg-border-subtle"></div>
 				<div class="flex flex-wrap gap-2">
-					<Button class="bg-primary px-4 py-2 text-sm font-medium text-primary-fg">Primary</Button>
-					<Button
-						class="border border-border px-4 py-2 text-sm text-fg hover:border-border-strong hover:text-fg-strong"
-					>
-						Outlined
-					</Button>
-					<Button
-						variant="copy"
-						value="johannes@example.com"
-						class="border border-border px-4 py-2 text-sm text-fg hover:border-border-strong hover:text-fg-strong"
-					>
-						Copy
-					</Button>
+					<Button variant="primary">Primary</Button>
+					<Button variant="outline">Outlined</Button>
+					<Button variant="outline" copy="johannes@example.com">Copy</Button>
 				</div>
 			</div>
 
@@ -225,12 +212,7 @@
 				<p class="font-mono text-xs text-fg-muted">Panel · bg-panel</p>
 				<h3 class="text-xl font-semibold text-fg-strong">Dialog</h3>
 				<p class="text-fg-muted">Opens a panel over the backdrop.</p>
-				<Button
-					class="bg-primary px-4 py-2 text-sm font-medium text-primary-fg"
-					onclick={() => (dialogOpen = true)}
-				>
-					Open dialog
-				</Button>
+				<Button variant="primary" onclick={() => (dialogOpen = true)}>Open dialog</Button>
 				<DialogRoot bind:open={dialogOpen}>
 					<Dialog.Portal>
 						<DialogOverlay />
@@ -242,7 +224,8 @@
 							<p class="text-fg">A panel on the backdrop, with the page blurred behind.</p>
 							<p class="text-sm text-fg-muted">Click outside or press Escape to close.</p>
 							<Button
-								class="mt-2 self-start border border-border px-4 py-2 text-sm text-fg hover:border-border-strong hover:text-fg-strong"
+								variant="outline"
+								class="mt-2 self-start"
 								onclick={() => (dialogOpen = false)}
 							>
 								Close
@@ -256,17 +239,13 @@
 				<p class="font-mono text-xs text-fg-muted">Surface card · bg-surface</p>
 				<h3 class="text-xl font-semibold text-fg-strong">Card</h3>
 				<p class="text-fg">A card with a border and hover state, as used for blog posts.</p>
-				<Button
-					class="border border-border px-4 py-2 text-sm text-fg hover:border-border-strong hover:text-fg-strong"
-				>
-					Read more
-				</Button>
+				<Button variant="outline">Read more</Button>
 			</div>
 		</div>
 		<h3 class="mt-10 mb-4 text-xl font-semibold">Text on backgrounds</h3>
 		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 			{#each cards as { label, name, bg }}
-				<div class="flex flex-col gap-2 border border-border-subtle p-6 {bg}">
+				<div class={['flex flex-col gap-2 border border-border-subtle p-6', bg]}>
 					<p class="font-mono text-xs text-fg-muted">{label} · bg-{name}</p>
 					<p class="text-2xl font-semibold text-fg-strong">Heading in fg-strong</p>
 					<p class="text-fg">Regular text in fg. The quick brown fox jumps over the lazy dog.</p>
@@ -289,7 +268,9 @@
 			</div>
 		</div>
 	</section>
-	<aside class="hidden w-[calc(9rem-2px)] flex-none border-l border-border-subtle pt-[11.25rem] sm:block">
+	<aside
+		class="hidden w-[calc(9rem-2px)] flex-none border-l border-border-subtle pt-[11.25rem] sm:block"
+	>
 		<div class="sticky top-6 flex flex-col items-center">
 			<h2 id="themes-heading" class="mb-4 text-2xl font-semibold">Themes</h2>
 			<div

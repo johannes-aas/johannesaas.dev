@@ -1,5 +1,6 @@
 <script>
 	import ProjectCard from '$lib/components/project-card.svelte'
+	import PageHeading from '$lib/components/page-heading.svelte'
 	import { m } from '$lib/paraglide/messages'
 
 	const projects = [
@@ -51,22 +52,18 @@
 </script>
 
 <!-- grids use -mx-px so the outer card borders sit exactly on the layout's side lines -->
-<h1 class="border-b border-border-subtle px-8 py-12 text-5xl font-bold md:px-10 md:py-16 md:text-6xl">
-	{m.projects_title()}
-</h1>
+<PageHeading>{m.projects_title()}</PageHeading>
 
 <div class="-mx-px grid md:grid-cols-2">
-	{#each projects as project}
+	{#each projects as project (project.title)}
 		<ProjectCard {...project} />
 	{/each}
 </div>
 
-<h2 class="border-b border-border-subtle px-8 py-12 text-4xl font-medium md:px-10 md:py-16 md:text-5xl">
-	{m.projects_contrib_title()}
-</h2>
+<PageHeading level={2}>{m.projects_contrib_title()}</PageHeading>
 
 <div class="-mx-px grid md:grid-cols-2">
-	{#each projectContrib as project}
+	{#each projectContrib as project (project.title)}
 		<ProjectCard {...project} />
 	{/each}
 </div>

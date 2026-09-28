@@ -18,13 +18,7 @@
 	let thumbLeft = $state(0)
 	let thumbWidth = $state(0)
 
-	// items measure their own DOM rect rather than being spaced out by index,
-	// so the thumb tracks arbitrary (unevenly sized) item content correctly.
-	// Kept as a plain (non-reactive) Map — registration triggers an imperative
-	// measure() call instead of a reactive derivation, since writing the
-	// measured state from inside a $derived that itself depends on a
-	// registration counter formed a write/read cycle Svelte flagged as an
-	// infinite update loop.
+	// plain Map with imperative measure(): a reactive version formed an update loop
 	const items = new Map()
 
 	function measure() {
@@ -74,19 +68,21 @@
 	{disabled}
 	aria-label={label}
 	onValueChange={(v) => {
-		// bits-ui's single toggle group deselects the active item back to ""
-		// on a repeat click, treating itself as a toggle rather than a radio
-		// group — ignore that so one option always stays selected
+		// bits-ui deselects to "" on a repeat click; keep one option selected like a radio group
 		if (v) onValueChange(v)
 	}}
-	class={cn('relative flex w-full overflow-hidden rounded-sm border border-border-subtle', className)}
+	class={cn(
+		'relative flex w-full overflow-hidden rounded-sm border border-border-subtle',
+		className
+	)}
 	{...restProps}
 >
 	{#if thumbVisible}
 		<div
 			aria-hidden="true"
 			class="pointer-events-none absolute inset-y-0 rounded-sm bg-primary transition-[transform,width] duration-200 ease-in-out"
-			style="width:{thumbWidth}px;transform:translateX({thumbLeft}px)"
+			style:width="{thumbWidth}px"
+			style:transform="translateX({thumbLeft}px)"
 		></div>
 	{/if}
 	{@render children()}

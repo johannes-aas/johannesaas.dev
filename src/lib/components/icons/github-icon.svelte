@@ -6,7 +6,7 @@
 
 <svg
 	bind:this={ref}
-	class={cn('h-5 w-5', className)}
+	class={cn('size-5', className)}
 	fill="currentColor"
 	viewBox="0 0 24 24"
 	{...restProps}

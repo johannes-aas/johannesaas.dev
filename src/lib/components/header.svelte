@@ -65,10 +65,14 @@
 	<a
 		href={page.url.pathname === localizeHref('/') ? undefined : localizeHref('/')}
 		aria-current={page.url.pathname === localizeHref('/') ? 'page' : undefined}
-		class="box-border h-16 w-16 flex-none p-3.5 sm:h-[4.5rem] sm:w-[4.5rem] sm:p-4">
+		class="box-border size-16 flex-none p-3.5 sm:size-18 sm:p-4"
+	>
 		<Logo />
 	</a>
-	<nav bind:this={nav} class="relative hidden flex-1 items-center justify-center gap-8 text-base sm:flex">
+	<nav
+		bind:this={nav}
+		class="relative hidden flex-1 items-center justify-center gap-8 text-base sm:flex"
+	>
 		{#each links as { href, label }, i (href)}
 			{@const current = href === page.url.pathname}
 			<a
@@ -85,11 +89,12 @@
 			aria-hidden="true"
 			style:transform={`translateX(${indicatorX}px)`}
 			class={[
-				'pointer-events-none absolute bottom-[-0.6rem] left-0 h-[3px] w-4 bg-primary',
+				'pointer-events-none absolute -bottom-2.5 left-0 h-[3px] w-4 bg-primary',
 				indicatorVisible ? 'opacity-100' : 'opacity-0',
-				ready &&
-					(slide ? 'transition-[transform,opacity]' : 'transition-opacity') +
-						' duration-300 ease-in-out'
+				ready && [
+					slide ? 'transition-[transform,opacity]' : 'transition-opacity',
+					'duration-300 ease-in-out'
+				]
 			]}
 		></span>
 	</nav>
@@ -97,26 +102,24 @@
 		<LanguageSwitcher />
 		<ThemeSwitcher />
 		<Button
-			class={[
-				'-mt-px -mr-px -mb-px grid w-16 flex-none place-items-center self-stretch border border-border-subtle text-fg hover:text-fg-strong sm:hidden',
-				$mobileMenuOpen && 'bg-panel text-fg-strong'
-			]}
+			variant="header"
+			class={['sm:hidden', $mobileMenuOpen && 'bg-panel text-fg-strong']}
 			onclick={toggleMenu}
 			aria-label={$mobileMenuOpen ? m.nav_close_menu() : m.nav_open_menu()}
 			aria-expanded={$mobileMenuOpen}
 			aria-controls="mobile-menu"
 		>
-			<span class="relative block h-6 w-6" aria-hidden="true">
+			<span class="relative block size-6" aria-hidden="true">
 				<span
 					class={[
 						'absolute top-1/2 left-0 h-px w-full bg-current transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]',
-						$mobileMenuOpen ? 'translate-y-0 rotate-45' : '-translate-y-[4px]'
+						$mobileMenuOpen ? 'translate-y-0 rotate-45' : '-translate-y-1'
 					]}
 				></span>
 				<span
 					class={[
 						'absolute top-1/2 left-0 h-px w-full bg-current transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]',
-						$mobileMenuOpen ? 'translate-y-0 -rotate-45' : 'translate-y-[4px]'
+						$mobileMenuOpen ? 'translate-y-0 -rotate-45' : 'translate-y-1'
 					]}
 				></span>
 			</span>

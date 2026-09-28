@@ -1,0 +1,188 @@
+/*
+	Theme 1 is the default on :root; each .theme-N below overrides the same tokens.
+	`static` keeps every token emitted even when no utility references it.
+*/
+@theme static {
+	--color-body: oklch(99% 0.003 90);
+	--color-panel: oklch(96% 0.003 90);
+	--color-inset: oklch(91.53% 0.0037 90.3);
+	--color-surface: oklch(94.8% 0.011 82);
+	--color-backdrop: oklch(15% 0.03 90 / 45%);
+	--color-fg-strong: oklch(21.5% 0.015 95);
+	--color-fg: oklch(36% 0.017 95);
+	--color-fg-muted: oklch(54% 0.01 95);
+	--color-border-subtle: oklch(89% 0.01 88);
+	--color-border: oklch(77.15% 0.017 88);
+	--color-border-strong: oklch(62.25% 0.017 88);
+	--color-primary: oklch(64.9% 0.1637 43);
+	--color-primary-fg: oklch(98.5% 0.008 43);
+	--color-primary-text: oklch(56% 0.17 43);
+	--color-primary-subtle: oklch(93.86% 0.023 50.92);
+	--color-cursor: lab(66.073% 72.4864 134.737);
+	--color-cursor-fg: oklch(99% 0.003 90);
+}
+
+@theme {
+	--font-sans: 'Funnel Sans', sans-serif;
+	--font-display: 'Playfair Display', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+}
+
+/* Swatch previews live on :root so a swatch can show any theme without applying it. */
+:root {
+	--theme-1-swatch: oklch(96% 0.01 88);
+	--theme-2-swatch: oklch(88% 0.0633 293.28);
+	--theme-3-swatch: oklch(71.37% 0.1489 254.62);
+	--theme-4-swatch: oklch(60.89% 0.11 221.72);
+	--theme-5-swatch: oklch(43.18% 0.0868 166.91);
+	--theme-6-swatch: oklch(26.64% 0.0674 152.93);
+
+	/* theme 1 fades to its accent instead of darkening, which looks dingy on near-white */
+	--theme-1-swatch-from: white;
+	--theme-1-swatch-to: color-mix(in oklch, white, oklch(64.9% 0.1637 43) 10%);
+	--theme-2-swatch-from: color-mix(in oklch, var(--theme-2-swatch), white 6%);
+	--theme-2-swatch-to: color-mix(in oklch, var(--theme-2-swatch), black 6%);
+	--theme-3-swatch-from: color-mix(in oklch, var(--theme-3-swatch), white 6%);
+	--theme-3-swatch-to: color-mix(in oklch, var(--theme-3-swatch), black 6%);
+	--theme-4-swatch-from: color-mix(in oklch, var(--theme-4-swatch), white 6%);
+	--theme-4-swatch-to: color-mix(in oklch, var(--theme-4-swatch), black 6%);
+	--theme-5-swatch-from: color-mix(in oklch, var(--theme-5-swatch), white 6%);
+	--theme-5-swatch-to: color-mix(in oklch, var(--theme-5-swatch), black 6%);
+	--theme-6-swatch-from: color-mix(in oklch, var(--theme-6-swatch), white 3%);
+	--theme-6-swatch-to: color-mix(in oklch, var(--theme-6-swatch), black 3%);
+
+	--theme-1-swatch-mark: oklch(65% 0.165 43);
+	--theme-2-swatch-mark: oklch(60% 0.18 293);
+	--theme-3-swatch-mark: oklch(52% 0.18 260);
+	--theme-4-swatch-mark: oklch(84% 0.107 222);
+	--theme-5-swatch-mark: oklch(72% 0.13 167);
+	--theme-6-swatch-mark: oklch(62% 0.14 152);
+}
+
+/* Theme 2: Wisteria */
+.theme-2 {
+	--color-body: oklch(95.06% 0.0204 298.19);
+	--color-panel: oklch(97.4% 0.003 298);
+	--color-inset: oklch(93.17% 0.0061 297.8);
+	--color-surface: oklch(91.09% 0.0358 297.99);
+	--color-backdrop: oklch(15% 0.03 298.19 / 45%);
+	--color-fg-strong: oklch(26.84% 0.0552 294.67);
+	--color-fg: oklch(36.12% 0.0652 295.04);
+	--color-fg-muted: oklch(50% 0.045 297.35);
+	--color-border-subtle: oklch(85.96% 0.03 297);
+	--color-border: oklch(74.21% 0.05 297.49);
+	--color-border-strong: oklch(59.66% 0.05 297.49);
+	--color-primary: oklch(60.27% 0.1306 293.01);
+	--color-primary-fg: oklch(98.5% 0.008 293.01);
+	--color-primary-text: oklch(46% 0.17 293.01);
+	--color-primary-subtle: oklch(90.3% 0.0346 297.26);
+	--color-cursor: oklch(60.221% 0.33667 291.536);
+	--color-cursor-fg: oklch(95.06% 0.0204 298.19);
+}
+
+/* Theme 3: Skyline */
+.theme-3 {
+	--color-body: oklch(90.32% 0.0249 257.65);
+	--color-panel: oklch(96.2% 0.004 258);
+	--color-inset: oklch(91.94% 0.0067 258.16);
+	--color-surface: oklch(94.5% 0.018 258.9);
+	--color-backdrop: oklch(15% 0.03 257.65 / 45%);
+	--color-fg-strong: oklch(25.27% 0.0497 260.63);
+	--color-fg: oklch(37.15% 0.0601 261.43);
+	--color-fg-muted: oklch(49% 0.036 262.78);
+	--color-border-subtle: oklch(80% 0.035 258);
+	--color-border: oklch(70.02% 0.05 258.37);
+	--color-border-strong: oklch(55.92% 0.05 258.37);
+	--color-primary: oklch(63.7% 0.1635 259.81);
+	--color-primary-fg: oklch(98.5% 0.008 259.81);
+	--color-primary-text: oklch(46% 0.19 259.81);
+	--color-primary-subtle: oklch(86.45% 0.0433 259.02);
+	--color-cursor: oklch(54.61% 0.2152 262.88);
+	--color-cursor-fg: oklch(90.32% 0.0249 257.65);
+}
+
+/* Theme 4: Tidepool (dark themes lighten borders so surfaces still read as raised) */
+.theme-4 {
+	--color-body: oklch(26.85% 0.0366 222.63);
+	--color-panel: oklch(28.5% 0.024 222);
+	--color-inset: oklch(32.64% 0.0233 221.28);
+	--color-surface: oklch(29.5% 0.0445 221.5);
+	--color-backdrop: oklch(8% 0.03 222.63 / 45%);
+	--color-fg-strong: oklch(97.5% 0.012 210.04);
+	--color-fg: oklch(88.2% 0.0412 211.86);
+	--color-fg-muted: oklch(70% 0.028 216.45);
+	--color-border-subtle: oklch(36.5% 0.035 222);
+	--color-border: oklch(44.45% 0.05 221.78);
+	--color-border-strong: oklch(57.6% 0.05 221.78);
+	--color-primary: oklch(62.4% 0.1088 211.53);
+	--color-primary-fg: oklch(10% 0.01 211.53);
+	--color-primary-text: oklch(80% 0.13 211.53);
+	--color-primary-subtle: oklch(32.19% 0.0501 217.29);
+	--color-cursor: oklch(78% 0.133 196);
+	--color-cursor-fg: oklch(26.85% 0.0366 222.63);
+}
+
+/* Theme 5: Thicket */
+.theme-5 {
+	--color-body: oklch(23.721% 0.02168 170.185);
+	--color-panel: oklch(22.39% 0.00358 165.108);
+	--color-inset: oklch(26.87% 0.0041 165.1);
+	--color-surface: oklch(27.8% 0.038 172.71);
+	--color-backdrop: oklch(8% 0.03 170.185 / 45%);
+	--color-fg-strong: oklch(97% 0.013 164.97);
+	--color-fg: oklch(85.17% 0.044 166.6);
+	--color-fg-muted: oklch(69% 0.028 166.37);
+	--color-border-subtle: oklch(32.37% 0.0259 171.94);
+	--color-border: oklch(42.07% 0.05 172.57);
+	--color-border-strong: oklch(55.17% 0.05 172.57);
+	--color-primary: oklch(59.61% 0.123 162.631);
+	--color-primary-fg: oklch(10% 0.01 162.631);
+	--color-primary-text: oklch(78% 0.14 162.631);
+	--color-primary-subtle: oklch(29.12% 0.0407 167.9);
+	--color-cursor: oklch(66.513% 0.18883 147.385);
+	--color-cursor-fg: oklch(23.721% 0.02168 170.185);
+}
+
+/* Theme 6: Nocturne */
+.theme-6 {
+	--color-body: oklch(19% 0.008 154.14);
+	--color-panel: oklch(31% 0.001 165);
+	--color-inset: oklch(34.96% 0.0121 164.35);
+	--color-surface: oklch(23.5% 0.016 154.22);
+	--color-backdrop: oklch(5% 0.03 154.14 / 45%);
+	--color-fg-strong: oklch(97% 0.013 154.13);
+	--color-fg: oklch(84.36% 0.018 154.36);
+	--color-fg-muted: oklch(72% 0.012 154.58);
+	--color-border-subtle: oklch(24.5% 0.002 155);
+	--color-border: oklch(39.8% 0.035 150);
+	--color-border-strong: oklch(48.35% 0.05 152);
+	--color-primary: oklch(56.86% 0.1311 154.616);
+	--color-primary-fg: oklch(10% 0.01 154.616);
+	--color-primary-text: oklch(76% 0.14 154.616);
+	--color-primary-subtle: oklch(21.67% 0.0347 156.88);
+	--color-cursor: oklch(72% 0.22 145);
+	--color-cursor-fg: oklch(17% 0.012 154.14);
+}
+
+/* Cross-fade fallback, set on <html> by the theme switcher for the duration of a switch. */
+.theme-transition,
+.theme-transition *,
+.theme-transition *::before,
+.theme-transition *::after {
+	transition:
+		background-color 1600ms ease,
+		border-color 1600ms ease,
+		color 1600ms ease,
+		fill 1600ms ease,
+		stroke 1600ms ease,
+		box-shadow 1600ms ease !important;
+	transition-delay: 0s !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.theme-transition,
+	.theme-transition *,
+	.theme-transition *::before,
+	.theme-transition *::after {
+		transition: none !important;
+	}
+}
