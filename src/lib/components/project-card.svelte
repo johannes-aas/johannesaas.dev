@@ -3,7 +3,15 @@
 	import { m } from '$lib/paraglide/messages'
 	import GridCard from '$lib/components/grid-card.svelte'
 
-	let { title, description, technologies = [], liveUrl = '', githubUrl = '' } = $props()
+	let { title, description, technologies = [], liveUrl, demoUrl, githubUrl } = $props()
+
+	const links = $derived(
+		[
+			{ href: liveUrl, label: m.project_visit() },
+			{ href: demoUrl, label: m.project_demo() },
+			{ href: githubUrl, label: m.project_github() }
+		].filter((link) => link.href)
+	)
 </script>
 
 <GridCard>
@@ -19,25 +27,15 @@
 	</div>
 
 	<div class="flex gap-4">
-		{#if liveUrl}
+		{#each links as { href, label } (href)}
 			<a
-				href={liveUrl}
+				{href}
 				target="_blank"
 				class="inline-flex items-center gap-1 font-medium text-fg hover:text-fg-strong"
 			>
-				{m.project_visit()}
+				{label}
 				<ArrowUpRight class="size-4" />
 			</a>
-		{/if}
-		{#if githubUrl}
-			<a
-				href={githubUrl}
-				target="_blank"
-				class="inline-flex items-center gap-1 font-medium text-fg hover:text-fg-strong"
-			>
-				{m.project_github()}
-				<ArrowUpRight class="size-4" />
-			</a>
-		{/if}
+		{/each}
 	</div>
 </GridCard>

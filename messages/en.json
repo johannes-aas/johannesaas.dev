@@ -1,5 +1,6 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
+	"nav_home": "Home",
 	"nav_about": "About",
 	"nav_projects": "Projects",
 	"nav_blog": "Blog",
@@ -20,6 +21,7 @@
 	"projects_title": "Projects",
 	"projects_contrib_title": "Built with others",
 	"project_visit": "Visit",
+	"project_demo": "Demo",
 	"project_github": "GitHub",
 	"project_react_calendar_description": "A modern, responsive calendar built with React, TypeScript, and Tailwind CSS",
 	"project_oysteinaas_description": "Landingpage for triathlete Øystein Aas",

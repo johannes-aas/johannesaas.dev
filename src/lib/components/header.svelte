@@ -11,8 +11,9 @@
 	import { mobileMenuOpen } from '$lib/stores/panelState'
 
 	const links = [
+		{ href: localizeHref('/'), label: m.nav_home() },
 		{ href: localizeHref('/about'), label: m.nav_about() },
-		{ href: localizeHref('/projects'), label: m.nav_projects() },
+		// { href: localizeHref('/projects'), label: m.nav_projects() },
 		{ href: localizeHref('/blog'), label: m.nav_blog() }
 	]
 

@@ -7,8 +7,10 @@
 <svelte:element
 	this={`h${level}`}
 	class={cn(
-		'border-b border-border-subtle px-8 py-12 md:px-10 md:py-16',
-		level === 1 ? 'text-5xl font-bold md:text-6xl' : 'text-4xl font-medium md:text-5xl',
+		'border-b border-border-subtle px-8 md:px-10',
+		level === 1
+			? 'py-12 text-5xl font-bold md:py-16 md:text-6xl'
+			: 'pt-14 pb-8 text-3xl font-medium md:pt-18 md:pb-12 md:text-4xl',
 		className
 	)}
 >
