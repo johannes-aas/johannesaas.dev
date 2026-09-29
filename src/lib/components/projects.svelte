@@ -7,14 +7,14 @@
 		{
 			title: 'React Calendar',
 			description: m.project_react_calendar_description(),
-			technologies: ['React', 'Tailwind CSS', 'TypeScript'],
+			technologies: ['React', 'TypeScript', 'Tailwind CSS'],
 			demoUrl: 'https://johannes-aas.github.io/react-calendar/',
 			githubUrl: 'https://github.com/johannes-aas/react-calendar'
 		},
 		{
 			title: 'oysteinaas.no',
 			description: m.project_oysteinaas_description(),
-			technologies: ['Nextjs', 'Tailwind CSS'],
+			technologies: ['Next.js', 'Tailwind CSS'],
 			liveUrl: 'https://oysteinaas.no/',
 			githubUrl: 'https://github.com/johannes-aas/oysteinaas'
 		},
@@ -30,21 +30,29 @@
 		{
 			title: 'Onlineweb',
 			description: m.project_onlineweb_description(),
-			technologies: ['Nextjs', 'React', 'Tailwind CSS', 'TypeScript'],
+			technologies: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'PostgreSQL'],
 			liveUrl: 'https://online.ntnu.no/',
 			githubUrl: 'https://github.com/dotkom/monoweb'
 		},
 		{
 			title: 'Login.no',
 			description: m.project_loginno_description(),
-			technologies: ['Nextjs', 'React', 'Tailwind CSS', 'TypeScript'],
+			technologies: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Go', 'PostgreSQL'],
 			liveUrl: 'https://login.no',
 			githubUrl: 'https://github.com/Login-Linjeforening-for-IT/beehive'
 		},
 		{
 			title: 'HealthTech',
 			description: m.project_healthtech_description(),
-			technologies: ['React', 'Tailwind CSS', 'TypeScript'],
+			technologies: [
+				'React',
+				'TypeScript',
+				'TanStack Query',
+				'Tailwind CSS',
+				'C#',
+				'.NET',
+				'PostgreSQL'
+			],
 			demoUrl: 'http://129.241.100.43/foreman',
 			githubUrl: 'https://github.com/IT2901-Group-7-2026'
 		}
