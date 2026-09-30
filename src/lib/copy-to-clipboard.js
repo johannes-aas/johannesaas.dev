@@ -1,10 +1,10 @@
 export const COPIED_EVENT = 'clipboard:copied'
 
+// execCommand first: it runs synchronously inside the tap, which iOS (in-app browsers especially)
+// requires, and works on plain-http LAN dev. navigator.clipboard is the fallback.
 export async function copyToClipboard(text) {
 	try {
-		// navigator.clipboard only exists in secure contexts, so plain-http LAN dev needs the fallback
-		if (navigator.clipboard) await navigator.clipboard.writeText(text)
-		else if (!copyWithTextarea(text)) return false
+		if (!copyWithTextarea(text)) await navigator.clipboard.writeText(text)
 		window.dispatchEvent(new CustomEvent(COPIED_EVENT))
 		return true
 	} catch {
@@ -14,6 +14,7 @@ export async function copyToClipboard(text) {
 }
 
 function copyWithTextarea(text) {
+	const previousFocus = document.activeElement
 	const textarea = document.createElement('textarea')
 	textarea.value = text
 	// readonly keeps the iOS keyboard from opening; fixed + transparent keeps the page from jumping
@@ -25,7 +26,10 @@ function copyWithTextarea(text) {
 	textarea.setSelectionRange(0, text.length)
 	try {
 		return document.execCommand('copy')
+	} catch {
+		return false
 	} finally {
 		textarea.remove()
+		previousFocus?.focus({ preventScroll: true })
 	}
 }
