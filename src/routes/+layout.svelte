@@ -26,7 +26,7 @@
 
 	/*
 		Page-nav wipe: a line sweeps down erasing the old `main`, then the new page fades in.
-		Clip and line both read --wipe-progress (set per rAF) so they can't drift apart under load.
+		Clip and line are written together per rAF so they can't drift apart under load.
 		See src/styles/view-transitions.css.
 	*/
 	const WIPE_DURATION = 900
@@ -59,12 +59,13 @@
 
 		const wipeWidth = mainEl?.getBoundingClientRect().width ?? 0
 		const oldSource = fromMenu ? document.getElementById('mobile-menu') : mainEl
-		const oldHeight = oldSource?.getBoundingClientRect().height ?? 0
+		const oldRect = oldSource?.getBoundingClientRect()
+		const oldTop = oldRect?.top ?? 0
+		const oldHeight = oldRect?.height ?? 0
 
 		return new Promise((resolve) => {
 			const html = document.documentElement
 			html.style.setProperty('--wipe-width', `${wipeWidth}px`)
-			html.style.setProperty('--wipe-progress', '0')
 
 			let rafId
 			const transition = document.startViewTransition(async () => {
@@ -82,20 +83,38 @@
 				$menuNav = false
 				html.style.removeProperty('--wipe-width')
 				html.style.removeProperty('--wipe-height')
-				html.style.removeProperty('--wipe-progress')
+				html.style.removeProperty('--wipe-offset')
+				html.style.removeProperty('--wipe-clip')
+				html.style.removeProperty('--wipe-line')
 			})
 			transition.ready
 				.then(() => {
-					// DOM has swapped, so mainEl is the new page; sweep the taller of the two
-					const newHeight = mainEl?.getBoundingClientRect().height ?? 0
-					const wipeHeight = Math.max(oldHeight, newHeight)
-					html.style.setProperty('--wipe-height', `${wipeHeight}px`)
+					// DOM has swapped and the scroll has reset, so mainEl is the new page at the top
+					const newRect = mainEl?.getBoundingClientRect()
+					const newTop = newRect?.top ?? 0
+					const newHeight = newRect?.height ?? 0
+					html.style.setProperty('--wipe-height', `${Math.max(oldHeight, newHeight)}px`)
+					// the group sits where the new page is; pull the old snapshot back to where it was on screen
+					html.style.setProperty('--wipe-offset', `${oldTop - newTop}px`)
+
+					// sweep only what's on screen below the sticky header, in viewport px
+					const from = Math.max(oldTop, newTop)
+					const to = Math.max(
+						from,
+						Math.min(window.innerHeight, Math.max(oldTop + oldHeight, newTop + newHeight))
+					)
+					const setWipe = (progress) => {
+						const y = from + (to - from) * easeInOutCubic(progress)
+						html.style.setProperty('--wipe-clip', `${y - oldTop}px`)
+						html.style.setProperty('--wipe-line', `${y - newTop}px`)
+					}
+					setWipe(0)
 
 					let start = null
 					const tick = (now) => {
 						if (start === null) start = now
 						const progress = Math.min(1, (now - start) / WIPE_DURATION)
-						html.style.setProperty('--wipe-progress', String(easeInOutCubic(progress)))
+						setWipe(progress)
 						if (progress < 1) rafId = requestAnimationFrame(tick)
 					}
 					rafId = requestAnimationFrame(tick)
@@ -124,9 +143,11 @@
 
 <div class="flex min-h-screen flex-col overflow-x-clip bg-body">
 	<div class="mx-auto flex w-full max-w-6xl flex-1 flex-col border-x border-border-subtle">
-		<GridLine />
-		<Header />
-		<GridLine />
+		<div class="sticky top-0 z-30 bg-body [view-transition-name:site-header]">
+			<GridLine />
+			<Header />
+			<GridLine />
+		</div>
 		<main
 			bind:this={mainEl}
 			class={[

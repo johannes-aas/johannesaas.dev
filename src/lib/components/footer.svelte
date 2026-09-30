@@ -13,7 +13,7 @@
 <footer
 	class="relative -mx-px overflow-hidden border-x border-border-subtle bg-body [view-transition-name:site-footer]"
 >
-	<div class="relative flex flex-col items-start gap-6 px-12 py-12 md:min-h-96">
+	<div class="relative flex flex-col items-start gap-6 p-8 md:p-10 md:min-h-96">
 		<div
 			class="absolute inset-y-0 right-0 hidden aspect-square p-12 md:block [&_path]:fill-primary-subtle [&_path]:stroke-primary [&_path]:[stroke-dasharray:1] [&_path]:[stroke-dashoffset:1] [&_path]:[transition:fill_300ms_ease-out,stroke-dashoffset_800ms_ease-in-out_150ms] [&_path]:hover:fill-primary/40 [&_path]:hover:[stroke-dashoffset:0] [&_path]:hover:[transition:stroke-dashoffset_800ms_ease-in-out,fill_500ms_ease-out_500ms]"
 			aria-hidden="true"
@@ -54,7 +54,7 @@
 	</div>
 
 	<div
-		class="relative flex flex-col items-start gap-4 border-t border-border-subtle px-12 py-6 sm:flex-row sm:items-center sm:justify-between"
+		class="relative flex flex-col items-start gap-4 border-t border-border-subtle p-8 md:p-10 sm:flex-row sm:items-center sm:justify-between"
 	>
 		{#if sha}
 			<a
