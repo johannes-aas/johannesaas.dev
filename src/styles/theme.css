@@ -158,7 +158,7 @@
 	--color-primary: oklch(56.86% 0.1311 154.616);
 	--color-primary-fg: oklch(10% 0.01 154.616);
 	--color-primary-text: oklch(76% 0.14 154.616);
-	--color-primary-subtle: oklch(21.67% 0.0347 156.88);
+	--color-primary-subtle: oklch(27% 0.045 156.88);
 	--color-cursor: oklch(72% 0.22 145);
 	--color-cursor-fg: oklch(17% 0.012 154.14);
 }
