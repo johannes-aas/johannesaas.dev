@@ -9,7 +9,7 @@
 
 <PageHeading>{m.blog_title()}</PageHeading>
 
-<div class="-mx-px grid md:grid-cols-2">
+<div class="-mx-px mb-32 grid md:grid-cols-2">
 	{#each posts as post (post.slug)}
 		<BlogCard slug={post.slug} {...post.meta} />
 	{/each}

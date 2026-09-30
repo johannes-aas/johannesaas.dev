@@ -70,7 +70,7 @@
 
 <PageHeading level={2}>{m.projects_contrib_title()}</PageHeading>
 
-<div class="-mx-px grid md:grid-cols-2">
+<div class="-mx-px mb-32 grid md:grid-cols-2">
 	{#each projectContrib as project (project.title)}
 		<ProjectCard {...project} />
 	{/each}

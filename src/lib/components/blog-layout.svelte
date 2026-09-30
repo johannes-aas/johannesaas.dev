@@ -7,7 +7,7 @@
 	let { date, children } = $props()
 </script>
 
-<section class="mx-auto max-w-3xl px-4 py-16">
+<section class="mx-auto max-w-3xl px-4 pt-16 pb-32">
 	<article
 		class="relative mx-auto flex max-w-[65ch] flex-col text-base leading-[1.6] [&_h1]:mb-3 [&_h1]:text-4xl [&_h1]:leading-none [&_h1]:font-bold [&>:not(a):not(time):not(h1)]:order-3 [&>h1]:order-1"
 	>
