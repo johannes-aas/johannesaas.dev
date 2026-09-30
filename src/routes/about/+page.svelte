@@ -1,5 +1,4 @@
 <script>
-	import SocialLinks from '$lib/components/social-links.svelte'
 	import TintedImage from '$lib/components/tinted-image.svelte'
 	import { m } from '$lib/paraglide/messages'
 </script>
@@ -11,8 +10,6 @@
 			<div class="max-w-md">
 				<p class="text-fg">{m.about_bio()}</p>
 			</div>
-			<h2 class="mt-6 mb-4 text-2xl font-semibold">{m.about_get_in_touch()}</h2>
-			<SocialLinks />
 		</div>
 		<div>
 			<TintedImage
