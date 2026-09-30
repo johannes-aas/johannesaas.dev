@@ -37,14 +37,16 @@
 		<p class="relative font-mono text-sm tracking-widest text-fg-muted uppercase lg:text-base">
 			{m.about_get_in_touch()}
 		</p>
-		<div class="relative mt-auto text-lg font-medium text-fg-strong sm:text-2xl lg:text-4xl">
+		<div
+			class="relative mt-auto text-base font-medium text-fg-strong min-[400px]:text-lg min-[830px]:text-2xl lg:text-4xl"
+		>
 			<Button
 				copy={email}
 				class="hidden break-all hover:text-primary-text fine-pointer:inline-flex"
 			>
 				{email}
 			</Button>
-			<div class="flex items-center gap-1 sm:gap-4 fine-pointer:hidden">
+			<div class="flex items-center gap-4 sm:gap-6 fine-pointer:hidden">
 				<span class="break-all">{email}</span>
 				<Button
 					variant="cell"
