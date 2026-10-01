@@ -1,8 +1,9 @@
 <script>
-	import { getLocale, localizeHref } from '$lib/paraglide/runtime'
+	import { localizeHref } from '$lib/paraglide/runtime'
 	import { m } from '$lib/paraglide/messages'
 	import Button from '$lib/components/button.svelte'
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left'
+	import { formatDate } from '$lib/date.js'
 
 	let { date, children } = $props()
 </script>
@@ -21,11 +22,7 @@
 		{#if date}
 			<time datetime={date} class="order-2 mt-2 mb-6 text-sm tracking-wide text-fg-muted">
 				{m.blog_published()}
-				{new Date(date).toLocaleDateString(getLocale(), {
-					year: 'numeric',
-					month: 'short',
-					day: 'numeric'
-				})}
+				{formatDate(date)}
 			</time>
 		{/if}
 		{@render children?.()}

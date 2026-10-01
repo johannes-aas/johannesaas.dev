@@ -7,7 +7,7 @@
 	import { GithubIcon, LinkedinIcon } from '$lib/components/icons'
 	import { copyToClipboard } from '$lib/copy-to-clipboard.js'
 	import { m } from '$lib/paraglide/messages'
-	import { relativeTime } from '$lib/relative-time.js'
+	import { formatDateTime, relativeTime } from '$lib/date.js'
 
 	const email = 'johannes.hansen.aas@gmail.com'
 	const sha = import.meta.env.VITE_COMMIT_SHA
@@ -117,7 +117,7 @@
 				{#if date}
 					<time
 						datetime={date}
-						title={new Date(date).toLocaleString()}
+						title={formatDateTime(date)}
 						class="shrink-0 pl-1 font-mono text-xs whitespace-nowrap text-fg-muted/70"
 					>
 						{m.footer_updated({ time: relativeTime(date) })}

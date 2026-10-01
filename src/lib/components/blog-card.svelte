@@ -1,5 +1,6 @@
 <script>
-	import { getLocale, localizeHref } from '$lib/paraglide/runtime'
+	import { localizeHref } from '$lib/paraglide/runtime'
+	import { formatDate } from '$lib/date.js'
 	import GridCard from '$lib/components/grid-card.svelte'
 
 	let { slug, title, date, cover = '' } = $props()
@@ -11,10 +12,6 @@
 	{/if}
 	<h2 class="mb-3 text-2xl font-semibold text-fg md:text-3xl">{title}</h2>
 	<time datetime={date} class="text-fg-muted">
-		{new Date(date).toLocaleDateString(getLocale(), {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric'
-		})}
+		{formatDate(date)}
 	</time>
 </GridCard>

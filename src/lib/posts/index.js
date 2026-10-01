@@ -1,3 +1,4 @@
+import { compareDesc } from 'date-fns'
 import { getLocale, baseLocale } from '$lib/paraglide/runtime'
 
 const modules = import.meta.glob('./*/*.svx', { eager: true })
@@ -15,5 +16,5 @@ for (const [path, module] of Object.entries(modules)) {
 
 export const getPosts = () => {
 	const merged = { ...byLocale[baseLocale], ...byLocale[getLocale()] }
-	return Object.values(merged).sort((a, b) => new Date(b.meta.date) - new Date(a.meta.date))
+	return Object.values(merged).sort((a, b) => compareDesc(a.meta.date, b.meta.date))
 }
