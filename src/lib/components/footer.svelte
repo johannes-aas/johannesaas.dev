@@ -7,10 +7,12 @@
 	import { GithubIcon, LinkedinIcon } from '$lib/components/icons'
 	import { copyToClipboard } from '$lib/copy-to-clipboard.js'
 	import { m } from '$lib/paraglide/messages'
+	import { relativeTime } from '$lib/relative-time.js'
 
 	const email = 'johannes.hansen.aas@gmail.com'
 	const sha = import.meta.env.VITE_COMMIT_SHA
 	const message = import.meta.env.VITE_COMMIT_MESSAGE
+	const date = import.meta.env.VITE_COMMIT_DATE
 
 	// touch only: on cursor devices the email itself copies, with the cursor as feedback
 	let copied = $state(false)
@@ -92,25 +94,36 @@
 	</div>
 
 	<div
-		class="relative flex flex-col items-start gap-6 border-t border-border-subtle p-7 sm:flex-row sm:items-center sm:justify-between md:p-10"
+		class="relative flex flex-col items-start gap-10 border-t border-border-subtle p-7 sm:flex-row sm:items-center sm:justify-between sm:gap-6 md:p-10"
 	>
 		{#if sha}
-			<a
-				href="https://github.com/johannes-aas/personal-website/commit/{sha}"
-				target="_blank"
-				rel="noopener noreferrer"
-				class="group flex max-w-full items-center overflow-hidden rounded-sm border border-border-subtle bg-panel font-mono text-xs text-fg-muted transition-colors hover:border-border-strong hover:text-fg"
-			>
-				<span
-					class="flex items-center gap-1.5 border-r border-border-subtle bg-inset px-2 py-1 text-fg transition-colors group-hover:border-border-strong group-hover:text-fg-strong"
+			<div class="flex max-w-full flex-wrap items-center gap-x-3 gap-y-1.5">
+				<a
+					href="https://github.com/johannes-aas/personal-website/commit/{sha}"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="group flex min-w-0 items-center overflow-hidden rounded-sm border border-border-subtle bg-panel font-mono text-xs text-fg-muted transition-colors hover:border-border-strong hover:text-fg"
 				>
-					<GitCommitHorizontal class="size-3.5 shrink-0" />
-					{sha.slice(0, 7)}
-				</span>
-				{#if message}
-					<span class="truncate px-2 py-1 sm:max-w-64">{message}</span>
+					<span
+						class="flex items-center gap-1.5 border-r border-border-subtle bg-inset px-2 py-1 text-fg transition-colors group-hover:border-border-strong group-hover:text-fg-strong"
+					>
+						<GitCommitHorizontal class="size-3.5 shrink-0" />
+						{sha.slice(0, 7)}
+					</span>
+					{#if message}
+						<span class="min-w-24 truncate px-2 py-1 sm:max-w-64">{message}</span>
+					{/if}
+				</a>
+				{#if date}
+					<time
+						datetime={date}
+						title={new Date(date).toLocaleString()}
+						class="shrink-0 pl-1 font-mono text-xs whitespace-nowrap text-fg-muted/70"
+					>
+						{m.footer_updated({ time: relativeTime(date) })}
+					</time>
 				{/if}
-			</a>
+			</div>
 		{/if}
 		<p class="text-sm text-fg-muted">{m.footer_built_with()}</p>
 	</div>

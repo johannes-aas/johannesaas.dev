@@ -7,6 +7,7 @@
 	"nav_open_menu": "Åpne meny",
 	"nav_close_menu": "Lukk meny",
 	"footer_built_with": "Laget med SvelteKit ❤️",
+	"footer_updated": "oppdatert {time}",
 	"home_greeting": "👋 Hei sann!",
 	"home_intro": "Hyggelig at du er på besøk. Det er ikke så mye å se her enda. Jeg brukte alt for mye tid på denne fete forsiden, men jobber med å legge til mer innhold.",
 	"hero_tagline": "Designentusiast",

@@ -7,6 +7,7 @@
 	"nav_open_menu": "Open menu",
 	"nav_close_menu": "Close menu",
 	"footer_built_with": "Built with SvelteKit ❤️",
+	"footer_updated": "updated {time}",
 	"home_greeting": "👋 Hi there!",
 	"home_intro": "Nice of you to stop by. There's not much to see here yet. I spent way too much time making this sick logo, but I'm working on adding more content.",
 	"hero_tagline": "Design enthusiast",
