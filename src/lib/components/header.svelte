@@ -55,7 +55,6 @@
 	})
 
 	function toggleMenu() {
-		if (!$mobileMenuOpen) window.scrollTo({ top: 0, behavior: 'instant' })
 		$mobileMenuOpen = !$mobileMenuOpen
 	}
 </script>
