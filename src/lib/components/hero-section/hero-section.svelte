@@ -454,7 +454,7 @@
 			mirrored
 			class="size-22 border border-border"
 		/>
-		<div class="flex flex-col gap-3">
+		<div class="flex flex-col gap-1 lg:gap-2">
 			<h3 class="text-3xl leading-7 tracking-tight text-fg-strong">
 				{m.hero_role_top()}<br class="hidden lg:block" />{m.hero_role_bottom()}
 			</h3>

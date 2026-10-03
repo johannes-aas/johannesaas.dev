@@ -68,7 +68,7 @@
 	{/each}
 </div>
 
-<PageHeading level={2}>{m.projects_contrib_title()}</PageHeading>
+<PageHeading level={2} class="pt-18 md:pt-22">{m.projects_contrib_title()}</PageHeading>
 
 <div class="-mx-px mb-32 grid md:grid-cols-2">
 	{#each projectContrib as project (project.title)}
