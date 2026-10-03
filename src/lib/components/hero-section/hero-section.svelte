@@ -485,7 +485,7 @@
 			aria-label="GitHub"
 			target="_blank"
 			rel="noopener noreferrer"
-			class="h-14 flex-1 bg-body sm:h-18 lg:col-start-2 lg:-ml-px lg:w-[calc(--spacing(18)+1px)] lg:flex-none"
+			class="h-14 flex-1 rounded-l-sm bg-body sm:h-18 lg:col-start-2 lg:rounded-none lg:-ml-px lg:w-[calc(--spacing(18)+1px)] lg:flex-none"
 		>
 			<GithubIcon aria-hidden="true" />
 		</Button>
@@ -503,7 +503,7 @@
 			variant="cell"
 			email="johannes.hansen.aas@gmail.com"
 			aria-label={m.hero_copy_email()}
-			class="-ml-px h-14 flex-1 bg-body sm:h-18 lg:-mt-px lg:h-[calc(--spacing(18)+1px)] lg:w-[calc(--spacing(18)+1px)] lg:flex-none"
+			class="-ml-px h-14 flex-1 rounded-r-sm bg-body sm:h-18 lg:-mt-px lg:h-[calc(--spacing(18)+1px)] lg:w-[calc(--spacing(18)+1px)] lg:flex-none lg:rounded-none"
 		>
 			<Mail aria-hidden="true" />
 		</Button>
