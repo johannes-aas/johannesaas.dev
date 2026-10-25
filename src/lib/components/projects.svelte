@@ -53,7 +53,7 @@
 				'.NET',
 				'PostgreSQL'
 			],
-			demoUrl: 'http://129.241.100.43/foreman',
+			// demoUrl: 'http://129.241.100.43/foreman',
 			githubUrl: 'https://github.com/IT2901-Group-7-2026'
 		}
 	]
