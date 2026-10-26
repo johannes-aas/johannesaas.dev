@@ -39,6 +39,7 @@
 
 	let displayPercent = $derived(dragging && dragPercent !== null ? dragPercent : pct(value))
 	let fill = $derived(fillFor(displayPercent))
+	let growsLeft = $derived(bipolar && displayPercent < pct(0))
 
 	function ticks() {
 		const steps = Math.round((max - min) / step)
@@ -101,6 +102,7 @@
 	<div
 		class={[
 			'absolute inset-y-0 bg-primary/50 transition-[left,width] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
+			growsLeft ? 'rounded-l-sm' : 'rounded-r-sm',
 			dragging && moved ? 'duration-0' : 'duration-300'
 		]}
 		style:left="{fill.left}%"

@@ -129,7 +129,7 @@
 	--color-surface: oklch(27.8% 0.038 172.71);
 	--color-backdrop: oklch(8% 0.03 170.185 / 45%);
 	--color-fg-strong: oklch(97% 0.013 164.97);
-	--color-fg: oklch(85.17% 0.044 166.6);
+	--color-fg: oklch(85.17% 0.034 166.6);
 	--color-fg-muted: oklch(69% 0.028 166.37);
 	--color-border-subtle: oklch(32.37% 0.0259 171.94);
 	--color-border: oklch(42.07% 0.05 172.57);
