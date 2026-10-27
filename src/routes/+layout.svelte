@@ -143,7 +143,9 @@
 
 <div class="flex min-h-screen flex-col overflow-x-clip bg-body">
 	<div class="mx-auto flex w-full max-w-6xl flex-1 flex-col border-x border-border-subtle">
-		<div class="sticky top-0 z-30 bg-body [view-transition-name:site-header]">
+		<div
+			class="sticky top-0 z-30 -mx-px border-x border-border-subtle bg-body [view-transition-name:site-header]"
+		>
 			<GridLine />
 			<Header />
 			<GridLine />
