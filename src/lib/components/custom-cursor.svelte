@@ -114,20 +114,22 @@
 		'absolute flex items-center justify-center whitespace-nowrap transition-[opacity,transform] duration-200 ease-out',
 		content === name ? 'scale-100 opacity-100 delay-75' : 'scale-50 opacity-0'
 	]}
-	<div
-		class={[
-			'pointer-events-none fixed top-0 left-0 z-9999 flex items-center justify-center overflow-hidden rounded-full text-sm font-semibold tracking-widest text-cursor-fg transition-[width,height,opacity,background-color] duration-200 ease-out',
-			sizeClass,
-			bgClass,
-			!visible && 'opacity-0'
-		]}
-		style:transform={`translate(${renderX}px, ${renderY}px) translate(-50%, -50%)`}
-	>
-		<span class={layer('link')}><ArrowUpRight class="size-5" strokeWidth={2.5} /></span>
-		<span class={layer('copy')}><Copy class="size-5" strokeWidth={2.5} /></span>
-		<span class={[layer('read'), 'gap-1']}
-			>{m.cursor_read()}<ArrowRight class="size-4" strokeWidth={2.5} /></span
+	<div class="pointer-events-none fixed inset-0 z-9999 [view-transition-name:cursor]">
+		<div
+			class={[
+				'absolute top-0 left-0 flex items-center justify-center overflow-hidden rounded-full text-sm font-semibold tracking-widest text-cursor-fg transition-[width,height,opacity,background-color] duration-200 ease-out',
+				sizeClass,
+				bgClass,
+				!visible && 'opacity-0'
+			]}
+			style:transform={`translate(${renderX}px, ${renderY}px) translate(-50%, -50%)`}
 		>
-		<span class={layer('copied')}>{m.cursor_copied()}</span>
+			<span class={layer('link')}><ArrowUpRight class="size-5" strokeWidth={2.5} /></span>
+			<span class={layer('copy')}><Copy class="size-5" strokeWidth={2.5} /></span>
+			<span class={[layer('read'), 'gap-1']}
+				>{m.cursor_read()}<ArrowRight class="size-4" strokeWidth={2.5} /></span
+			>
+			<span class={layer('copied')}>{m.cursor_copied()}</span>
+		</div>
 	</div>
 {/if}

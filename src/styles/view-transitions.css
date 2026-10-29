@@ -84,3 +84,21 @@
 	z-index: 4;
 	animation-duration: 900ms;
 }
+
+/*
+	Cursor (custom-cursor.svelte): a full-viewport layer above everything. The new snapshot is
+	live, so the dot keeps tracking the pointer; the frozen old one is dropped.
+*/
+::view-transition-group(cursor) {
+	z-index: 10;
+	animation: none;
+}
+
+::view-transition-old(cursor) {
+	display: none;
+}
+
+::view-transition-new(cursor) {
+	animation: none;
+	mix-blend-mode: normal;
+}
