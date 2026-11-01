@@ -40,9 +40,30 @@
 		$mobileMenuOpen = false
 	})
 
+	// resolves once the visual viewport stops resizing, i.e. the mobile URL bar has finished animating
+	function viewportSettled(quiet = 100, max = 400) {
+		return new Promise((done) => {
+			const vv = window.visualViewport
+			let quietTimer
+			const finish = () => {
+				vv?.removeEventListener('resize', onResize)
+				clearTimeout(quietTimer)
+				clearTimeout(maxTimer)
+				requestAnimationFrame(() => done())
+			}
+			const onResize = () => {
+				clearTimeout(quietTimer)
+				quietTimer = setTimeout(finish, quiet)
+			}
+			const maxTimer = setTimeout(finish, max)
+			vv?.addEventListener('resize', onResize)
+			onResize()
+		})
+	}
+
 	// From the open mobile menu, the menu takes over `page-content` so the wipe erases it.
 	// The name must live on only one element at a time, hence the flushes.
-	onNavigate((navigation) => {
+	onNavigate(async (navigation) => {
 		if (
 			!document.startViewTransition ||
 			window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -55,6 +76,10 @@
 		if (fromMenu) {
 			$menuNav = true
 			flushSync()
+			if (window.scrollY > 0) {
+				window.scrollTo(0, 0)
+				await viewportSettled()
+			}
 		}
 
 		const wipeWidth = mainEl?.getBoundingClientRect().width ?? 0

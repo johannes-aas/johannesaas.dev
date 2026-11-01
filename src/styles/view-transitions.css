@@ -73,9 +73,14 @@
 	animation: none;
 }
 
-::view-transition-old(site-header),
+/* the new snapshot is live, so open panels (theme switcher) close normally instead of freezing in the old one */
+::view-transition-old(site-header) {
+	display: none;
+}
+
 ::view-transition-new(site-header) {
 	animation: none;
+	mix-blend-mode: normal;
 }
 
 /* above page-content and the wipe line so a shorter next page doesn't draw over the footer as it glides up */
