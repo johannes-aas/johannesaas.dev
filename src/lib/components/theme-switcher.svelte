@@ -1,7 +1,8 @@
 <script>
-	import { onMount, flushSync } from 'svelte'
+	import { onMount } from 'svelte'
 	import { Dialog } from 'bits-ui'
-	import { fade } from 'svelte/transition'
+	import { fly } from 'svelte/transition'
+	import { cubicOut } from 'svelte/easing'
 	import { openPanelCount } from '$lib/stores/panelState'
 	import { m } from '$lib/paraglide/messages'
 	import Button from '$lib/components/button.svelte'
@@ -21,35 +22,16 @@
 	// JS state, not a CSS breakpoint: bits-ui's dialog layers swallow pointer events even when hidden
 	let isMobile = $state(false)
 	let container
-	let toggleEl = $state(null)
 	let buttonEls = $state(Array(ids.length).fill(null))
 	let mobileButtonEls = $state(Array(ids.length).fill(null))
-	let transitionTimer
-	let jumpTimer
-	let transitioning = $state(false)
-	// set synchronously on click; themeIndex only changes inside the view transition callback
-	let locked = false
-	// only after a real switch, so the jump doesn't play when the panel just opens
-	let justRevealed = $state(false)
-
-	const revealDuration = (i) => 400 + i * 40
-
-	function triggerJump() {
-		justRevealed = true
-		clearTimeout(jumpTimer)
-		jumpTimer = setTimeout(() => {
-			justRevealed = false
-		}, revealDuration(last))
-	}
+	let fadeTimer
+	// the 600ms fade in theme.css, plus a little margin
+	const FADE_MS = 700
 
 	onMount(() => {
-		const saved = localStorage.getItem('theme')
-		if (saved && ids.includes(saved)) {
-			themeIndex = ids.indexOf(saved)
-		} else {
-			themeIndex = window.matchMedia('(prefers-color-scheme: dark)').matches ? last : 0
-		}
-		applyTheme(themeIndex, false)
+		const saved = ids.indexOf(localStorage.getItem('theme'))
+		const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? last : 0
+		applyTheme(saved === -1 ? preferred : saved, false)
 
 		const mql = window.matchMedia('(min-width: 640px)')
 		isMobile = !mql.matches
@@ -65,98 +47,21 @@
 		syncThemeColor(html)
 	}
 
-	function crossFadeTheme(i) {
-		const html = document.documentElement
-		html.classList.add('theme-transition')
-		clearTimeout(transitionTimer)
-		transitionTimer = setTimeout(() => {
-			html.classList.remove('theme-transition')
-			transitioning = false
-			locked = false
-			triggerJump()
-		}, 1800)
-		transitioning = true
+	function applyTheme(i, animate = true) {
 		themeIndex = i
-		swapTheme()
-	}
+		if (!animate) return swapTheme()
 
-	// percentages, not px: Chrome misplaces px clip-paths on fractional display scaling
-	function buttonClipPaths(buttonRect, vw, vh) {
-		const toX = (px) => `${(px / vw) * 100}%`
-		const toY = (py) => `${(py / vh) * 100}%`
-		const point = (px, py) => `${toX(px)} ${toY(py)}`
-		const x = buttonRect.left + buttonRect.width / 2
-		const y = buttonRect.top + buttonRect.height / 2
-		const scale = Math.max((2 * Math.max(x, vw - x)) / vw, (2 * Math.max(y, vh - y)) / vh) * 1.05
-		const halfW = (scale * vw) / 2
-		const halfH = (scale * vh) / 2
-		const collapsed = `polygon(${[
-			point(buttonRect.left, buttonRect.top),
-			point(buttonRect.right, buttonRect.top),
-			point(buttonRect.right, buttonRect.bottom),
-			point(buttonRect.left, buttonRect.bottom)
-		].join(', ')})`
-		const expanded = `polygon(${[
-			point(x - halfW, y - halfH),
-			point(x + halfW, y - halfH),
-			point(x + halfW, y + halfH),
-			point(x - halfW, y + halfH)
-		].join(', ')})`
-		return [collapsed, expanded]
-	}
-
-	function revealTheme(i, originRect) {
 		const html = document.documentElement
-		const [from, to] = buttonClipPaths(originRect, window.innerWidth, window.innerHeight)
-
-		html.style.setProperty('--theme-reveal-clip-from', from)
-		html.classList.add('theme-reveal')
-
-		let anim
-		const transition = document.startViewTransition(() => {
-			flushSync(() => {
-				transitioning = true
-				themeIndex = i
-			})
-			swapTheme()
-		})
-		transition.ready
-			.then(
-				() =>
-					(anim = html.animate(
-						{ clipPath: [from, to] },
-						{
-							duration: 1000,
-							easing: 'ease-in-out',
-							fill: 'forwards',
-							pseudoElement: '::view-transition-new(root)'
-						}
-					)).finished
-			)
-			.catch(() => {})
-			// waits on our own animation: Safari resolves transition.finished as soon as `ready` settles
-			.finally(() => {
-				anim?.cancel()
-				html.classList.remove('theme-reveal')
-				html.style.removeProperty('--theme-reveal-clip-from')
-				transitioning = false
-				locked = false
-				triggerJump()
-			})
-	}
-
-	function applyTheme(i, animate = true, originRect = null) {
-		if (!animate) {
-			themeIndex = i
-			return swapTheme()
-		}
-
-		const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-		if (reduced || !document.startViewTransition) {
-			crossFadeTheme(i)
-			return
-		}
-		revealTheme(i, originRect ?? toggleEl.getBoundingClientRect())
+		// hold the old color-scheme until the fade ends: flipping it as the transitions start makes
+		// Chrome restart them every frame, so text crawls to grey and then snaps
+		html.style.colorScheme ||= getComputedStyle(html).colorScheme
+		html.classList.add('theme-transition')
+		swapTheme()
+		clearTimeout(fadeTimer)
+		fadeTimer = setTimeout(() => {
+			html.classList.remove('theme-transition')
+			html.style.removeProperty('color-scheme')
+		}, FADE_MS)
 	}
 
 	// mobile browsers tint their chrome from <meta name="theme-color">, which CSS can't reach
@@ -168,16 +73,9 @@
 	}
 
 	function setTheme(i) {
-		if (locked || i === themeIndex) return
-		locked = true
-		localStorage.setItem('theme', ids[i])
-		applyTheme(i, true, buttonEls[i]?.getBoundingClientRect())
-	}
-
-	function setThemeImmediate(i) {
 		if (i === themeIndex) return
 		localStorage.setItem('theme', ids[i])
-		applyTheme(i, false)
+		applyTheme(i)
 	}
 
 	function setOpen(value) {
@@ -196,7 +94,7 @@
 	}
 
 	// roving tabindex: arrow keys move focus and pick the theme (ARIA radiogroup pattern)
-	function onButtonKeyDown(event, i, setFn, els) {
+	function onButtonKeyDown(event, i, els) {
 		let next = i
 		switch (event.key) {
 			case 'ArrowUp':
@@ -218,13 +116,12 @@
 		}
 		event.preventDefault()
 		next = Math.max(0, Math.min(last, next))
-		setFn(next)
+		setTheme(next)
 		els[next]?.focus()
 	}
 
 	function onWindowPointerDown(event) {
-		// the view transition overlay hit-tests to <html>, so clicks would look like outside clicks
-		if (transitioning || isMobile) return
+		if (isMobile) return
 		if (open && container && !container.contains(event.target)) setOpen(false)
 	}
 
@@ -242,7 +139,6 @@
 	<Button
 		variant="header"
 		class={open && 'bg-panel text-fg-strong'}
-		bind:ref={toggleEl}
 		onclick={toggle}
 		aria-label={m.theme_label()}
 		aria-expanded={open}
@@ -299,8 +195,8 @@
 								selected={i === themeIndex}
 								class="h-9 w-full flex-none"
 								bind:ref={mobileButtonEls[i]}
-								onclick={() => setThemeImmediate(i)}
-								onkeydown={(event) => onButtonKeyDown(event, i, setThemeImmediate, mobileButtonEls)}
+								onclick={() => setTheme(i)}
+								onkeydown={(event) => onButtonKeyDown(event, i, mobileButtonEls)}
 							/>
 						{/each}
 					</div>
@@ -312,42 +208,37 @@
 	</DialogRoot>
 
 	{#if open}
-		<div class="absolute inset-x-0 top-full z-50 -mx-px hidden sm:block">
+		<!-- 100% is the header's height. clip, not hidden: focusing a swatch would scroll a hidden box and skip the slide -->
+		<div
+			class="absolute top-full right-0 z-50 hidden h-[calc(100dvh-100%-1px)] w-[calc(9rem-2px)] overflow-clip sm:block"
+		>
 			<div
-				class="flex h-18 w-full items-center border border-border-subtle bg-panel"
-				transition:fade={{ duration: 160 }}
+				class="flex h-full flex-col overflow-y-auto overscroll-contain border-t border-l border-border-subtle bg-panel"
+				transition:fly={{ x: '100%', opacity: 1, duration: 400, easing: cubicOut }}
 			>
-				<span class="grid w-[calc(--spacing(18)-1px)] flex-none place-items-center">
-					<Sun class="size-5 stroke-fg-strong stroke-[1.5]" aria-hidden="true" />
-				</span>
+				<!-- my-auto, not justify-center: keeps the top reachable when it overflows -->
+				<div class="my-auto flex flex-col items-center gap-4 py-6">
+					<Sun class="size-5 flex-none stroke-fg-strong stroke-[1.5]" aria-hidden="true" />
 
-				<div class="flex flex-1 items-center gap-2" role="radiogroup" aria-label={m.theme_label()}>
-					{#each ids as id, i (id)}
-						{@const selected = i === themeIndex}
-						<ThemeSwatch
-							{id}
-							{selected}
-							aria-disabled={transitioning}
-							class={[
-								'h-6 flex-1 transition-opacity motion-reduce:animate-none motion-reduce:transition-none',
-								transitioning && !selected
-									? 'opacity-0 duration-150'
-									: 'delay-(--stagger-delay) duration-450',
-								justRevealed &&
-									!selected &&
-									'animate-swatch-jump [animation-delay:var(--stagger-delay)]'
-							]}
-							style="--stagger-delay: {i * 40}ms"
-							bind:ref={buttonEls[i]}
-							onclick={() => setTheme(i)}
-							onkeydown={(event) => onButtonKeyDown(event, i, setTheme, buttonEls)}
-						/>
-					{/each}
+					<div
+						class="flex flex-col items-center gap-2"
+						role="radiogroup"
+						aria-label={m.theme_label()}
+					>
+						{#each ids as id, i (id)}
+							<ThemeSwatch
+								{id}
+								selected={i === themeIndex}
+								class="h-12 w-28 flex-none"
+								bind:ref={buttonEls[i]}
+								onclick={() => setTheme(i)}
+								onkeydown={(event) => onButtonKeyDown(event, i, buttonEls)}
+							/>
+						{/each}
+					</div>
+
+					<Moon class="size-5 flex-none stroke-fg-strong stroke-[1.5]" aria-hidden="true" />
 				</div>
-
-				<span class="grid w-[calc(--spacing(18)-1px)] flex-none place-items-center">
-					<Moon class="size-5 stroke-fg-strong stroke-[1.5]" aria-hidden="true" />
-				</span>
 			</div>
 		</div>
 	{/if}

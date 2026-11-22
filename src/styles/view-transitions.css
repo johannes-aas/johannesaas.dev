@@ -1,26 +1,8 @@
-/*
-	Theme reveal (theme-switcher.svelte): the new snapshot is clipped from JS via the
-	Web Animations API; this pins it collapsed until that animation takes over.
-	Unscoped because class selectors don't reliably reach the ::view-transition tree.
-*/
+/* the root snapshot swaps instantly; page navigations animate their own named groups */
 ::view-transition-old(root),
 ::view-transition-new(root) {
 	animation: none;
 	mix-blend-mode: normal;
-}
-
-::view-transition-old(root) {
-	z-index: 1;
-}
-
-::view-transition-new(root) {
-	z-index: 2;
-	clip-path: var(--theme-reveal-clip-from, none);
-}
-
-/* named groups escape the root snapshot, so merge them back in for the reveal clip */
-.theme-reveal * {
-	view-transition-name: none !important;
 }
 
 /*

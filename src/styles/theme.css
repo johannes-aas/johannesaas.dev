@@ -102,6 +102,7 @@
 
 /* Theme 4: Tidepool (dark themes lighten borders so surfaces still read as raised) */
 .theme-4 {
+	color-scheme: dark;
 	--color-body: oklch(26.85% 0.0366 222.63);
 	--color-panel: oklch(28.5% 0.024 222);
 	--color-inset: oklch(32.64% 0.0233 221.28);
@@ -123,6 +124,7 @@
 
 /* Theme 5: Thicket */
 .theme-5 {
+	color-scheme: dark;
 	--color-body: oklch(23.721% 0.02168 170.185);
 	--color-panel: oklch(22.39% 0.00358 165.108);
 	--color-inset: oklch(26.87% 0.0041 165.1);
@@ -144,6 +146,7 @@
 
 /* Theme 6: Nocturne */
 .theme-6 {
+	color-scheme: dark;
 	--color-body: oklch(19% 0.008 154.14);
 	--color-panel: oklch(31% 0.001 165);
 	--color-inset: oklch(34.96% 0.0121 164.35);
@@ -163,18 +166,18 @@
 	--color-cursor-fg: oklch(17% 0.012 154.14);
 }
 
-/* Cross-fade fallback, set on <html> by the theme switcher for the duration of a switch. */
+/* Cross-fade, set on <html> by the theme switcher for the duration of a switch (keep in sync with FADE_MS). */
 .theme-transition,
 .theme-transition *,
 .theme-transition *::before,
 .theme-transition *::after {
 	transition:
-		background-color 1600ms ease,
-		border-color 1600ms ease,
-		color 1600ms ease,
-		fill 1600ms ease,
-		stroke 1600ms ease,
-		box-shadow 1600ms ease !important;
+		background-color 600ms ease,
+		border-color 600ms ease,
+		color 600ms ease,
+		fill 600ms ease,
+		stroke 600ms ease,
+		box-shadow 600ms ease !important;
 	transition-delay: 0s !important;
 }
 
