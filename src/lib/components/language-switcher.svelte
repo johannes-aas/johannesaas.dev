@@ -8,7 +8,7 @@
 </script>
 
 <Button
-	href={localizeHref(page.url.pathname,{ locale: other })}
+	href={localizeHref(page.url.pathname, { locale: other })}
 	hreflang={other}
 	lang={other}
 	data-sveltekit-reload

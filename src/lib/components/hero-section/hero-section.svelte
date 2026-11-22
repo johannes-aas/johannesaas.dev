@@ -449,7 +449,7 @@
 		class="mx-auto mt-8 flex w-(--hero-w) items-center gap-4 px-6 md:px-10 lg:absolute lg:bottom-6 lg:left-6 lg:z-10 lg:mx-0 lg:mt-0 lg:w-auto lg:flex-col lg:items-start lg:gap-3 lg:px-0 landscape:w-(--hero-w-landscape) lg:landscape:w-auto"
 	>
 		<TintedImage
-			src="/images/johannes2.jpg"
+			src="/images/johannes-avatar.jpg"
 			alt={m.about_photo_alt()}
 			mirrored
 			class="size-22 border border-border"
@@ -485,7 +485,7 @@
 			aria-label="GitHub"
 			target="_blank"
 			rel="noopener noreferrer"
-			class="h-14 flex-1 rounded-l-sm bg-body sm:h-18 lg:col-start-2 lg:rounded-none lg:-ml-px lg:w-[calc(--spacing(18)+1px)] lg:flex-none"
+			class="h-14 flex-1 rounded-l-sm bg-body sm:h-18 lg:col-start-2 lg:-ml-px lg:w-[calc(--spacing(18)+1px)] lg:flex-none lg:rounded-none"
 		>
 			<GithubIcon aria-hidden="true" />
 		</Button>
