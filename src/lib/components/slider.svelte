@@ -17,10 +17,8 @@
 	// bits-ui binds `value`, so it gets a mirror of the controlled prop
 	let internalValue = $derived(value)
 
-	let hovered = $state(false)
 	let dragging = $state(false)
 	let moved = $state(false)
-	let active = $derived(hovered || dragging)
 
 	// raw pointer position while dragging, so the fill glides regardless of `step`
 	let trackRect = null
@@ -40,6 +38,11 @@
 	let displayPercent = $derived(dragging && dragPercent !== null ? dragPercent : pct(value))
 	let fill = $derived(fillFor(displayPercent))
 	let growsLeft = $derived(bipolar && displayPercent < pct(0))
+	let formatted = $derived(`${bipolar && value > 0 ? '+' : ''}${value.toFixed(decimals)}`)
+	let motion = $derived([
+		'ease-[cubic-bezier(0.34,1.56,0.64,1)]',
+		dragging && moved ? 'duration-0' : 'duration-300'
+	])
 
 	function ticks() {
 		const steps = Math.round((max - min) / step)
@@ -88,8 +91,6 @@
 	thumbPositioning="exact"
 	onValueChange={(v) => onchange?.(v)}
 	ondblclick={disabled ? undefined : () => onreset?.()}
-	onpointerenter={() => (hovered = true)}
-	onpointerleave={() => (hovered = false)}
 	onpointerdown={onRootPointerDown}
 	onpointermove={onRootPointerMove}
 	onpointerup={endDrag}
@@ -99,18 +100,18 @@
 		disabled && 'opacity-40'
 	]}
 >
+	{#each ticks() as left (left)}
+		<div class="absolute inset-y-2 w-px bg-border" style:left="{left}%"></div>
+	{/each}
 	<div
 		class={[
-			'absolute inset-y-0 bg-primary/50 transition-[left,width] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
+			'absolute inset-y-0 bg-primary/80 transition-[left,width]',
 			growsLeft ? 'rounded-l-sm' : 'rounded-r-sm',
-			dragging && moved ? 'duration-0' : 'duration-300'
+			motion
 		]}
 		style:left="{fill.left}%"
 		style:width="{fill.width}%"
 	></div>
-	{#each ticks() as left (left)}
-		<div class="absolute inset-y-2 w-px bg-primary/40" style:left="{left}%"></div>
-	{/each}
 	{#if bipolar}
 		<div class="absolute inset-y-0 w-px bg-border-strong" style:left="{pct(0)}%"></div>
 	{/if}
@@ -120,17 +121,21 @@
 		aria-label={label}
 		class="absolute inset-y-0 w-1 opacity-0"
 	/>
+	<span class="relative text-sm text-fg-strong">{label}</span>
+	<span class="relative font-mono text-sm text-fg tabular-nums">{formatted}</span>
+	<!-- ticks and text recoloured for the filled part, clipped to the fill -->
 	<div
 		aria-hidden="true"
 		class={[
-			'pointer-events-none absolute inset-y-1 w-1.5 rounded-full border border-inset bg-primary transition-[left,opacity] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
-			active ? 'opacity-100' : 'opacity-0',
-			dragging && moved ? 'duration-0' : 'duration-300'
+			'pointer-events-none absolute inset-0 flex items-center justify-between px-3 text-sm text-primary-fg transition-[clip-path] dark:text-fg-strong',
+			motion
 		]}
-		style:left="calc({displayPercent}% - 3px)"
-	></div>
-	<span class="relative text-sm text-fg-strong">{label}</span>
-	<span class="relative font-mono text-sm text-fg tabular-nums"
-		>{bipolar && value > 0 ? '+' : ''}{value.toFixed(decimals)}</span
+		style:clip-path="inset(0 {100 - fill.left - fill.width}% 0 {fill.left}%)"
 	>
+		{#each ticks() as left (left)}
+			<div class="absolute inset-y-2 w-px bg-primary-fg/40" style:left="{left}%"></div>
+		{/each}
+		<span class="relative">{label}</span>
+		<span class="relative font-mono tabular-nums">{formatted}</span>
+	</div>
 </SliderPrimitive.Root>
