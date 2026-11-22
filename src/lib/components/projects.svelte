@@ -7,35 +7,30 @@
 		{
 			title: 'React Calendar',
 			description: m.project_react_calendar_description(),
-			technologies: ['React', 'TypeScript', 'Tailwind CSS'],
+			caseStudyUrl: '/projects/react-calendar',
+			technologies: ['React', 'TypeScript', 'Tailwind CSS', 'Floating UI'],
 			demoUrl: 'https://johannes-aas.github.io/react-calendar/',
 			githubUrl: 'https://github.com/johannes-aas/react-calendar'
 		},
 		{
-			title: 'oysteinaas.no',
+			title: 'Øystein Aas',
 			description: m.project_oysteinaas_description(),
 			technologies: ['Next.js', 'Tailwind CSS'],
 			liveUrl: 'https://oysteinaas.no/',
 			githubUrl: 'https://github.com/johannes-aas/oysteinaas'
-		},
-		{
-			title: m.project_portfolio_title(),
-			description: m.project_portfolio_description(),
-			technologies: ['SvelteKit', 'Tailwind CSS'],
-			githubUrl: 'https://github.com/johannes-aas/johannesaas.dev'
 		}
 	]
 
 	const projectContrib = [
 		{
-			title: 'Onlineweb',
+			title: 'Online',
 			description: m.project_onlineweb_description(),
 			technologies: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'PostgreSQL'],
 			liveUrl: 'https://online.ntnu.no/',
 			githubUrl: 'https://github.com/dotkom/monoweb'
 		},
 		{
-			title: 'Login.no',
+			title: 'Login',
 			description: m.project_loginno_description(),
 			technologies: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Go', 'PostgreSQL'],
 			liveUrl: 'https://login.no',
@@ -44,6 +39,7 @@
 		{
 			title: 'HealthTech',
 			description: m.project_healthtech_description(),
+			caseStudyUrl: '/projects/healthtech',
 			technologies: [
 				'React',
 				'TypeScript',
