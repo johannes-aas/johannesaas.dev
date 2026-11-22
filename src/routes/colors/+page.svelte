@@ -130,14 +130,11 @@
 					<div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
 						{#each tokens as { name, bg }}
 							<div class="border border-border-subtle bg-panel">
+								<!-- backdrop is translucent: show it over body (right) next to body alone (left) -->
 								<div
-									class={[
-										'h-24 border-b border-border-subtle',
-										name === 'backdrop' &&
-											'bg-[repeating-linear-gradient(45deg,var(--color-fg-muted)_0_6px,transparent_6px_12px)]'
-									]}
+									class={['h-24 border-b border-border-subtle', name === 'backdrop' && 'bg-body']}
 								>
-									<div class={['h-full', bg]}></div>
+									<div class={['h-full', bg, name === 'backdrop' && 'ml-auto w-1/2']}></div>
 								</div>
 								<p class="px-3 py-2 font-mono text-sm text-fg-strong">{name}</p>
 							</div>
@@ -269,9 +266,10 @@
 		</div>
 	</section>
 	<aside
-		class="hidden w-[calc(9rem-2px)] flex-none border-l border-border-subtle pt-[11.25rem] sm:block"
+		class="hidden w-[calc(9rem-2px)] flex-none border-l border-border-subtle pt-[11.25rem] pb-20 sm:block"
 	>
-		<div class="sticky top-6 flex flex-col items-center">
+		<!-- header is 18 + 2px of grid lines -->
+		<div class="sticky top-[calc(--spacing(18)+2px+--spacing(6))] flex flex-col items-center">
 			<h2 id="themes-heading" class="mb-4 text-2xl font-semibold">Themes</h2>
 			<div
 				class="flex flex-col items-center gap-3"
