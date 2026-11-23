@@ -64,7 +64,7 @@
 			<ArrowLeft class="size-4 transition-transform group-hover:-translate-x-0.5" />
 			{m.nav_projects()}
 		</Button>
-		<PageHeading class="border-b-0 pt-6 sm:pt-12 sm:text-right">{title}</PageHeading>
+		<PageHeading class="border-b-0 pt-6 sm:pt-12 sm:text-right lg:pr-24">{title}</PageHeading>
 	</div>
 
 	<!-- gap-px over a border-coloured background draws the cell dividers at every breakpoint -->
@@ -78,7 +78,7 @@
 			</div>
 			{@render actions(links, 'mt-auto')}
 		</div>
-		<dl class="grid auto-rows-fr gap-px sm:auto-cols-fr sm:grid-flow-col lg:grid-flow-row">
+		<dl class="grid grid-flow-col auto-rows-fr gap-px lg:grid-flow-row">
 			{#each facts as { label, value } (label)}
 				<div class="bg-body px-8 py-6 md:px-10">
 					<dt class="font-mono text-xs tracking-widest text-fg-muted uppercase">{label}</dt>
