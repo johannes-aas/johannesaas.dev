@@ -4,6 +4,7 @@
 	"nav_about": "Om meg",
 	"nav_projects": "Prosjekter",
 	"nav_blog": "Blogg",
+	"nav_colors": "Farger",
 	"nav_open_menu": "Åpne meny",
 	"nav_close_menu": "Lukk meny",
 	"footer_built_with": "Laget med SvelteKit ❤️",

@@ -6,8 +6,20 @@
 	import Logo from '$lib/components/logo.svelte'
 	import { GithubIcon, LinkedinIcon } from '$lib/components/icons'
 	import { copyToClipboard } from '$lib/copy-to-clipboard.js'
+	import { page } from '$app/state'
 	import { m } from '$lib/paraglide/messages'
+	import { deLocalizeHref, localizeHref } from '$lib/paraglide/runtime'
 	import { formatDateTime, relativeTime } from '$lib/date.js'
+
+	const links = [
+		{ href: localizeHref('/'), label: m.nav_home() },
+		{ href: localizeHref('/about'), label: m.nav_about() },
+		{ href: localizeHref('/projects'), label: m.nav_projects() },
+		{ href: localizeHref('/blog'), label: m.nav_blog() },
+		{ href: localizeHref('/colors'), label: m.nav_colors() }
+	]
+
+	const currentPath = $derived(deLocalizeHref(page.url.pathname))
 
 	const email = 'johannes.hansen.aas@gmail.com'
 	const sha = import.meta.env.VITE_COMMIT_SHA
@@ -92,6 +104,22 @@
 			</a>
 		</div>
 	</div>
+
+	<nav
+		class="relative grid grid-cols-3 justify-items-start gap-x-6 gap-y-3 border-t border-border-subtle px-7 py-5 text-sm sm:flex sm:flex-wrap md:px-10"
+	>
+		{#each links as { href, label } (href)}
+			{@const current = deLocalizeHref(href) === currentPath}
+			<a
+				href={current ? undefined : href}
+				aria-current={current ? 'page' : undefined}
+				aria-disabled={current || undefined}
+				class={current ? 'text-fg-strong' : 'text-fg-muted transition-colors hover:text-fg-strong'}
+			>
+				{label}
+			</a>
+		{/each}
+	</nav>
 
 	<div
 		class="relative flex flex-col items-start gap-10 border-t border-border-subtle p-7 sm:flex-row sm:items-center sm:justify-between sm:gap-6 md:p-10"
