@@ -1,5 +1,6 @@
 <script>
 	import { page } from '$app/state'
+	import { deLocalizeHref } from '$lib/paraglide/runtime'
 	import { mobileMenuOpen, menuNav } from '$lib/stores/panelState'
 
 	let { links } = $props()
@@ -60,7 +61,7 @@
 	}
 
 	function onLinkClick(event, href) {
-		if (href === page.url.pathname) {
+		if (deLocalizeHref(href) === deLocalizeHref(page.url.pathname)) {
 			event.preventDefault()
 			$mobileMenuOpen = false
 		}

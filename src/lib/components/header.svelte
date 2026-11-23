@@ -6,16 +6,18 @@
 	import LanguageSwitcher from './language-switcher.svelte'
 	import { page } from '$app/state'
 	import { m } from '$lib/paraglide/messages'
-	import { localizeHref } from '$lib/paraglide/runtime'
+	import { deLocalizeHref, localizeHref } from '$lib/paraglide/runtime'
 	import Button from '$lib/components/button.svelte'
 	import { mobileMenuOpen } from '$lib/stores/panelState'
 
 	const links = [
 		{ href: localizeHref('/'), label: m.nav_home() },
 		{ href: localizeHref('/about'), label: m.nav_about() },
-		// { href: localizeHref('/projects'), label: m.nav_projects() },
+		{ href: localizeHref('/projects'), label: m.nav_projects() },
 		{ href: localizeHref('/blog'), label: m.nav_blog() }
 	]
+
+	const currentPath = $derived(deLocalizeHref(page.url.pathname))
 
 	let nav = $state()
 	let linkEls = $state([])
@@ -25,7 +27,7 @@
 	let ready = $state(false)
 
 	function measure() {
-		const el = linkEls[links.findIndex((l) => l.href === page.url.pathname)]
+		const el = linkEls[links.findIndex((l) => deLocalizeHref(l.href) === currentPath)]
 		if (!el || !nav) {
 			indicatorVisible = false
 			return
@@ -36,7 +38,7 @@
 	}
 
 	$effect(() => {
-		page.url.pathname
+		currentPath
 		measure()
 	})
 
@@ -63,8 +65,8 @@
 
 <header class="relative z-30 flex items-center backdrop-blur-md">
 	<a
-		href={page.url.pathname === localizeHref('/') ? undefined : localizeHref('/')}
-		aria-current={page.url.pathname === localizeHref('/') ? 'page' : undefined}
+		href={currentPath === '/' ? undefined : localizeHref('/')}
+		aria-current={currentPath === '/' ? 'page' : undefined}
 		class="box-border size-16 flex-none p-3.5 sm:size-18 sm:p-4"
 	>
 		<Logo />
@@ -74,7 +76,7 @@
 		class="relative hidden flex-1 items-center justify-center gap-8 text-base sm:flex"
 	>
 		{#each links as { href, label }, i (href)}
-			{@const current = href === page.url.pathname}
+			{@const current = deLocalizeHref(href) === currentPath}
 			<a
 				bind:this={linkEls[i]}
 				href={current ? undefined : href}
