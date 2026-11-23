@@ -477,7 +477,7 @@
 	</div>
 	<!-- 2-column grid from lg with the top-left cell empty; column 2 / row 2 overlap by 1px so borders don't double -->
 	<div
-		class="mx-auto mt-6 flex w-(--hero-w) px-6 md:px-10 lg:absolute lg:right-0 lg:bottom-0 lg:z-20 lg:mx-0 lg:mt-0 lg:-mr-px lg:-mb-px lg:grid lg:w-auto lg:grid-cols-[repeat(2,--spacing(18))] lg:px-0 landscape:w-(--hero-w-landscape) lg:landscape:w-auto"
+		class="mx-auto mt-6 flex w-(--hero-w) px-6 md:px-10 lg:absolute lg:right-0 lg:bottom-0 lg:z-20 lg:mx-0 lg:mt-0 lg:-mr-px lg:-mb-px lg:grid lg:w-auto lg:grid-cols-[repeat(2,auto)] lg:px-0 landscape:w-(--hero-w-landscape) lg:landscape:w-auto"
 	>
 		<Button
 			variant="cell"
@@ -485,7 +485,7 @@
 			aria-label="GitHub"
 			target="_blank"
 			rel="noopener noreferrer"
-			class="h-14 flex-1 rounded-l-sm bg-body sm:h-18 lg:col-start-2 lg:-ml-px lg:w-[calc(--spacing(18)+1px)] lg:flex-none lg:rounded-none"
+			class="h-14 flex-1 rounded-l-sm bg-body sm:h-18 lg:col-start-2 lg:-ml-px lg:w-18 lg:flex-none lg:rounded-none"
 		>
 			<GithubIcon aria-hidden="true" />
 		</Button>
@@ -495,7 +495,7 @@
 			aria-label="LinkedIn"
 			target="_blank"
 			rel="noopener noreferrer"
-			class="-ml-px h-14 flex-1 bg-body sm:h-18 lg:-mt-px lg:ml-0 lg:h-[calc(--spacing(18)+1px)] lg:w-18 lg:flex-none"
+			class="-ml-px h-14 flex-1 bg-body sm:h-18 lg:-mt-px lg:ml-0 lg:w-18 lg:flex-none"
 		>
 			<LinkedinIcon aria-hidden="true" />
 		</Button>
@@ -503,7 +503,7 @@
 			variant="cell"
 			email="johannes.hansen.aas@gmail.com"
 			aria-label={m.hero_copy_email()}
-			class="-ml-px h-14 flex-1 rounded-r-sm bg-body sm:h-18 lg:-mt-px lg:h-[calc(--spacing(18)+1px)] lg:w-[calc(--spacing(18)+1px)] lg:flex-none lg:rounded-none"
+			class="-ml-px h-14 flex-1 rounded-r-sm bg-body sm:h-18 lg:-mt-px lg:w-18 lg:flex-none lg:rounded-none"
 		>
 			<Mail aria-hidden="true" />
 		</Button>
