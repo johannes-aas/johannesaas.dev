@@ -8,16 +8,9 @@
 			title: 'HealthTech',
 			description: m.project_healthtech_description(),
 			caseStudyUrl: '/projects/healthtech',
-			image: '/images/projects/healthtech/foreman.webp',
-			technologies: [
-				'React',
-				'TypeScript',
-				'TanStack Query',
-				'Tailwind CSS',
-				'C#',
-				'.NET',
-				'PostgreSQL'
-			],
+			image: '/images/projects/healthtech/thumbnail.webp',
+			imageDark: '/images/projects/healthtech/thumbnail-dark.webp',
+			imagePosition: 'bottom',
 			demoUrl: 'https://healthtech-demo-theta.vercel.app/foreman',
 			githubUrl: 'https://github.com/IT2901-Group-7-2026'
 		},
@@ -25,16 +18,15 @@
 			title: 'React Calendar',
 			description: m.project_react_calendar_description(),
 			caseStudyUrl: '/projects/react-calendar',
-			image: '/images/projects/react-calendar/demo.webp',
-			technologies: ['React', 'TypeScript', 'Tailwind CSS', 'Floating UI'],
+			image: '/images/projects/react-calendar/thumbnail.webp',
+			imageDark: '/images/projects/react-calendar/thumbnail-dark.webp',
 			demoUrl: 'https://johannes-aas.github.io/react-calendar/',
 			githubUrl: 'https://github.com/johannes-aas/react-calendar'
 		},
 		{
 			title: 'Øystein Aas',
 			description: m.project_oysteinaas_description(),
-			image: '/images/projects/oystein-aas.webp',
-			technologies: ['Next.js', 'Tailwind CSS'],
+			image: '/images/projects/oystein-aas/thumbnail.webp',
 			liveUrl: 'https://oysteinaas.no/',
 			githubUrl: 'https://github.com/johannes-aas/oysteinaas'
 		}
@@ -44,16 +36,15 @@
 		{
 			title: 'Online',
 			description: m.project_onlineweb_description(),
-			image: '/images/projects/online.webp',
-			technologies: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'PostgreSQL'],
+			image: '/images/projects/online/thumbnail.webp',
 			liveUrl: 'https://online.ntnu.no/',
 			githubUrl: 'https://github.com/dotkom/monoweb'
 		},
 		{
 			title: 'Login',
 			description: m.project_loginno_description(),
-			image: '/images/projects/login.webp',
-			technologies: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Go', 'PostgreSQL'],
+			image: '/images/projects/login/thumbnail.webp',
+			imageDark: '/images/projects/login/thumbnail-dark.webp',
 			liveUrl: 'https://login.no',
 			githubUrl: 'https://github.com/Login-Linjeforening-for-IT/beehive'
 		}
