@@ -2,6 +2,7 @@
 	import ArrowRight from '@lucide/svelte/icons/arrow-right'
 	import ArrowUpRight from '@lucide/svelte/icons/arrow-up-right'
 	import Copy from '@lucide/svelte/icons/copy'
+	import { afterNavigate } from '$app/navigation'
 	import { m } from '$lib/paraglide/messages'
 	import { COPIED_EVENT } from '$lib/copy-to-clipboard.js'
 	import { finePointer } from '$lib/pointer.js'
@@ -30,6 +31,27 @@
 	const COPY_SELECTOR = '[data-cursor="copy"]'
 	const COPIED_DURATION = 1500
 
+	const getVariant = (target) => {
+		if (!(target instanceof Element)) return 'default'
+		if (target.closest(COPY_SELECTOR)) return 'copy'
+		if (target.closest(READ_SELECTOR)) return 'read'
+		if (isExternalLink(target)) return 'link'
+		if (target.closest(INTERACTIVE_SELECTOR)) return 'hover'
+		return 'default'
+	}
+
+	const updateVariant = (target) => {
+		// keep the confirmation up until the timeout, wherever the pointer goes
+		if (!copied) variant = getVariant(target)
+	}
+
+	// the page can change under a still pointer (scroll, navigation), so re-hit-test at its last position
+	const refreshVariant = () => {
+		if (visible) updateVariant(document.elementFromPoint(x, y))
+	}
+
+	afterNavigate(refreshVariant)
+
 	$effect(() => {
 		if (!finePointer.current) return
 
@@ -51,21 +73,7 @@
 				renderY = y
 				visible = true
 			}
-
-			const target = e.target
-			if (copied) {
-				// keep the confirmation up until the timeout, wherever the pointer goes
-			} else if (target instanceof Element && target.closest(COPY_SELECTOR)) {
-				variant = 'copy'
-			} else if (target instanceof Element && target.closest(READ_SELECTOR)) {
-				variant = 'read'
-			} else if (target instanceof Element && isExternalLink(target)) {
-				variant = 'link'
-			} else if (target instanceof Element && target.closest(INTERACTIVE_SELECTOR)) {
-				variant = 'hover'
-			} else {
-				variant = 'default'
-			}
+			updateVariant(e.target)
 		}
 
 		const handleCopied = () => {
@@ -73,7 +81,7 @@
 			clearTimeout(copiedTimeout)
 			copiedTimeout = setTimeout(() => {
 				copied = false
-				variant = 'default'
+				refreshVariant()
 			}, COPIED_DURATION)
 		}
 
@@ -83,6 +91,8 @@
 
 		// capture-phase pointermove: bits-ui's slider stops propagation of drag moves on document
 		window.addEventListener('pointermove', handleMove, true)
+		// capture: scroll doesn't bubble, this also catches nested scroll containers
+		window.addEventListener('scroll', refreshVariant, { capture: true, passive: true })
 		document.addEventListener('pointerleave', handleLeave)
 		window.addEventListener(COPIED_EVENT, handleCopied)
 
@@ -91,6 +101,7 @@
 			clearTimeout(copiedTimeout)
 			window.removeEventListener(COPIED_EVENT, handleCopied)
 			window.removeEventListener('pointermove', handleMove, true)
+			window.removeEventListener('scroll', refreshVariant, true)
 			document.removeEventListener('pointerleave', handleLeave)
 			visible = false
 		}
