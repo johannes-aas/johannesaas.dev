@@ -1,5 +1,6 @@
 <script>
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left'
+	import ArrowRight from '@lucide/svelte/icons/arrow-right'
 	import ArrowUpRight from '@lucide/svelte/icons/arrow-up-right'
 	import Button from '$lib/components/button.svelte'
 	import PageHeading from '$lib/components/page-heading.svelte'
@@ -8,7 +9,7 @@
 
 	// cta: { href, label, note }, the link the page pushes. links: { href, label, topOnly }, topOnly
 	// links are left out of the closing section. images: { src, alt, width, height };
-	// a section shows one image full width, more in two columns.
+	// a section shows one image full width, more in two columns. next: { href, title }.
 	let {
 		title,
 		summary,
@@ -17,7 +18,8 @@
 		cta,
 		links = [],
 		hero,
-		sections = []
+		sections = [],
+		next
 	} = $props()
 </script>
 
@@ -32,7 +34,7 @@
 			href={cta.href}
 			target="_blank"
 			rel="noopener noreferrer"
-			class="gap-2 px-6 py-3 text-base hover:bg-primary/90"
+			class="gap-2 px-6 py-3 text-base"
 		>
 			{cta.label}
 			<ArrowUpRight class="size-5" />
@@ -52,17 +54,18 @@
 {/snippet}
 
 <article class="mb-32">
-	<div class="px-8 pt-8 md:px-10 md:pt-10">
+	<div
+		class="flex flex-col items-start border-b border-border-subtle sm:flex-row sm:justify-between"
+	>
 		<Button
 			href={localizeHref('/projects')}
-			class="group text-sm text-fg-muted hover:text-fg-strong"
+			class="group mt-8 ml-8 shrink-0 text-sm text-fg-muted hover:text-fg-strong md:mt-10 md:ml-10"
 		>
 			<ArrowLeft class="size-4 transition-transform group-hover:-translate-x-0.5" />
 			{m.nav_projects()}
 		</Button>
+		<PageHeading class="border-b-0 pt-6 sm:pt-12 sm:text-right">{title}</PageHeading>
 	</div>
-
-	<PageHeading class="pt-6 md:pt-8">{title}</PageHeading>
 
 	<!-- gap-px over a border-coloured background draws the cell dividers at every breakpoint -->
 	<div class="grid gap-px border-b border-border-subtle bg-border-subtle lg:grid-cols-3">
@@ -119,4 +122,35 @@
 		</div>
 		{@render actions(links.filter((link) => !link.topOnly))}
 	</section>
+
+	<nav class="grid border-b border-border-subtle sm:grid-cols-3">
+		<Button
+			href={localizeHref('/projects')}
+			class={[
+				'group flex justify-start p-8 text-sm text-fg-muted hover:bg-surface/50 hover:text-fg-strong md:p-10',
+				!next && 'sm:col-span-3'
+			]}
+		>
+			<ArrowLeft class="size-4 transition-transform group-hover:-translate-x-0.5" />
+			{m.nav_projects()}
+		</Button>
+		{#if next}
+			<Button
+				href={localizeHref(next.href)}
+				class="group flex justify-between gap-8 border-t border-border-subtle p-8 text-left hover:bg-surface/50 sm:col-span-2 sm:border-t-0 sm:border-l md:p-10"
+			>
+				<span>
+					<span class="block font-mono text-xs tracking-widest text-fg-muted uppercase">
+						{m.case_next_project()}
+					</span>
+					<span class="mt-2 block font-display text-3xl font-bold italic md:text-4xl">
+						{next.title}
+					</span>
+				</span>
+				<ArrowRight
+					class="size-5 shrink-0 text-fg transition-transform group-hover:translate-x-0.5"
+				/>
+			</Button>
+		{/if}
+	</nav>
 </article>

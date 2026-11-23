@@ -44,4 +44,5 @@
 			]
 		}
 	]}
+	next={{ href: '/projects/healthtech', title: 'HealthTech' }}
 />
