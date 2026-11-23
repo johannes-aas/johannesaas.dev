@@ -36,7 +36,7 @@
 	"case_next_project": "Next project",
 	"healthtech_cta": "Check out demo",
 	"healthtech_cta_note": "The demo runs on sample data. Switch between the operator and foreman views in the profile menu.",
-	"healthtech_summary": "A prototype system, developed as a bachelor's thesis at NTNU, that collects noise, vibration and dust exposure data from wearable sensors. Workers can track their own exposure against action and limit values, while foremen get an overview of their entire team.",
+	"healthtech_summary": "A dashboard prototype, developed as a bachelor's thesis at NTNU, that visualizes noise, vibration and dust exposure data from wearable sensors. Workers can track their own exposure against action and limit values, while foremen get an overview of their entire team.",
 	"healthtech_history_title": "History",
 	"healthtech_history_text": "Day, week and month views show when limits were crossed.",
 	"healthtech_team_title": "Team",
