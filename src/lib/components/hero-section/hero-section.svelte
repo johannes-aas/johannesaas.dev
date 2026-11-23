@@ -431,9 +431,10 @@
 			style:transform="translate({offsetX * LEAD * UNIT_PCT}%, {offsetY * LEAD * UNIT_PCT}%)"
 		>
 			{#each NAMES as { text, position }, j (text)}
+				<!-- padding holds the italic overhang, which some browsers clips to the box while the transition runs -->
 				<span
 					class={[
-						'name pointer-events-auto absolute transition-[opacity,transform] duration-900 ease-out motion-reduce:transition-none [.skip-intro_&]:transition-none',
+						'name pointer-events-auto absolute -mx-[0.2em] px-[0.2em] transition-[opacity,transform] duration-900 ease-out motion-reduce:transition-none [.skip-intro_&]:transition-none',
 						position
 					]}
 					style:opacity={j < revealedPaths ? 1 : 0}
