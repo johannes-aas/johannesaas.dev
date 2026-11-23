@@ -399,7 +399,13 @@
 	style:--hero-w="clamp(300px, 100svw, 600px)"
 	style:--hero-w-landscape="clamp(400px, calc(100svh - 5rem), 620px)"
 >
-	<div class="relative mx-auto">
+	<div
+		class={[
+			'relative mx-auto transition-transform duration-500 ease-in-out motion-reduce:transition-none',
+			settingsOpen && '-translate-x-16'
+		]}
+		ontransitionend={(e) => e.target === e.currentTarget && handleScroll()}
+	>
 		<svg
 			bind:this={svgEl}
 			class="pointer-events-none size-auto overflow-visible p-6 md:p-10 portrait:w-(--hero-w) landscape:h-(--hero-w-landscape)"
