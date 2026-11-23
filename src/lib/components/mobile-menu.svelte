@@ -5,12 +5,6 @@
 
 	let { links } = $props()
 
-	const enterDelays = [
-		'[animation-delay:250ms]',
-		'[animation-delay:330ms]',
-		'[animation-delay:410ms]'
-	]
-
 	let hasOpened = $state(false)
 	// the page-nav wipe erases the menu itself, so skip its own close animation
 	let leftViaNav = $state(false)
@@ -100,9 +94,10 @@
 				<a
 					{href}
 					onclick={(event) => onLinkClick(event, href)}
+					style:animation-delay="{250 + i * 80}ms"
 					class={[
 						'block py-1 pl-2 font-display text-6xl leading-[1.15] font-bold tracking-tight text-fg-strong italic',
-						$mobileMenuOpen && ['animate-menu-link', enterDelays[i]]
+						$mobileMenuOpen && 'animate-menu-link'
 					]}
 				>
 					{label}
