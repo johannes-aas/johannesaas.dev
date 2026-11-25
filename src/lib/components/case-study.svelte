@@ -24,7 +24,12 @@
 </script>
 
 {#snippet screenshot(image, loading = 'lazy')}
-	<img {...image} {loading} decoding="async" class="w-full border border-border-subtle" />
+	<img
+		{...image}
+		{loading}
+		decoding="async"
+		class="w-full rounded-sm border border-border-subtle"
+	/>
 {/snippet}
 
 {#snippet actions(items, className)}
@@ -73,7 +78,9 @@
 			<p class="max-w-xl text-lg text-fg-strong">{summary}</p>
 			<div class="flex flex-wrap gap-2">
 				{#each technologies as tech (tech)}
-					<span class="border border-border bg-body px-2 py-1 text-sm text-fg-strong">{tech}</span>
+					<span class="rounded-sm border border-border bg-body px-2 py-1 text-sm text-fg-strong"
+						>{tech}</span
+					>
 				{/each}
 			</div>
 			{@render actions(links, 'mt-auto')}
@@ -95,7 +102,7 @@
 	{#each sections as { title, text, images } (title)}
 		<section class="border-b border-border-subtle">
 			<div class="grid gap-3 px-8 pt-12 pb-8 md:grid-cols-2 md:gap-10 md:px-10 md:pt-16 md:pb-10">
-				<h2 class="font-display text-3xl font-bold italic md:text-4xl">{title}</h2>
+				<h2 class="text-3xl font-semibold md:text-4xl">{title}</h2>
 				<p class="max-w-md text-fg md:pt-2 md:text-lg">{text}</p>
 			</div>
 			<div
@@ -115,7 +122,7 @@
 		class="mt-16 flex flex-col items-start gap-8 border-y border-border-subtle bg-primary-subtle px-8 py-16 md:mt-24 md:flex-row md:items-end md:justify-between md:px-10 md:py-20"
 	>
 		<div>
-			<h2 class="font-display text-4xl font-bold italic md:text-5xl">{m.case_cta_title()}</h2>
+			<h2 class="text-4xl font-semibold md:text-5xl">{m.case_cta_title()}</h2>
 			{#if cta.note}
 				<p class="mt-4 max-w-md text-fg md:text-lg">{cta.note}</p>
 			{/if}
@@ -143,7 +150,7 @@
 					<span class="block font-mono text-xs tracking-widest text-fg-muted uppercase">
 						{m.case_next_project()}
 					</span>
-					<span class="mt-2 block font-display text-3xl font-bold italic md:text-4xl">
+					<span class="mt-2 block text-3xl font-semibold md:text-4xl">
 						{next.title}
 					</span>
 				</span>

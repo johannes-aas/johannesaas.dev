@@ -98,7 +98,7 @@
 		aria-label={m.theme_label()}
 		aria-expanded={open}
 	>
-		<span class="relative grid size-4 place-items-center sm:size-5">
+		<span class="relative grid size-4 place-items-center sm:size-4.5">
 			<!-- the icon only swaps at sm+; the mobile dialog has its own close button -->
 			<span
 				class={[

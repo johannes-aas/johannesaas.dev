@@ -12,9 +12,9 @@
 
 	const links = [
 		{ href: localizeHref('/'), label: m.nav_home() },
-		{ href: localizeHref('/about'), label: m.nav_about() },
 		{ href: localizeHref('/projects'), label: m.nav_projects() },
-		{ href: localizeHref('/blog'), label: m.nav_blog() }
+		{ href: localizeHref('/about'), label: m.nav_about() }
+		// { href: localizeHref('/blog'), label: m.nav_blog() }
 	]
 
 	const currentPath = $derived(deLocalizeHref(page.url.pathname))
@@ -73,7 +73,7 @@
 	</a>
 	<nav
 		bind:this={nav}
-		class="relative hidden flex-1 items-center justify-center gap-8 text-base sm:flex"
+		class="relative hidden flex-1 items-center justify-center gap-4 text-sm sm:flex"
 	>
 		{#each links as { href, label }, i (href)}
 			{@const current = deLocalizeHref(href) === currentPath}
@@ -82,7 +82,10 @@
 				href={current ? undefined : href}
 				aria-current={current ? 'page' : undefined}
 				aria-disabled={current || undefined}
-				class={current ? 'text-fg-strong' : 'text-fg hover:text-fg-strong hover:transition-colors'}
+				class={[
+					'px-3 py-2',
+					current ? 'text-fg-strong' : 'text-fg hover:text-fg-strong hover:transition-colors'
+				]}
 			>
 				{label}
 			</a>
@@ -91,7 +94,7 @@
 			aria-hidden="true"
 			style:transform={`translateX(${indicatorX}px)`}
 			class={[
-				'pointer-events-none absolute -bottom-2.5 left-0 h-[3px] w-4 bg-primary',
+				'pointer-events-none absolute -bottom-0.5 left-0 h-[3px] w-4 bg-primary',
 				indicatorVisible ? 'opacity-100' : 'opacity-0',
 				ready && [
 					slide ? 'transition-[transform,opacity]' : 'transition-opacity',

@@ -16,7 +16,7 @@
 		sessionStorage.setItem('skip-intro', e.detail ? `${e.clientX},${e.clientY}` : '1')}
 	aria-label={m.language_label()}
 	variant="header"
-	class="font-mono text-sm tracking-[0.16em] uppercase"
+	class="font-mono text-xs tracking-[0.16em] uppercase"
 >
 	{other}
 </Button>

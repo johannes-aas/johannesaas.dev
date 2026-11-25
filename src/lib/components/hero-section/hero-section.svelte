@@ -453,7 +453,7 @@
 	</div>
 	<GridLine class="mt-8 lg:hidden" />
 	<div
-		class="mx-auto mt-8 flex w-(--hero-w) items-center gap-4 px-6 md:px-10 lg:absolute lg:bottom-6 lg:left-6 lg:z-10 lg:mx-0 lg:mt-0 lg:w-auto lg:flex-col lg:items-start lg:gap-3 lg:px-0 landscape:w-(--hero-w-landscape) lg:landscape:w-auto"
+		class="mx-auto mt-8 flex w-(--hero-w) items-center gap-4 px-6 md:px-10 lg:absolute lg:bottom-6 lg:left-10 lg:z-10 lg:mx-0 lg:mt-0 lg:w-auto lg:flex-col lg:items-start lg:gap-3 lg:px-0 landscape:w-(--hero-w-landscape) lg:landscape:w-auto"
 	>
 		<TintedImage
 			src="/images/johannes-avatar.jpg"
@@ -516,7 +516,7 @@
 		</Button>
 	</div>
 	<div
-		class="mx-auto mt-4 flex w-(--hero-w) items-center gap-2 px-6 text-xs tracking-wider text-fg-muted uppercase tabular-nums md:px-10 lg:absolute lg:top-4 lg:left-6 lg:z-20 lg:mx-0 lg:mt-0 lg:w-auto lg:px-0 landscape:w-(--hero-w-landscape) lg:landscape:w-auto"
+		class="mx-auto mt-4 flex w-(--hero-w) items-center gap-2 px-6 text-xs tracking-wider text-fg-muted uppercase tabular-nums md:px-10 lg:absolute lg:top-4 lg:left-10 lg:z-20 lg:mx-0 lg:mt-0 lg:w-auto lg:px-0 landscape:w-(--hero-w-landscape) lg:landscape:w-auto"
 		aria-label={m.hero_local_time()}
 	>
 		<span>{m.hero_country()}</span>

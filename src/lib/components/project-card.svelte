@@ -44,10 +44,14 @@
 {/snippet}
 
 <!-- isolate + -z-10 keep the masked (and zooming) image behind the text that overlaps its faded end -->
-<GridCard interactive={Boolean(caseStudyUrl)} class="group isolate flex flex-col">
+<!-- cards are under 452px wide between md and 904px; above that GridCard's md:p-10 applies -->
+<GridCard
+	interactive={Boolean(caseStudyUrl)}
+	class="group isolate flex flex-col px-6 py-10 sm:max-md:px-10 md:max-[904px]:px-6"
+>
 	<div
 		style:--image-position={imagePosition}
-		class="relative -z-10 -mb-8 aspect-2/1 overflow-hidden border border-border-subtle mask-b-from-40% md:-mb-10"
+		class="relative -z-10 -mb-8 aspect-2/1 overflow-hidden rounded-sm border border-border-subtle mask-b-from-40% md:-mb-10"
 	>
 		{#if imageDark}
 			{@render thumbnail(image, 'dark:hidden')}
@@ -57,9 +61,11 @@
 		{/if}
 	</div>
 
-	<div class="flex flex-1 flex-col px-2 pb-2 md:px-10 md:pb-4">
+	<div
+		class="flex flex-1 flex-col px-4 min-[904px]:px-10 min-[904px]:pb-4 sm:max-md:px-10 sm:max-md:pb-4"
+	>
 		<h3 class="mb-3 text-3xl font-semibold text-fg md:text-4xl">{title}</h3>
-		<p class="mb-4 text-fg">{description}</p>
+		<p class="mb-6 text-fg">{description}</p>
 
 		<div class="mt-auto flex flex-wrap items-center gap-4">
 			{#each links as { href, label } (href)}

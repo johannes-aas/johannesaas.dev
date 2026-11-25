@@ -204,7 +204,7 @@
 					onclick={() => setOpen(false)}
 					aria-label={m.logo_settings_close()}
 				>
-					<X class="size-4 stroke-[1.75]" aria-hidden="true" />
+					<X class="size-4.5 stroke-[1.75]" aria-hidden="true" />
 				</Button>
 			</div>
 
@@ -276,6 +276,6 @@
 		aria-expanded={open}
 		inert={open}
 	>
-		<Settings class="size-4 flex-none stroke-[1.75] sm:size-5" aria-hidden="true" />
+		<Settings class="size-4 flex-none stroke-[1.75] sm:size-4.5" aria-hidden="true" />
 	</Button>
 </div>

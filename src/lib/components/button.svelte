@@ -16,14 +16,14 @@
 	} = $props()
 
 	const cell =
-		'border border-border-subtle text-fg hover:text-fg-strong [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:stroke-[1.75] sm:[&_svg]:size-5'
+		'border border-border-subtle text-fg hover:text-fg-strong [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:stroke-[1.75] sm:[&_svg]:size-4.5'
 
 	const variants = {
 		cell,
 		header: [cell, '-my-px -mr-px w-16 flex-none self-stretch sm:w-18'],
 		outline:
-			'border border-border px-4 py-2 text-sm text-fg hover:border-border-strong hover:text-fg-strong',
-		primary: 'bg-primary px-4 py-2 text-sm font-medium text-primary-fg'
+			'rounded-sm border border-border px-4 py-2 text-sm text-fg hover:border-border-strong hover:text-fg-strong',
+		primary: 'rounded-sm bg-primary px-4 py-2 text-sm font-medium text-primary-fg'
 	}
 
 	let copyValue = $derived(copy ?? (finePointer.current ? email : undefined))
