@@ -12,26 +12,19 @@
 	import Moon from '@lucide/svelte/icons/moon'
 	import X from '@lucide/svelte/icons/x'
 	import Palette from '@lucide/svelte/icons/palette'
+	import { themeIds as ids, theme, initTheme, setTheme } from '$lib/theme.svelte.js'
 
-	// ordered lightest to darkest
-	const ids = ['theme-1', 'theme-2', 'theme-3', 'theme-4', 'theme-5', 'theme-6']
 	const last = ids.length - 1
 
-	let themeIndex = $state(0)
 	let open = $state(false)
 	// JS state, not a CSS breakpoint: bits-ui's dialog layers swallow pointer events even when hidden
 	let isMobile = $state(false)
 	let container
 	let buttonEls = $state(Array(ids.length).fill(null))
 	let mobileButtonEls = $state(Array(ids.length).fill(null))
-	let fadeTimer
-	// the 600ms fade in theme.css, plus a little margin
-	const FADE_MS = 700
 
 	onMount(() => {
-		const saved = ids.indexOf(localStorage.getItem('theme'))
-		const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? last : 0
-		applyTheme(saved === -1 ? preferred : saved, false)
+		initTheme()
 
 		const mql = window.matchMedia('(min-width: 640px)')
 		isMobile = !mql.matches
@@ -39,44 +32,6 @@
 		mql.addEventListener('change', onMqlChange)
 		return () => mql.removeEventListener('change', onMqlChange)
 	})
-
-	function swapTheme() {
-		const html = document.documentElement
-		html.classList.remove(...ids)
-		html.classList.add(ids[themeIndex])
-		syncThemeColor(html)
-	}
-
-	function applyTheme(i, animate = true) {
-		themeIndex = i
-		if (!animate) return swapTheme()
-
-		const html = document.documentElement
-		// hold the old color-scheme until the fade ends: flipping it as the transitions start makes
-		// Chrome restart them every frame, so text crawls to grey and then snaps
-		html.style.colorScheme ||= getComputedStyle(html).colorScheme
-		html.classList.add('theme-transition')
-		swapTheme()
-		clearTimeout(fadeTimer)
-		fadeTimer = setTimeout(() => {
-			html.classList.remove('theme-transition')
-			html.style.removeProperty('color-scheme')
-		}, FADE_MS)
-	}
-
-	// mobile browsers tint their chrome from <meta name="theme-color">, which CSS can't reach
-	function syncThemeColor(html) {
-		const meta = document.querySelector('meta[name="theme-color"]')
-		if (!meta) return
-		const bg = getComputedStyle(html).getPropertyValue('--color-body').trim()
-		if (bg) meta.setAttribute('content', bg)
-	}
-
-	function setTheme(i) {
-		if (i === themeIndex) return
-		localStorage.setItem('theme', ids[i])
-		applyTheme(i)
-	}
 
 	function setOpen(value) {
 		if (value === open) return
@@ -89,7 +44,7 @@
 		if (open) {
 			await new Promise((r) => requestAnimationFrame(r))
 			const els = isMobile ? mobileButtonEls : buttonEls
-			els[themeIndex]?.focus()
+			els[theme.index]?.focus()
 		}
 	}
 
@@ -192,7 +147,7 @@
 						{#each ids as id, i (id)}
 							<ThemeSwatch
 								{id}
-								selected={i === themeIndex}
+								selected={i === theme.index}
 								class="h-9 w-full flex-none"
 								bind:ref={mobileButtonEls[i]}
 								onclick={() => setTheme(i)}
@@ -228,7 +183,7 @@
 						{#each ids as id, i (id)}
 							<ThemeSwatch
 								{id}
-								selected={i === themeIndex}
+								selected={i === theme.index}
 								class="h-12 w-28 flex-none"
 								bind:ref={buttonEls[i]}
 								onclick={() => setTheme(i)}

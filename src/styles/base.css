@@ -1,7 +1,7 @@
 /* keep in sync with FINE_POINTER_QUERY in $lib/pointer.js */
 @custom-variant fine-pointer (@media (hover: hover) and (pointer: fine));
 
-/* the dark themes in theme.css; keep in sync with the theme ids in app.html and theme-switcher */
+/* the dark themes in theme.css; keep in sync with the theme ids in app.html and $lib/theme.svelte.js */
 @custom-variant dark (&:where(.theme-4, .theme-5, .theme-6, .theme-4 *, .theme-5 *, .theme-6 *));
 
 @layer base {

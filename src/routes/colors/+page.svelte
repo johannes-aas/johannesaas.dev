@@ -1,6 +1,6 @@
 <script>
-	import { onMount, onDestroy } from 'svelte'
 	import { Dialog } from 'bits-ui'
+	import { themeIds, theme, setTheme } from '$lib/theme.svelte.js'
 	import Button from '$lib/components/button.svelte'
 	import Slider from '$lib/components/slider.svelte'
 	import ThemeSwatch from '$lib/components/theme-swatch.svelte'
@@ -25,29 +25,6 @@
 		{ name: 'border', border: 'border-border' },
 		{ name: 'border-strong', border: 'border-border-strong' }
 	]
-
-	const themeIds = [1, 2, 3, 4, 5, 6].map((n) => `theme-${n}`)
-	let activeTheme = $state(themeIds[0])
-	let savedTheme = null
-
-	onMount(() => {
-		savedTheme =
-			themeIds.find((id) => document.documentElement.classList.contains(id)) ?? themeIds[0]
-		activeTheme = savedTheme
-	})
-
-	onDestroy(() => {
-		if (typeof document === 'undefined' || !savedTheme) return
-		document.documentElement.classList.remove(...themeIds)
-		document.documentElement.classList.add(savedTheme)
-	})
-
-	function pickTheme(id) {
-		const html = document.documentElement
-		html.classList.remove(...themeIds)
-		html.classList.add(id)
-		activeTheme = id
-	}
 
 	let spread = $state(40)
 	let drift = $state(-20)
@@ -103,14 +80,14 @@
 	{#each themeIds as id, i (id)}
 		<ThemeSwatch
 			{id}
-			selected={id === activeTheme}
+			selected={i === theme.index}
 			tabindex={0}
 			aria-label="Theme {i + 1}"
 			class={[
 				'h-10 flex-1 sm:h-14 sm:w-24 sm:flex-none',
-				id === activeTheme ? 'border-border-strong' : 'hover:border-border'
+				i === theme.index ? 'border-border-strong' : 'hover:border-border'
 			]}
-			onclick={() => pickTheme(id)}
+			onclick={() => setTheme(i)}
 		/>
 	{/each}
 {/snippet}
