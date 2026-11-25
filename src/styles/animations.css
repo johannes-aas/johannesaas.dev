@@ -4,6 +4,8 @@
 	--animate-dialog-out: dialog-out 140ms ease-in forwards;
 	--animate-overlay-in: overlay-in 180ms ease-out;
 	--animate-overlay-out: overlay-out 140ms ease-in forwards;
+	--animate-popover-in: popover-in 150ms ease-out;
+	--animate-popover-out: popover-out 100ms ease-in forwards;
 
 	--animate-menu-in: menu-in 700ms cubic-bezier(0.76, 0, 0.24, 1) both;
 	--animate-menu-out: menu-out 700ms cubic-bezier(0.76, 0, 0.24, 1) both;
@@ -53,6 +55,19 @@
 		to {
 			opacity: 0;
 			scale: 0.95;
+		}
+	}
+	/* grows from the trigger's side, wherever the popover lands */
+	@keyframes popover-in {
+		from {
+			opacity: 0;
+			scale: 0.96;
+		}
+	}
+	@keyframes popover-out {
+		to {
+			opacity: 0;
+			scale: 0.96;
 		}
 	}
 	@keyframes overlay-in {
