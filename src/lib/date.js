@@ -13,6 +13,22 @@ export function formatDateTime(date) {
 	return format(date, 'PPpp', { locale: locale() })
 }
 
+export function formatDateLong(date) {
+	return format(date, 'PPP', { locale: locale() })
+}
+
+const capitalize = (text) => text.charAt(0).toUpperCase() + text.slice(1)
+
+// GitHub-style: three letters, capitalized, no trailing period ("Jan", "Des")
+export function formatMonthShort(date) {
+	return capitalize(format(date, 'LLLL', { locale: locale() }).slice(0, 3))
+}
+
+// day: 0 (Sunday) to 6
+export function weekdayShort(day) {
+	return capitalize(locale().localize.day(day, { width: 'abbreviated' }))
+}
+
 export function relativeTime(date) {
 	return formatDistanceToNowStrict(date, {
 		addSuffix: true,
